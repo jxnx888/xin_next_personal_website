@@ -1,0 +1,116 @@
+{
+  "code": 200,
+  "data": {
+    "Great Wall Motor": {
+      "companyName": "Great Wall Motor Co., Ltd.",
+      "companySC": "Great Wall Motor",
+      "jobtitle": "Front-end Developer",
+      "responsibilities": [
+        "Utilized the React Hocks framework to build a new international GWM E-commerce website with team members, and worked closely with UE/UI designers and product managers to develop responsive, high-performance, accessible, reliable E-commerce websites.",
+        "Managed React team to improve our ability, such as code review, knowledge share.",
+        "Maintained and updated the current E-commerce website.",
+        "Built the reusable, stable components in React Hocks",
+        "Docked with foreign suppliers about implementing related features",
+        "Created Command-line Interface for GWM inner projects."
+      ],
+      "startDate": "2021/03",
+      "endDate": "2021/09",
+      "duration": "6 mos",
+      "projects": [
+        {
+          "title": "GWM Online Store - THAI",
+          "img": "/image/projects/greatWall.jpg",
+          "desc": "Online store for selling GWM vehicles - THAI",
+          "tags": "Development and maintenance, React Hooks, Vue.js, Javascript, CSS3, HTML5",
+          "url": "https://www.gwm.co.th/en/",
+          "code": 0
+        }
+      ]
+    },
+    "Kai Rong": {
+      "companyName": "Shanghai Kairong Information Technology Co., Lt",
+      "companySC": "Kai Rong",
+      "jobtitle": "Senior Front-end Developer",
+      "responsibilities": [
+        "Managing front end team as a project manager assistant.",
+        "Maintaining current E-commerce website by using HTML, CSS, jQuery, JSP, Thymeleaf.",
+        "Utilizing the Vue.js framework to build a new version of the E-commerce website by self.",
+        "Working closely with UX/UI designers and product manager to develop responsive, high performance, accessible, reliable E-commerce websites.",
+        "Utilizing the Three.js to design and build 3D printer, and luggage decal related WebApp."
+      ],
+      "startDate": "2019/05",
+      "endDate": "2021/03",
+      "duration": "1 yr 11 mos",
+      "projects": [
+        {
+          "title": "Import Express - Ecommerce",
+          "img": "/image/projects/import.jpg",
+          "desc": "Online Shopping for Clothing, Mobile Phone, Computers, Jewelry, Beauty, Sports, Home and so on; Shopping on Our website For Small Businesses.",
+          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "url": "https://www.import-express.com/",
+          "code": 0
+        },
+        {
+          "title": "Kids Charming - Ecommerce",
+          "img": "/image/projects/kids.jpg",
+          "desc": "China Wholesale Online, China Wholesale Suppliers, China Cheap Products for Children",
+          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "url": "https://www.kidscharming.com/",
+          "code": 1
+        },
+        {
+          "title": "Pet Store - Ecommerce",
+          "img": "/image/projects/pet.jpg",
+          "desc": "China Wholesale Online, China Wholesale Suppliers, China Cheap Products for Pets",
+          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "url": "https://www.petstoreinc.com/",
+          "code": 2
+        },
+        {
+          "title": "Magic Box - App for Children",
+          "img": "/image/projects/magicBox.jpg",
+          "desc": "MagicBox for kids education based on Three.js. Build modules by using default geometries",
+          "tags": "Development and maintenance, Android, iOS, Three.js, Javascript, jQuery, CSS3, HTML5",
+          "url": "/threeDimensionalBuilder",
+          "storeUrlQr": {
+            "ios": "/image/qr/magicboxQR.png",
+            "android": ""
+          },
+          "code": 3
+        },
+        {
+          "title": "Luggage Decal Splatter",
+          "img": "/image/projects/luggage.jpg",
+          "desc": "Pick or upload decals to  on luggage. Before and after shooting the decal, users can change the decal size and rotation and position",
+          "tags": "Development and maintenance, Three.js, Javascript, jQuery, CSS3, HTML5",
+          "url": "/threeDimensionalBuilder",
+          "code": 4
+        }
+      ]
+    },
+    "Yuan Dian": {
+      "companyName": "Yuan Dian Hu Dong Technology Co., Ltd",
+      "companySC": "Yuan Dian",
+      "jobtitle": "Junior Front-end Developer",
+      "responsibilities": [
+        "Managed H5 fission project development for WeChat public accounts as a leader.",
+        "Managed Development team, and communicating with product manager and business partners.",
+        "Utilized HTML5/CSS3, Vue.js, JavaScript, jQuery, MySQL to develop mobile-friendly responsible H5 projects."
+      ],
+      "startDate": "2018/05",
+      "endDate": "2018/09",
+      "duration": "3 mos",
+      "projects": [
+        {
+          "title": "WeChat  ",
+          "img": "/image/projects/mice.jpg",
+          "desc": "Secret Test - Get test results by filling in or selecting information, and drain traffic through QR codes.",
+          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5",
+          "code": 5
+        }
+      ]
+    }
+  },
+  "companyName": []
+}
+

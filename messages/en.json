@@ -1,0 +1,73 @@
+{
+  "HOME": "Home",
+  "SKILLS": "Skills",
+  "PROJECTS": "Portfolio",
+  "ABOUT_ME": "About Me",
+  "CONTACT": "Contact",
+  "BLOG": "Blog",
+  "RESUME": "Resume",
+  "RESUME_LOWER": "resume",
+  "MY_NAME": "Xin Ning",
+  "MY_TITLE": "Front-end Developer",
+  "EMAIL": "ningxin1007@hotmail.com",
+  "ARTICLES": "Articles",
+  "MY_TAGS": "My Tags",
+  "VIEW": "View",
+  "POSTED": "Posted",
+  "BACK": "Back",
+  "SOMETHING_WRONG": "Sorry, something went wrong, please refresh!",
+  "HOME_WELCOME1": "You've found yourself at the online home of Xin Ning, a Front-end Developer.",
+  "HOME_WELCOME2": "Here you'll find a selection of my latest work, stats about my skills and a link to my ",
+  "HOME_WELCOME3": "If you have a project or need some extra help, please drop me an email at",
+  "HOME_WELCOME4": " alternatively you can fill out my contact form in the ",
+  "CONTACTPAGE": "Contact page.",
+  "My_PROJECTS": "My Projects",
+  "MY_SKILLS": "My Skills",
+  "KEEP_LEARNING": ["KEEP LEARNING, KEEP GROWING", "Once you stop learning, you start dying.", "Albert Einstein"],
+  "INTRODUCTION": ["Hi, I am Xin Ning.", "Welcome to my personal website.", "I am Creative, and I Love to Develop.", "I am Good at JavaScript, jQuery, React Hooks, Vue.js, HTML5 and CSS3."],
+  "home": {
+    "welcome": "Welcome to my personal website",
+    "subtitle": "Full Stack Developer & Creative Technologist"
+  },
+  "footer": {
+    "copyright": "Copyright 2015 - 2025 | Xin Ning"
+  },
+  "skills": {
+    "title": "Skills & Experience",
+    "devSkill": "Developer Skills",
+    "SoftSkill": "Soft Skills",
+    "infor": [
+      "Skills & Experience",
+      "The main area of my expertise is front-end development.",
+      "Utilizing HTML5, CSS3, JavaScript, Vue.js, React Hooks to build e-commerce web and web apps."
+    ],
+    "softSkillName": {
+      "Focus": "Focus",
+      "Teamwork": "Teamwork",
+      "Patience": "Patience",
+      "Organisation": "Organisation",
+      "Flexibility": "Flexibility",
+      "Communication": "Communication",
+      "Listening": "Listening"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "skills": "Skills",
+    "projects": "Portfolio",
+    "contact": "Contact",
+    "blog": "Blog"
+  },
+  "projects": {
+    "bannerInfo": "I'm able to work independently and handle multiple tasks at the same time. More importantly, I am always a good team member with a team-oriented spirit in my mind.",
+    "responsibilities": "Responsibilities",
+    "tip": "Click Here to Play",
+    "topInfo": "The following are some of my main work experience and corresponding projects, and show my corresponding skills."
+  },
+  "contact": {
+    "topTitle": ["Want to contact Xin Ning", "Here are few ways to get in touch with me"],
+    "getInTouch": ["I'm very approachable and would love to speak to you.", "Feel free to call, send us an email, facebook me or simply complete the enquiry form."],
+    "message": ["YOUR NAME", "EMAIL ADDRESS", "TELEPHONE NUMBER", "SUBJECT", "YOUR MESSAGE", "SUBMIT"],
+    "validation": ["* Please input your name", "* Please input your email address", "* Please enter a valid email address.", "* Please input your telephone number", "* Please input your subject", "* Please input your message", "* Network error, please try again later", "Succeeded, I will give you back within 24 hours, Thanks."]
+  }
+}
