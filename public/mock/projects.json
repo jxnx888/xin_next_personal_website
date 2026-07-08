@@ -1,17 +1,41 @@
 {
   "code": 200,
   "data": {
+    "LCI Education": {
+      "companyName": "LCI Education",
+      "companySC": "LCI Education",
+      "jobtitle": "Front-end Developer",
+      "responsibilities": [
+        "Developing and maintaining multilingual web applications for an international education group with 23 institutions across 5 continents.",
+        "Building responsive, accessible interfaces using React, Next.js and TypeScript, collaborating closely with UX/UI designers and back-end teams.",
+        "Implementing CMS-driven content workflows and ensuring cross-browser compatibility and web performance.",
+        "Participating in code reviews and contributing to shared component libraries and front-end standards."
+      ],
+      "startDate": "2021/10",
+      "endDate": "Present",
+      "duration": "3 yrs+",
+      "projects": [
+        {
+          "title": "LCI Education — Corporate Website",
+          "img": "/image/projects/lci.jpg",
+          "desc": "Official multilingual website for LCI Education, an international education group with 23 institutions operating across 5 continents.",
+          "tags": "Front-end Development, JavaScript, TypeScript, Responsive Design, CMS Integration, Internationalization",
+          "url": "https://www.lcieducation.com/",
+          "code": 0
+        }
+      ]
+    },
     "Great Wall Motor": {
       "companyName": "Great Wall Motor Co., Ltd.",
       "companySC": "Great Wall Motor",
       "jobtitle": "Front-end Developer",
       "responsibilities": [
-        "Utilized the React Hocks framework to build a new international GWM E-commerce website with team members, and worked closely with UE/UI designers and product managers to develop responsive, high-performance, accessible, reliable E-commerce websites.",
-        "Managed React team to improve our ability, such as code review, knowledge share.",
-        "Maintained and updated the current E-commerce website.",
-        "Built the reusable, stable components in React Hocks",
-        "Docked with foreign suppliers about implementing related features",
-        "Created Command-line Interface for GWM inner projects."
+        "Utilized the React Hooks framework to build a new international GWM e-commerce website with team members, working closely with UX/UI designers and product managers to deliver responsive, high-performance web experiences.",
+        "Led React team knowledge sharing through code reviews and internal workshops.",
+        "Maintained and iterated on the existing e-commerce website.",
+        "Built reusable, stable component library in React Hooks.",
+        "Collaborated with international vendors on feature integrations.",
+        "Created a Command-line Interface tool for GWM internal projects."
       ],
       "startDate": "2021/03",
       "endDate": "2021/09",
@@ -20,23 +44,23 @@
         {
           "title": "GWM Online Store - THAI",
           "img": "/image/projects/greatWall.jpg",
-          "desc": "Online store for selling GWM vehicles - THAI",
-          "tags": "Development and maintenance, React Hooks, Vue.js, Javascript, CSS3, HTML5",
+          "desc": "Official online store for selling GWM vehicles in Thailand — a fully responsive e-commerce platform built with React.",
+          "tags": "React Hooks, Vue.js, JavaScript, CSS3, HTML5",
           "url": "https://www.gwm.co.th/en/",
           "code": 0
         }
       ]
     },
     "Kai Rong": {
-      "companyName": "Shanghai Kairong Information Technology Co., Lt",
+      "companyName": "Shanghai Kairong Information Technology Co., Ltd.",
       "companySC": "Kai Rong",
       "jobtitle": "Senior Front-end Developer",
       "responsibilities": [
-        "Managing front end team as a project manager assistant.",
-        "Maintaining current E-commerce website by using HTML, CSS, jQuery, JSP, Thymeleaf.",
-        "Utilizing the Vue.js framework to build a new version of the E-commerce website by self.",
-        "Working closely with UX/UI designers and product manager to develop responsive, high performance, accessible, reliable E-commerce websites.",
-        "Utilizing the Three.js to design and build 3D printer, and luggage decal related WebApp."
+        "Managed front-end team as a project manager assistant.",
+        "Maintained three e-commerce websites using HTML, CSS, jQuery, JSP and Thymeleaf.",
+        "Led the full rebuild of the e-commerce platform using Vue.js.",
+        "Worked closely with UX/UI designers and product managers to deliver responsive, high-performance web experiences.",
+        "Designed and built interactive 3D experiences using Three.js — including a 3D printer configurator and a luggage decal app."
       ],
       "startDate": "2019/05",
       "endDate": "2021/03",
@@ -45,32 +69,32 @@
         {
           "title": "Import Express - Ecommerce",
           "img": "/image/projects/import.jpg",
-          "desc": "Online Shopping for Clothing, Mobile Phone, Computers, Jewelry, Beauty, Sports, Home and so on; Shopping on Our website For Small Businesses.",
-          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "desc": "B2B e-commerce platform for importing wholesale goods — clothing, electronics, jewelry, sports and more — targeting small business buyers.",
+          "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
           "url": "https://www.import-express.com/",
           "code": 0
         },
         {
           "title": "Kids Charming - Ecommerce",
           "img": "/image/projects/kids.jpg",
-          "desc": "China Wholesale Online, China Wholesale Suppliers, China Cheap Products for Children",
-          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "desc": "China wholesale platform specializing in children's products — connecting international buyers with domestic suppliers.",
+          "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
           "url": "https://www.kidscharming.com/",
           "code": 1
         },
         {
           "title": "Pet Store - Ecommerce",
           "img": "/image/projects/pet.jpg",
-          "desc": "China Wholesale Online, China Wholesale Suppliers, China Cheap Products for Pets",
-          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "desc": "China wholesale platform for pet supplies, connecting international buyers with domestic manufacturers.",
+          "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
           "url": "https://www.petstoreinc.com/",
           "code": 2
         },
         {
           "title": "Magic Box - App for Children",
           "img": "/image/projects/magicBox.jpg",
-          "desc": "MagicBox for kids education based on Three.js. Build modules by using default geometries",
-          "tags": "Development and maintenance, Android, iOS, Three.js, Javascript, jQuery, CSS3, HTML5",
+          "desc": "An educational 3D builder app for kids built with Three.js — children can assemble 3D models using geometric and cartoon shapes.",
+          "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5, Android, iOS",
           "url": "/threeDimensionalBuilder",
           "storeUrlQr": {
             "ios": "/image/qr/magicboxQR.png",
@@ -81,31 +105,31 @@
         {
           "title": "Luggage Decal Splatter",
           "img": "/image/projects/luggage.jpg",
-          "desc": "Pick or upload decals to  on luggage. Before and after shooting the decal, users can change the decal size and rotation and position",
-          "tags": "Development and maintenance, Three.js, Javascript, jQuery, CSS3, HTML5",
+          "desc": "A Three.js web app for customizing luggage with decals — users can upload images and adjust the size, rotation and position in real time.",
+          "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5",
           "url": "/threeDimensionalBuilder",
           "code": 4
         }
       ]
     },
     "Yuan Dian": {
-      "companyName": "Yuan Dian Hu Dong Technology Co., Ltd",
+      "companyName": "Yuan Dian Hu Dong Technology Co., Ltd.",
       "companySC": "Yuan Dian",
-      "jobtitle": "Junior Front-end Developer",
+      "jobtitle": "Front-end Developer",
       "responsibilities": [
-        "Managed H5 fission project development for WeChat public accounts as a leader.",
-        "Managed Development team, and communicating with product manager and business partners.",
-        "Utilized HTML5/CSS3, Vue.js, JavaScript, jQuery, MySQL to develop mobile-friendly responsible H5 projects."
+        "Led the development of H5 viral marketing campaigns for WeChat public accounts.",
+        "Managed the development team and coordinated with product managers and business partners.",
+        "Built mobile-responsive H5 projects using HTML5, CSS3, Vue.js, JavaScript, jQuery and MySQL."
       ],
       "startDate": "2018/05",
       "endDate": "2018/09",
       "duration": "3 mos",
       "projects": [
         {
-          "title": "WeChat  ",
+          "title": "WeChat H5 — Viral Quiz Campaign",
           "img": "/image/projects/mice.jpg",
-          "desc": "Secret Test - Get test results by filling in or selecting information, and drain traffic through QR codes.",
-          "tags": "Development and maintenance, Javascript, jQuery, CSS3, HTML5",
+          "desc": "A WeChat H5 campaign built to drive user acquisition through shareable personality quizzes — users fill in or select answers to get results, then share via QR code.",
+          "tags": "Vue.js, JavaScript, jQuery, CSS3, HTML5",
           "code": 5
         }
       ]
@@ -113,4 +137,3 @@
   },
   "companyName": []
 }
-

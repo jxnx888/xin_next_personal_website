@@ -1,17 +1,41 @@
 {
   "code": 200,
   "data": {
+    "LCI Education": {
+      "companyName": "LCI Education",
+      "companySC": "LCI Education",
+      "jobtitle": "前端开发工程师",
+      "responsibilities": [
+        "为拥有23所院校、覆盖5大洲的国际教育集团开发和维护多语言 Web 应用。",
+        "使用 React、Next.js 和 TypeScript 构建响应式、无障碍的用户界面，与 UX/UI 设计师和后端团队密切协作。",
+        "实现 CMS 内容工作流，保障跨浏览器兼容性与网站性能。",
+        "参与代码审查，贡献共享组件库，推动前端规范建设。"
+      ],
+      "startDate": "2021/10",
+      "endDate": "至今",
+      "duration": "3 年以上",
+      "projects": [
+        {
+          "title": "LCI Education — 企业官网",
+          "img": "/image/projects/lci.jpg",
+          "desc": "LCI Education 官方多语言网站，LCI Education 是一家拥有23所院校、业务遍及5大洲的国际教育集团。",
+          "tags": "前端开发, JavaScript, TypeScript, 响应式设计, CMS 集成, 国际化",
+          "url": "https://www.lcieducation.com/",
+          "code": 0
+        }
+      ]
+    },
     "Great Wall Motor": {
       "companyName": "长城汽车股份有限公司",
       "companySC": "长城汽车",
       "jobtitle": "前端开发工程师",
       "responsibilities": [
-        "利用React Hocks框架与团队成员构建全新的长城国际电子商务网站，并与UE/UI设计师和产品经理密 切合作，开发响应式、高性能、可访问、可靠的电子商务网站。",
-        "管理 React 团队以提高我们的能力，例如代码审查、知识共享。",
-        "维护和更新迭代当前的电子商务网站。",
-        "在 React Hocks 中构建可重用、稳定的组件。",
-        "与国外供应商对接，实现相关功能。",
-        "为 GWM 内部项目创建命令行界面(GWM-CLI)。"
+        "使用 React Hooks 框架与团队成员共同构建长城汽车全新国际电商网站，与 UX/UI 设计师和产品经理密切协作，交付响应式、高性能的 Web 体验。",
+        "通过代码审查和内部知识分享，带领 React 团队提升整体技术能力。",
+        "维护和迭代更新现有电商网站。",
+        "在 React Hooks 中构建可复用、稳定的组件库。",
+        "与国外供应商对接，实现相关功能集成。",
+        "为 GWM 内部项目开发命令行工具（GWM-CLI）。"
       ],
       "startDate": "2021/03",
       "endDate": "2021/09",
@@ -20,23 +44,23 @@
         {
           "title": "GWM 电商网站 - 泰国",
           "img": "/image/projects/greatWall.jpg",
-          "desc": "GWM 线上售车网站 - 泰国",
-          "tags": "开发、维护、更新、迭代, React Hooks, Vue.js, Javascript, CSS3, HTML5",
+          "desc": "长城汽车泰国官方线上售车平台 — 基于 React 构建的全响应式电商网站。",
+          "tags": "React Hooks, Vue.js, JavaScript, CSS3, HTML5",
           "url": "https://www.gwm.co.th/en/",
           "code": 0
         }
       ]
     },
     "Kai Rong": {
-      "companyName": "上海凯融信息公司",
+      "companyName": "上海凯融信息科技有限公司",
       "companySC": "上海凯融",
-      "jobtitle": "高级前端开发人员",
+      "jobtitle": "高级前端开发工程师",
       "responsibilities": [
-        "作为项目经理助理，管理前端团队.",
-        "使用HTML, CSS, jQuery, JSP, Thymeleaf等维护现有的三个电商网站.",
-        "通过Vue.js来开发新版本的电商网站.",
-        "与UX/UI设计师和产品经理密切合作，开发响应快、性能高、易访问、可靠的电子商务网站.",
-        "使用three.js开发纯前端的3D打印机，以及行李箱涂鸦项目的配套App."
+        "担任项目经理助理，负责前端团队的日常管理与协调。",
+        "使用 HTML、CSS、jQuery、JSP、Thymeleaf 维护三个电商网站。",
+        "独立主导新版电商平台的全量重构，采用 Vue.js 开发。",
+        "与 UX/UI 设计师和产品经理紧密协作，交付响应快、性能高、易访问的电商网站。",
+        "使用 Three.js 独立设计并开发3D打印机配置器及行李箱涂鸦定制 App。"
       ],
       "startDate": "2019/05",
       "endDate": "2021/03",
@@ -45,32 +69,32 @@
         {
           "title": "Import Express - Ecommerce",
           "img": "/image/projects/import.jpg",
-          "desc": "我们出售服装、手机、电脑、珠宝、美容、运动、家居等商品; 推荐小企业在我们的网站上购物",
-          "tags": "开发和维护, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "desc": "面向小企业的 B2B 跨境电商平台，涵盖服装、电子、珠宝、运动、家居等品类。",
+          "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
           "url": "https://www.import-express.com/",
           "code": 0
         },
         {
           "title": "Kids Charming - Ecommerce",
           "img": "/image/projects/kids.jpg",
-          "desc": "中国网上批发, 中国供应商批发, 中国儿童廉价产品",
-          "tags": "开发和维护, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "desc": "专注儿童品类的中国批发平台，连接国际买家与国内供应商。",
+          "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
           "url": "https://www.kidscharming.com/",
           "code": 1
         },
         {
           "title": "Pet Store - Ecommerce",
           "img": "/image/projects/pet.jpg",
-          "desc": "中国网上批发, 中国供应商批发, 中国宠物廉价产品",
-          "tags": "开发和维护, Javascript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
+          "desc": "宠物用品中国批发平台，连接国际买家与国内厂商。",
+          "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
           "url": "https://www.petstoreinc.com/",
           "code": 2
         },
         {
-          "title": "Magic Box - App for Children",
+          "title": "Magic Box - 儿童3D搭建 App",
           "img": "/image/home/3dprinting.jpg",
-          "desc": "MagicBox是针对于小孩教育的一款Three.js的App, 用户可以使用默认的几何模型或者卡通模型来搭建模型",
-          "tags": "开发和维护, Android, iOS, Three.js, Javascript, jQuery, CSS3, HTML5",
+          "desc": "基于 Three.js 的儿童教育 3D 搭建 App，孩子可以用几何或卡通模型自由组合搭建作品。",
+          "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5, Android, iOS",
           "url": "/threeDimensionalBuilder",
           "storeUrlQr": {
             "ios": "/image/qr/magicboxQR.png",
@@ -81,8 +105,8 @@
         {
           "title": "Luggage Decal Splatter",
           "img": "/image/projects/luggage.jpg",
-          "desc": "挑选或上传图片, 并涂鸦在行李上。在涂鸦前后，用户可以更改涂鸦的大小、旋转角度和位置",
-          "tags": "开发和维护，three.js, Javascript, jQuery, CSS3, HTML5",
+          "desc": "Three.js 行李箱涂鸦定制 Web App，用户可挑选或上传图片涂鸦于行李，实时调整大小、角度与位置。",
+          "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5",
           "url": "/threeDimensionalBuilder",
           "code": 4
         }
@@ -91,21 +115,21 @@
     "Yuan Dian": {
       "companyName": "源点互动科技有限公司",
       "companySC": "源点互动",
-      "jobtitle": "前端开发人员",
+      "jobtitle": "前端开发工程师",
       "responsibilities": [
-        "负责管理和开发微信公众号H5裂变项目",
-        "管理开发团队, 负责与产品经理和业务伙伴沟通。",
-        "使用HTML5/CSS3，vue.js、JavaScript、jQuery、MySQL开发移动端响应式H5项目"
+        "负责主导微信公众号 H5 裂变营销活动的开发与交付。",
+        "管理开发团队，负责与产品经理和业务伙伴沟通协调。",
+        "使用 HTML5、CSS3、Vue.js、JavaScript、jQuery 和 MySQL 开发移动端响应式 H5 项目。"
       ],
       "startDate": "2018/05",
       "endDate": "2018/09",
       "duration": "3 个月",
       "projects": [
         {
-          "title": "Import Express - Ecommerce",
+          "title": "微信 H5 — 病毒式测试营销",
           "img": "/image/projects/mice.jpg",
-          "desc": "秘测 - 通过填写、选择信息，获取测试结果， 通过二维码引流。",
-          "tags": "开发和维护,Vue.js, Javascript, jQuery, CSS3, HTML5",
+          "desc": "微信 H5 裂变营销活动，用户通过填写或选择信息获取个性化测试结果，并通过二维码分享引流。",
+          "tags": "Vue.js, JavaScript, jQuery, CSS3, HTML5",
           "code": 5
         }
       ]
@@ -113,4 +137,3 @@
   },
   "companyName": []
 }
-

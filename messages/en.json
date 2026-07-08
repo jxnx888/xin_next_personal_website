@@ -8,7 +8,7 @@
   "RESUME": "Resume",
   "RESUME_LOWER": "resume",
   "MY_NAME": "Xin Ning",
-  "MY_TITLE": "Front-end Developer",
+  "MY_TITLE": "Full-Stack Developer",
   "EMAIL": "ningxin1007@hotmail.com",
   "ARTICLES": "Articles",
   "MY_TAGS": "My Tags",
@@ -16,40 +16,32 @@
   "POSTED": "Posted",
   "BACK": "Back",
   "SOMETHING_WRONG": "Sorry, something went wrong, please refresh!",
-  "HOME_WELCOME1": "You've found yourself at the online home of Xin Ning, a Front-end Developer.",
+  "NO_POSTS": "No posts found.",
+  "POSTS_TOTAL": "{count} posts",
+  "MIN_READ": "min read",
+  "SENDING": "Sending...",
+  "SECTION": "Section",
+  "VIEW_WORK": "View My Work",
+  "GET_IN_TOUCH": "Get In Touch",
+  "DOWNLOAD_RESUME": "Download Resume",
+  "STAT_YEARS": "Years Exp.",
+  "STAT_PROJECTS": "Projects",
+  "STAT_COMPANIES": "Companies",
+  "HOME_WELCOME1": "You've found the online home of Xin Ning, a Front-end Developer based in Montreal.",
   "HOME_WELCOME2": "Here you'll find a selection of my latest work, stats about my skills and a link to my ",
   "HOME_WELCOME3": "If you have a project or need some extra help, please drop me an email at",
   "HOME_WELCOME4": " alternatively you can fill out my contact form in the ",
+  "HOME_ABOUT": "I write clean, maintainable code and care deeply about performance and user experience. I work well independently and thrive in collaborative, cross-functional teams.",
   "CONTACTPAGE": "Contact page.",
   "My_PROJECTS": "My Projects",
-  "MY_SKILLS": "My Skills",
   "KEEP_LEARNING": ["KEEP LEARNING, KEEP GROWING", "Once you stop learning, you start dying.", "Albert Einstein"],
-  "INTRODUCTION": ["Hi, I am Xin Ning.", "Welcome to my personal website.", "I am Creative, and I Love to Develop.", "I am Good at JavaScript, jQuery, React Hooks, Vue.js, HTML5 and CSS3."],
+  "INTRODUCTION": ["I Build & Ship for the Web.", "8+ Years of Web Development Experience."],
   "home": {
     "welcome": "Welcome to my personal website",
-    "subtitle": "Full Stack Developer & Creative Technologist"
+    "subtitle": "Front-end Developer & Creative Technologist"
   },
   "footer": {
-    "copyright": "Copyright 2015 - 2025 | Xin Ning"
-  },
-  "skills": {
-    "title": "Skills & Experience",
-    "devSkill": "Developer Skills",
-    "SoftSkill": "Soft Skills",
-    "infor": [
-      "Skills & Experience",
-      "The main area of my expertise is front-end development.",
-      "Utilizing HTML5, CSS3, JavaScript, Vue.js, React Hooks to build e-commerce web and web apps."
-    ],
-    "softSkillName": {
-      "Focus": "Focus",
-      "Teamwork": "Teamwork",
-      "Patience": "Patience",
-      "Organisation": "Organisation",
-      "Flexibility": "Flexibility",
-      "Communication": "Communication",
-      "Listening": "Listening"
-    }
+    "copyright": "Copyright 2015 - 2026 | Xin Ning"
   },
   "nav": {
     "home": "Home",
@@ -59,15 +51,19 @@
     "blog": "Blog"
   },
   "projects": {
-    "bannerInfo": "I'm able to work independently and handle multiple tasks at the same time. More importantly, I am always a good team member with a team-oriented spirit in my mind.",
+    "title": "Portfolio",
     "responsibilities": "Responsibilities",
     "tip": "Click Here to Play",
-    "topInfo": "The following are some of my main work experience and corresponding projects, and show my corresponding skills."
+    "topInfo": "The following are some of my main work experience and corresponding projects, showcasing my technical skills and contributions.",
+    "visitSite": "Visit Website",
+    "viewCode": "View Code",
+    "downloadApp": "Download App",
+    "techLabel": "Tech"
   },
   "contact": {
-    "topTitle": ["Want to contact Xin Ning", "Here are few ways to get in touch with me"],
-    "getInTouch": ["I'm very approachable and would love to speak to you.", "Feel free to call, send us an email, facebook me or simply complete the enquiry form."],
+    "topTitle": ["Want to contact Xin Ning", "Here are a few ways to get in touch with me"],
+    "getInTouch": ["I'm always happy to connect — whether it's a project idea, a question, or just a chat.", "Feel free to call, send me an email, or simply fill out the contact form below."],
     "message": ["YOUR NAME", "EMAIL ADDRESS", "TELEPHONE NUMBER", "SUBJECT", "YOUR MESSAGE", "SUBMIT"],
-    "validation": ["* Please input your name", "* Please input your email address", "* Please enter a valid email address.", "* Please input your telephone number", "* Please input your subject", "* Please input your message", "* Network error, please try again later", "Succeeded, I will give you back within 24 hours, Thanks."]
+    "validation": ["* Please input your name", "* Please input your email address", "* Please enter a valid email address.", "* Please input your telephone number", "* Please input your subject", "* Please input your message", "* Network error, please try again later", "Succeeded, I will get back to you within 24 hours. Thanks!"]
   }
 }

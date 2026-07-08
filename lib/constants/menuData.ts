@@ -14,30 +14,24 @@ export const menuData: MenuItem[] = [
   },
   {
     id: 2,
-    name: 'SKILLS',
-    routerLink: '/skills',
-    routerName: 'Skills'
-  },
-  {
-    id: 3,
     name: 'PROJECTS',
     routerLink: '/projects',
     routerName: 'Projects'
   },
   {
-    id: 4,
-    name: 'ABOUT_ME',
-    routerLink: '/aboutme',
-    routerName: 'Aboutme'
-  },
-  {
-    id: 5,
+    id: 3,
     name: 'BLOG',
     routerLink: '/blog',
     routerName: 'Blog'
   },
   {
-    id: 6,
+    id: 4,
+    name: 'RESUME',
+    routerLink: '/resume',
+    routerName: 'Resume'
+  },
+  {
+    id: 5,
     name: 'CONTACT',
     routerLink: '/contact',
     routerName: 'Contact'

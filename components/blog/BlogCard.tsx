@@ -3,77 +3,73 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
-import { BlogPost, TAG_COLORS } from '@/lib/types/blog';
-import { getBlogImagePath } from '@/lib/utils/blogUtils';
-import { useIsMobile } from '@/lib/hooks/useDeviceType';
+import { BlogPost } from '@/lib/types/blog';
+import { getBlogImagePath, getReadTime } from '@/lib/utils/blogUtils';
+import TagBadge from '@/components/blog/TagBadge';
 
 interface BlogCardProps {
   post: BlogPost;
+  currentTag?: string | null;
 }
 
-export default function BlogCard({ post }: BlogCardProps) {
+export default function BlogCard({ post, currentTag }: BlogCardProps) {
   const t = useTranslations();
   const params = useParams();
   const locale = params.locale as string;
-  const isMobile = useIsMobile();
 
   const imagePath = getBlogImagePath(post.type[0]);
+  const readTime = getReadTime(post.content);
+  const href = `/${locale}/blog/${post.id}${currentTag ? `?from=${encodeURIComponent(currentTag)}` : ''}`;
 
   return (
-    <Link href={`/${locale}/blog/${post.id}`}>
-      <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden mb-6 cursor-pointer">
-        <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'}`}>
-          {/* Image */}
-          {!isMobile && (
-            <div className="w-full md:w-1/3 relative h-48 md:h-auto">
-              <img
-                src={imagePath}
-                alt={post.type[0]}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/image/blog/default.jpg';
-                }}
-              />
-            </div>
-          )}
+    <Link href={href}>
+      <div className="blog-card group">
+        <div className="flex flex-row phone:flex-col pad-v:flex-col">
+
+          {/* Mobile top cover — shown on phone+pad-v */}
+          <div className="hidden phone:block pad-v:block relative overflow-hidden h-32">
+            <img
+              src={imagePath}
+              alt={post.type[0]}
+              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
+              onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
+            />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 40%, var(--bg-secondary))' }} />
+          </div>
+
+          {/* Desktop side image */}
+          <div className="shrink-0 relative overflow-hidden phone:hidden pad-v:hidden" style={{ width: '200px', minHeight: '155px' }}>
+            <img
+              src={imagePath}
+              alt={post.type[0]}
+              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500 absolute inset-0"
+              onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
+            />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
+          </div>
 
           {/* Content */}
-          <div className={`p-6 ${isMobile ? 'w-full' : 'w-2/3'}`}>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 hover:text-blue-600 transition-colors">
+          <div className="p-6 flex-1">
+            <h3 className="text-lg font-bold mb-2 text-[var(--text)] group-hover:text-[var(--accent)] transition-colors duration-200">
               {post.title}
             </h3>
-
-            <p className="text-gray-600 mb-4 line-clamp-3">
+            <p className="text-[var(--text-muted)] mb-4 line-clamp-2 text-sm leading-relaxed">
               {post.abstract}
             </p>
-
-            {/* Tags and Date */}
-            <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} items-start ${isMobile ? 'items-start' : 'md:items-center'} justify-between gap-2`}>
-              {/* Tags */}
+            <div className="flex items-center justify-between phone:flex-col phone:items-start phone:gap-3 pad-v:flex-col pad-v:items-start pad-v:gap-3">
               <div className="flex flex-wrap gap-2">
                 {post.type.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium"
-                    style={{
-                      backgroundColor: TAG_COLORS[tag] || '#999',
-                      color: '#fff',
-                      opacity: 0.9,
-                    }}
-                  >
-                    <span className="mr-1">📌</span>
-                    {tag}
-                  </span>
+                  <TagBadge key={index} tag={tag} />
                 ))}
               </div>
-
-              {/* Date */}
-              <div className={`text-sm text-gray-500 whitespace-nowrap ${isMobile ? 'mt-2' : ''}`}>
-                {t('POSTED')} @ {post.time}
+              <div className="flex items-center gap-3 text-xs text-[var(--text-dim)] whitespace-nowrap">
+                <span>{readTime} {t('MIN_READ')}</span>
+                <span className="opacity-40">·</span>
+                <span>{t('POSTED')} @ {post.time}</span>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </Link>

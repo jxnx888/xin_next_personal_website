@@ -68,14 +68,32 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
         <div
           key={key}
           onClick={() => handleMenuClick(key, index)}
-          className={`
-            w-full h-9 leading-9 text-center text-sm font-bold rounded-full mb-2.5 cursor-pointer
-            transition-colors duration-200
-            ${activeIndex === index
-              ? 'bg-orange-500 text-white'
-              : 'bg-gray-200 text-gray-800 hover:bg-orange-400 hover:text-white'
+          className="w-full h-9 leading-9 text-center text-xs font-semibold rounded-lg mb-2.5 cursor-pointer transition-all duration-200"
+          style={
+            activeIndex === index
+              ? {
+                  background: 'linear-gradient(135deg, #00d4ff, #0099b5)',
+                  color: '#fff',
+                  boxShadow: '0 0 10px rgba(0,212,255,0.2)',
+                }
+              : {
+                  background: 'var(--bg-secondary)',
+                  border: '1px solid var(--border)',
+                  color: 'var(--text-muted)',
+                }
+          }
+          onMouseEnter={(e) => {
+            if (activeIndex !== index) {
+              (e.currentTarget as HTMLDivElement).style.color = 'var(--text)';
+              (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(0,212,255,0.3)';
             }
-          `}
+          }}
+          onMouseLeave={(e) => {
+            if (activeIndex !== index) {
+              (e.currentTarget as HTMLDivElement).style.color = 'var(--text-muted)';
+              (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--border)';
+            }
+          }}
         >
           {label}
         </div>

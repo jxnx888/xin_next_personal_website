@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1",
+    "@types/three": "^0.185.0",
     "@vercel/analytics": "^1",
     "antd": "^5",
     "axios": "^1",
@@ -20,11 +21,11 @@
     "moment-timezone": "^0.5",
     "next": "^15",
     "next-intl": "^3",
-    "pdfjs-dist": "^5.4.394",
     "qs": "^6",
     "react": "^19",
     "react-dom": "^19",
-    "react-pdf": "^10.2.0",
+    "react-pdf": "^9.2.1",
+    "three": "^0.185.1",
     "video.js": "^8",
     "zustand": "^5"
   },

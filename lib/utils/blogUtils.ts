@@ -1,13 +1,16 @@
 import { BlogPost, TagCount } from '@/lib/types/blog';
 
-export async function getBlogData(locale: string): Promise<BlogPost[]> {
-  const url = locale === 'zh' ? '/mock/blogCN.json' : '/mock/blogEN.json';
+const blogCache: Record<string, BlogPost[]> = {};
 
+export async function getBlogData(locale: string): Promise<BlogPost[]> {
+  if (blogCache[locale]) return blogCache[locale];
+
+  const url = locale === 'zh' ? '/mock/blogCN.json' : '/mock/blogEN.json';
   try {
     const response = await fetch(url);
     const data = await response.json();
-
     if (data.code === 200) {
+      blogCache[locale] = data.data;
       return data.data;
     }
     return [];
@@ -19,17 +22,11 @@ export async function getBlogData(locale: string): Promise<BlogPost[]> {
 
 export function getTagCounts(blogs: BlogPost[]): TagCount {
   const tagCounts: TagCount = {};
-
   blogs.forEach((blog) => {
     blog.type.forEach((tag) => {
-      if (tagCounts[tag]) {
-        tagCounts[tag]++;
-      } else {
-        tagCounts[tag] = 1;
-      }
+      tagCounts[tag] = (tagCounts[tag] || 0) + 1;
     });
   });
-
   return tagCounts;
 }
 
@@ -39,7 +36,11 @@ export function filterBlogsByTag(blogs: BlogPost[], tag?: string): BlogPost[] {
 }
 
 export function getBlogImagePath(tag: string): string {
-  // Convert tag to lowercase and remove spaces for image filename
-  const filename = tag.toLowerCase().replace(/ /g, '');
-  return `/image/blog/${filename}.jpg`;
+  return `/image/blog/${tag.toLowerCase().replace(/ /g, '')}.jpg`;
+}
+
+export function getReadTime(content: string): number {
+  const text = content.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const words = text.split(' ').filter(Boolean).length;
+  return Math.max(1, Math.ceil(words / 200));
 }

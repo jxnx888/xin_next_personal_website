@@ -1,13 +1,14 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { ConfigProvider } from 'antd';
-import enUS from 'antd/locale/en_US';
-import zhCN from 'antd/locale/zh_CN';
+import AntdProvider from '@/components/AntdProvider';
 import { notFound } from 'next/navigation';
 import { locales, type Locale } from '@/i18n/config';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
+import { ThemeProvider } from '@/components/ThemeProvider';
+
+const antiFlashScript = `(function(){try{var s=localStorage.getItem('theme');if(s==='light'){document.documentElement.classList.add('light');}else if(!s&&!window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('light');}}catch(e){}})();`;
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -30,22 +31,22 @@ export default async function LocaleLayout({
   // Providing all messages to the client
   const messages = await getMessages();
 
-  // Get Ant Design locale
-  const antdLocale = locale === 'zh' ? zhCN : enUS;
-
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body>
+        <script dangerouslySetInnerHTML={{ __html: antiFlashScript }} />
         <NextIntlClientProvider messages={messages}>
-          <AntdRegistry>
-            <ConfigProvider locale={antdLocale}>
-              <Navigation />
-              <main className="pt-[100px] phone:pt-[60px]">
-                {children}
-              </main>
-              <Footer />
-            </ConfigProvider>
-          </AntdRegistry>
+          <ThemeProvider>
+            <AntdRegistry>
+              <AntdProvider locale={locale}>
+                <Navigation />
+                <main className="pt-[80px] phone:pt-[56px]">
+                  {children}
+                </main>
+                <Footer />
+              </AntdProvider>
+            </AntdRegistry>
+          </ThemeProvider>
         </NextIntlClientProvider>
       </body>
     </html>
