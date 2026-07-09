@@ -1,6 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { Suspense } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -11,13 +12,18 @@ import PageBanner from '@/components/layout/PageBanner';
 import SectionCard from '@/components/ui/SectionCard';
 import TagBadge from '@/components/blog/TagBadge';
 
-export default function BlogDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string; locale: string }>;
-}) {
-  const { id, locale } = use(params);
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+    <div
+      className="w-8 h-8 rounded-full border-2 animate-spin"
+      style={{ borderColor: 'var(--accent-dim)', borderTopColor: 'var(--accent)' }}
+    />
+  </div>
+);
+
+function BlogDetailContent({ id }: { id: string }) {
   const t = useTranslations();
+  const locale = useLocale();
   const searchParams = useSearchParams();
 
   const fromTag = searchParams.get('from');
@@ -29,32 +35,36 @@ export default function BlogDetailPage({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+
     const loadBlog = async () => {
       setLoading(true);
-      const blogs = await getBlogData(locale);
-      const foundBlog = blogs.find((b) => b.id.toString() === id);
-      if (foundBlog) {
-        const fixedContent = foundBlog.content.replace(
-          /<img src=/g,
-          '<img referrerPolicy="no-referrer" src='
-        );
-        setBlog({ ...foundBlog, content: fixedContent });
+      try {
+        const blogs = await getBlogData(locale, controller.signal);
+        if (cancelled) return;
+        const foundBlog = blogs.find((b) => b.id.toString() === id);
+        if (foundBlog) {
+          // Add referrerpolicy to all img tags to prevent referrer leaking
+          const fixedContent = foundBlog.content.replace(
+            /(<img\b[^>]*)(\bsrc=)/gi,
+            '$1 referrerpolicy="no-referrer" $2'
+          );
+          setBlog({ ...foundBlog, content: fixedContent });
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') return;
+        if (!cancelled) console.error('Error loading blog:', error);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
     };
+
     loadBlog();
+    return () => { cancelled = true; controller.abort(); };
   }, [id, locale]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-        <div
-          className="w-8 h-8 rounded-full border-2 animate-spin"
-          style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: 'var(--accent)' }}
-        />
-      </div>
-    );
-  }
+  if (loading) return <LoadingSpinner />;
 
   if (!blog) {
     return (
@@ -67,14 +77,13 @@ export default function BlogDetailPage({
     );
   }
 
-  const readTime = getReadTime(blog.content);
+  const readTime = getReadTime(blog.content, locale);
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <PageBanner title={t('BLOG')} imageSrc="/image/banner3.png" subtitle={blog.title} />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Back link — restores tag filter if navigated from a filtered list */}
         <Link
           href={backHref}
           className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-[var(--accent)] mb-6 transition-colors text-sm"
@@ -83,7 +92,6 @@ export default function BlogDetailPage({
         </Link>
 
         <SectionCard className="overflow-hidden">
-          {/* Header */}
           <div className="p-8 phone:p-5" style={{ borderBottom: '1px solid var(--border-soft)' }}>
             <h1 className="text-3xl phone:text-xl font-bold text-center text-[var(--text)] mb-5 leading-snug">
               {blog.title}
@@ -97,14 +105,13 @@ export default function BlogDetailPage({
                 {readTime} {t('MIN_READ')}
               </span>
               <div className="flex flex-wrap gap-2">
-                {blog.type.map((tag, index) => (
-                  <TagBadge key={index} tag={tag} />
+                {blog.type.map((tag) => (
+                  <TagBadge key={tag} tag={tag} />
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Content */}
           <div
             className="p-8 phone:p-5 blog-content"
             dangerouslySetInnerHTML={{ __html: blog.content }}
@@ -112,5 +119,18 @@ export default function BlogDetailPage({
         </SectionCard>
       </div>
     </div>
+  );
+}
+
+export default function BlogDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string; locale: string }>;
+}) {
+  const { id } = use(params);
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <BlogDetailContent id={id} />
+    </Suspense>
   );
 }

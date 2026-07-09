@@ -5,6 +5,7 @@ export interface Project {
   tags: string;
   url: string;
   code: number;
+  codeUrl?: string;
   storeUrlQr?: {
     ios?: string;
     android?: string;

@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface PageBannerProps {
   title: string;
   subtitle?: string;
@@ -10,18 +12,21 @@ export default function PageBanner({ title, subtitle, imageSrc }: PageBannerProp
       className="relative h-52 phone:h-36 overflow-hidden"
       style={{ background: 'var(--bg-deep)' }}
     >
-      {/* Background image */}
+      {/* Background image — priority for LCP */}
       {imageSrc && (
-        <div
-          className="absolute inset-0 bg-center bg-cover"
-          style={{ backgroundImage: `url(${imageSrc})`, opacity: 0.25 }}
+        <Image
+          src={imageSrc}
+          alt=""
+          fill
+          priority
+          className="object-cover opacity-25"
         />
       )}
 
       {/* Gradient fade to page bg */}
       <div
         className="absolute inset-0"
-        style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, var(--bg) 100%)' }}
+        style={{ background: 'linear-gradient(to bottom, var(--banner-overlay) 0%, var(--bg) 100%)' }}
       />
 
       {/* Tech grid overlay */}

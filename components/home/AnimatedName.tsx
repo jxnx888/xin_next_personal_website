@@ -12,12 +12,14 @@ export default function AnimatedName({ name, className = '', style }: AnimatedNa
   const letterRefs = useRef<(HTMLSpanElement | null)[]>([]);
 
   useEffect(() => {
+    const ids: ReturnType<typeof setTimeout>[] = [];
     letterRefs.current.forEach((span, i) => {
       if (!span) return;
-      setTimeout(() => {
+      ids.push(setTimeout(() => {
         span.style.animation = 'bounceIn 1s both';
-      }, i * 100);
+      }, i * 100));
     });
+    return () => ids.forEach(clearTimeout);
   }, [name]);
 
   const handleHover = (e: React.MouseEvent<HTMLSpanElement>) => {
@@ -29,10 +31,11 @@ export default function AnimatedName({ name, className = '', style }: AnimatedNa
   };
 
   return (
-    <h1 className={className} style={style}>
+    <h1 className={className} style={style} aria-label={name}>
       {name.split('').map((char, i) => (
         <span
           key={i}
+          aria-hidden="true"
           ref={el => { letterRefs.current[i] = el; }}
           style={{ opacity: 0, display: 'inline-block', minWidth: char === ' ' ? '0.3em' : undefined }}
           className="cursor-default transition-colors duration-300"

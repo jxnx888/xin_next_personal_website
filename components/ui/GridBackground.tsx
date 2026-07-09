@@ -2,6 +2,7 @@ export default function GridBackground() {
   return (
     <>
       <div
+        aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{
           backgroundImage:
@@ -10,6 +11,7 @@ export default function GridBackground() {
         }}
       />
       <div
+        aria-hidden="true"
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'radial-gradient(ellipse at 50% 50%, var(--accent-subtle) 0%, transparent 65%)' }}
       />

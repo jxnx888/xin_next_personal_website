@@ -35,7 +35,12 @@ export default function GlowButton({
     return <a href={href} download className={cls} style={baseStyle}>{children}</a>;
 
   if (href && (external || href.startsWith('http')))
-    return <a href={href} target="_blank" rel="noopener noreferrer" className={cls} style={baseStyle}>{children}</a>;
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={cls} style={baseStyle}>
+        {children}
+        <span className="sr-only"> (opens in new tab)</span>
+      </a>
+    );
 
   if (href)
     return <Link href={href} className={cls} style={baseStyle}>{children}</Link>;

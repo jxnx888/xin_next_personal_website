@@ -16,10 +16,11 @@ export default function ProjectsPage() {
   const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchProjects = async () => {
       try {
         const url = locale === 'zh' ? '/mock/projectsCN.json' : '/mock/projects.json';
-        const response = await fetch(url);
+        const response = await fetch(url, { signal: controller.signal });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data: ProjectsResponse = await response.json();
         if (data.code === 200) {
@@ -31,28 +32,36 @@ export default function ProjectsPage() {
           setLoadError(true);
         }
       } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') return;
         console.error('Failed to load projects:', error);
         setLoadError(true);
       }
     };
     fetchProjects();
+    return () => controller.abort();
   }, [locale]);
 
   if (loadError) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-        <p className="text-[var(--text-muted)]">{tg('SOMETHING_WRONG')}</p>
+      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+        <PageBanner title={t('title')} subtitle={t('topInfo')} imageSrc="/image/banner2.png" />
+        <div className="flex items-center justify-center py-24">
+          <p className="text-[var(--text-muted)]">{tg('SOMETHING_WRONG')}</p>
+        </div>
       </div>
     );
   }
 
   if (!projectsData) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
-        <div
-          className="w-8 h-8 rounded-full border-2 animate-spin"
-          style={{ borderColor: 'var(--accent-dim)', borderTopColor: 'var(--accent)' }}
-        />
+      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+        <PageBanner title={t('title')} subtitle={t('topInfo')} imageSrc="/image/banner2.png" />
+        <div className="flex items-center justify-center py-24">
+          <div
+            className="w-8 h-8 rounded-full border-2 animate-spin"
+            style={{ borderColor: 'var(--accent-dim)', borderTopColor: 'var(--accent)' }}
+          />
+        </div>
       </div>
     );
   }
@@ -82,7 +91,7 @@ export default function ProjectsPage() {
                 <h3 className="text-base text-[var(--accent)] mb-4 opacity-80">
                   {career.companyName}
                 </h3>
-                <div className="text-[var(--text-muted)] phone:text-sm text-sm">
+                <div className="text-[var(--text-muted)] text-sm">
                   <p
                     className="font-semibold mb-2 text-[var(--text)] text-xs tracking-widest uppercase"
                   >

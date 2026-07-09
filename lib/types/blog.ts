@@ -22,7 +22,7 @@ export const TAG_COLORS: { [key: string]: string } = {
   'TypeScript': '#3b82f6',
   'Node.js': '#d52bb3',
   'MongoDB': '#4ade80',
-  'IOS': '#60a5fa',
+  'iOS': '#60a5fa',
   'Microsoft Exchange Server': '#38bdf8',
   'CSS': '#38bdf8',
   'React': '#22d3ee',

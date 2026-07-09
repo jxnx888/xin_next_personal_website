@@ -34,6 +34,8 @@
   "NAV_THEME": "Theme",
   "NAV_LIGHT_MODE": "Light Mode",
   "NAV_DARK_MODE": "Dark Mode",
+  "NAV_OPEN_MENU": "Open Menu",
+  "SKIP_TO_CONTENT": "Skip to content",
   "HOME_ABOUT": "I write clean, maintainable code and care deeply about performance and user experience. I work well independently and thrive in collaborative, cross-functional teams.",
   "MY_PROJECTS": "My Projects",
   "KEEP_LEARNING": ["KEEP LEARNING, KEEP GROWING", "Once you stop learning, you start dying.", "Albert Einstein"],
@@ -55,7 +57,6 @@
   "projects": {
     "title": "Portfolio",
     "responsibilities": "Responsibilities",
-    "tip": "Click Here to Play",
     "topInfo": "The following are some of my main work experience and corresponding projects, showcasing my technical skills and contributions.",
     "visitSite": "Visit Website",
     "viewCode": "View Code",

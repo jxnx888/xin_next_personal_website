@@ -10,9 +10,12 @@ import GlowButton from '@/components/ui/GlowButton';
 import SectionCard from '@/components/ui/SectionCard';
 import GridBackground from '@/components/ui/GridBackground';
 import SectionHeader from '@/components/ui/SectionHeader';
+import Image from 'next/image';
 
 const TECH_ROW1 = ['React', 'Next.js', 'Vue.js', 'Three.js', 'Node.js', 'Sitecore', 'Uniform'];
 const TECH_ROW2 = ['JavaScript', 'TypeScript', 'HTML5 / CSS3', 'Tailwind CSS', 'Segment', 'Optimizely'];
+const TECH_MARQUEE_ROW1 = Array(8).fill(TECH_ROW1).flat();
+const TECH_MARQUEE_ROW2 = Array(8).fill(TECH_ROW2).flat();
 
 const FEATURED_PROJECTS_STATIC = [
   { company: 'LCI Education',  img: '/image/projects/lci.jpg',       tags: ['Next.js', 'TypeScript', 'React', 'i18n'],            url: 'https://www.lcieducation.com/' },
@@ -102,12 +105,12 @@ export default function HomePage() {
         </div>
 
         {/* Typewriter + CTA */}
-        {mounted && (
-          <div
-            className="absolute text-center"
-            style={{ left: '50%', bottom: '8%', transform: 'translate(-50%, 0)', maxWidth: '680px', width: '92%' }}
-          >
-            {/* Typewriter — desktop only */}
+        <div
+          className="absolute text-center"
+          style={{ left: '50%', bottom: '8%', transform: 'translate(-50%, 0)', maxWidth: '680px', width: '92%' }}
+        >
+          {/* Typewriter — desktop only, inside mounted guard to avoid hydration mismatch */}
+          {mounted && (
             <div className="phone:hidden mb-4">
               <span style={{ color: 'var(--accent)', fontSize: 'clamp(14px, 1.8vw, 20px)', opacity: 0.85 }}>
                 {typedText}
@@ -116,41 +119,45 @@ export default function HomePage() {
                 |
               </span>
             </div>
+          )}
 
-            {/* CTA buttons */}
-            <div className="flex items-center justify-center gap-3">
-              <GlowButton
-                href={`/${locale}/projects`}
-                style={{ padding: 'clamp(8px, 1vw, 11px) clamp(18px, 2vw, 28px)', fontSize: 'clamp(11px, 1.1vw, 13px)' }}
-              >
-                {t('VIEW_WORK')} →
-              </GlowButton>
-              <GlowButton
-                href={`/${locale}/contact`}
-                variant="outline"
-                style={{ padding: 'clamp(8px, 1vw, 11px) clamp(18px, 2vw, 28px)', fontSize: 'clamp(11px, 1.1vw, 13px)' }}
-              >
-                {t('GET_IN_TOUCH')}
-              </GlowButton>
-            </div>
+          {/* CTA buttons — always rendered to avoid CLS */}
+          <div className="flex items-center justify-center gap-3">
+            <GlowButton
+              href={`/${locale}/projects`}
+              style={{ padding: 'clamp(8px, 1vw, 11px) clamp(18px, 2vw, 28px)', fontSize: 'clamp(11px, 1.1vw, 13px)' }}
+            >
+              {t('VIEW_WORK')} →
+            </GlowButton>
+            <GlowButton
+              href={`/${locale}/contact`}
+              variant="outline"
+              style={{ padding: 'clamp(8px, 1vw, 11px) clamp(18px, 2vw, 28px)', fontSize: 'clamp(11px, 1.1vw, 13px)' }}
+            >
+              {t('GET_IN_TOUCH')}
+            </GlowButton>
           </div>
-        )}
+        </div>
 
         {/* Scroll indicator */}
-        <div
-          className="absolute phone:hidden cursor-pointer"
-          style={{ bottom: '-11px', left: '50%', animation: 'bounce-y 2s ease-in-out infinite' }}
+        <button
+          type="button"
+          className="absolute phone:hidden cursor-pointer bg-transparent border-0 p-0"
+          aria-label="Scroll to content"
+          style={{ bottom: '-11px', left: '50%', transform: 'translateX(-50%)', animation: 'bounce-y 2s ease-in-out infinite' }}
           onClick={() => document.getElementById('below-hero')?.scrollIntoView({ behavior: 'smooth' })}
         >
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 hover:border-[rgba(0,212,255,0.4)]"
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200"
             style={{ background: 'var(--bg-deep)', border: '1px solid var(--border)', color: 'var(--text-dim)' }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = 'var(--accent-glow)'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.borderColor = ''; }}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </div>
-        </div>
+        </button>
       </div>
 
       {/* ── Tech Strip ───────────────────────────────────── */}
@@ -172,13 +179,13 @@ export default function HomePage() {
         {/* Scanline overlay */}
         <div
           className="absolute inset-0 pointer-events-none z-10"
-          style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.045) 3px, rgba(0,0,0,0.045) 4px)' }}
+          style={{ backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 3px, var(--scanline-stripe) 3px, var(--scanline-stripe) 4px)' }}
         />
 
         {/* Row 1 — scroll left — frameworks */}
         <div style={{ padding: '10px 0 5px', overflow: 'hidden' }}>
           <div style={{ display: 'flex', animation: 'marquee 100s linear infinite', width: 'max-content' }}>
-            {Array(8).fill(TECH_ROW1).flat().map((item, i) => (
+            {TECH_MARQUEE_ROW1.map((item, i) => (
               <span
                 key={i}
                 style={{
@@ -214,7 +221,7 @@ export default function HomePage() {
         {/* Row 2 — scroll right — tooling/styling */}
         <div style={{ padding: '5px 0 10px', overflow: 'hidden' }}>
           <div style={{ display: 'flex', animation: 'marquee 80s linear infinite reverse', width: 'max-content' }}>
-            {Array(8).fill(TECH_ROW2).flat().map((item, i) => (
+            {TECH_MARQUEE_ROW2.map((item, i) => (
               <span
                 key={i}
                 style={{
@@ -259,7 +266,7 @@ export default function HomePage() {
                 download
                 style={{ padding: '8px 16px', fontSize: '14px' }}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
                 {t('DOWNLOAD_RESUME')}
@@ -307,20 +314,22 @@ export default function HomePage() {
             linkLabel={t('VIEW_ALL')}
           />
 
-          <div className="grid pad:grid-cols-3 pc:grid-cols-3 gap-5">
+          <div className="grid pad-v:grid-cols-2 pad:grid-cols-3 pc:grid-cols-3 gap-5">
             {featuredProjects.map((proj) => (
               <SectionCard
                 key={proj.title}
-                className="group overflow-hidden flex flex-col transition-all duration-300 hover:border-[rgba(0,212,255,0.22)]"
+                className="group overflow-hidden flex flex-col transition-all duration-300 hover-accent-border"
               >
                 {/* Image */}
                 <div className="relative h-44 overflow-hidden shrink-0">
-                  <img
+                  <Image
                     src={proj.img}
                     alt={proj.title}
-                    className="w-full h-full object-cover opacity-65 group-hover:opacity-85 group-hover:scale-[1.04] transition-all duration-500"
+                    fill
+                    sizes="(max-width: 767px) 100vw, (max-width: 1023px) 50vw, 33vw"
+                    className="object-cover opacity-65 group-hover:opacity-85 group-hover:scale-[1.04] transition-all duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                  <div className="absolute inset-0" style={{ background: 'var(--image-overlay)' }} />
                   <span
                     className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded"
                     style={{
@@ -364,7 +373,7 @@ export default function HomePage() {
                       className="w-fit"
                       style={{ padding: '5px 12px', fontSize: '11px', opacity: 0.85 }}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                      <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
                         <polyline points="15 3 21 3 21 9" />
                         <line x1="10" y1="14" x2="21" y2="3" />
@@ -391,10 +400,12 @@ export default function HomePage() {
         <SectionCard className="overflow-hidden">
           <div className="flex flex-col pad:flex-row pc:flex-row">
             <div className="pad:w-5/12 pc:w-5/12 relative h-64 pad:h-auto pc:h-auto">
-              <img
+              <Image
                 src="/image/home/keep-learning.jpg"
                 alt="Keep Learning"
-                className="w-full h-full object-cover opacity-60"
+                fill
+                sizes="(max-width: 767px) 100vw, (max-width: 1023px) 100vw, 42vw"
+                className="object-cover opacity-60"
               />
               <div className="absolute inset-0 phone:hidden pad-v:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
             </div>

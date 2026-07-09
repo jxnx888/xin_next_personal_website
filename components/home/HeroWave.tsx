@@ -103,13 +103,21 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
         targetMY = _hit.y;
       }
     };
-    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+
+    let isVisible = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisible = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    observer.observe(container);
 
     let animId: number;
     let time = 0;
 
     const animate = () => {
       animId = requestAnimationFrame(animate);
+      if (!isVisible) return;
       time += 0.006;
 
       smoothMX += (targetMX - smoothMX) * 0.05;
@@ -147,10 +155,11 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
       camera.updateProjectionMatrix();
       renderer.setSize(nw, nh);
     };
-    window.addEventListener('resize', onResize);
+    window.addEventListener('resize', onResize, { passive: true });
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener('resize', onResize);
       window.removeEventListener('mousemove', onMouseMove);
       geometry.dispose();
@@ -165,5 +174,5 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
     };
   }, [theme]);
 
-  return <div ref={containerRef} className="absolute inset-0 pointer-events-none" />;
+  return <div ref={containerRef} aria-hidden="true" className="absolute inset-0 pointer-events-none" />;
 }

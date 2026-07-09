@@ -1,20 +1,36 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, Drawer, Button } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { menuData } from '@/lib/constants/menuData';
 import { useTheme } from '@/components/ThemeProvider';
 
+const SunIcon = () => (
+  <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+);
+
+const MoonIcon = () => (
+  <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+);
+
 export default function Navigation() {
   const t = useTranslations();
-  const params = useParams();
+  const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
-  const locale = params.locale as string;
   const { theme, toggle: toggleTheme } = useTheme();
 
   const [scrolled, setScrolled] = useState(false);
@@ -39,34 +55,20 @@ export default function Navigation() {
   }, []);
 
   const changeLanguage = (newLocale: string) => {
-    const currentPath = pathname.replace(`/${locale}`, '');
-    router.push(`/${newLocale}${currentPath}`);
+    const currentPath = pathname.replace(new RegExp(`^/${locale}`), '');
+    const qs = window.location.search;
+    router.push(`/${newLocale}${currentPath}${qs}`);
   };
 
   const isActive = (path: string) => {
-    const cleanPath = pathname.replace(`/${locale}`, '');
+    const cleanPath = pathname.replace(new RegExp(`^/${locale}`), '');
     if (path === '/') return cleanPath === '' || cleanPath === '/';
     return cleanPath.startsWith(path);
   };
 
-  const SunIcon = () => (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="5"/>
-      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    </svg>
-  );
-
-  const MoonIcon = () => (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-    </svg>
-  );
-
   return (
     <>
+      <a href="#main-content" className="skip-to-content">{t('SKIP_TO_CONTENT')}</a>
       {/* scroll-hide only on desktop (pad+pc); phone/pad-v always visible */}
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
@@ -86,9 +88,12 @@ export default function Navigation() {
 
           {/* Logo */}
           <Link href={`/${locale}/`}>
-            <img
+            <Image
               src="/image/logo.png"
               alt="Xin's Website"
+              width={180}
+              height={60}
+              priority
               className="h-[60px] phone:h-[44px] pad-v:h-[44px] w-auto object-contain"
               style={{ filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'brightness(0)', opacity: 0.9 }}
             />
@@ -126,6 +131,7 @@ export default function Navigation() {
               style={{ border: '1px solid var(--border-input)' }}
             >
               <button
+                aria-label="Switch to Chinese"
                 className={`bg-transparent border-0 p-0 cursor-pointer transition-colors ${locale === 'zh' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text)]'}`}
                 onClick={() => changeLanguage('zh')}
               >
@@ -133,6 +139,7 @@ export default function Navigation() {
               </button>
               <span className="text-[var(--text-dim)]">|</span>
               <button
+                aria-label="Switch to English"
                 className={`bg-transparent border-0 p-0 cursor-pointer transition-colors ${locale === 'en' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text)]'}`}
                 onClick={() => changeLanguage('en')}
               >
@@ -155,6 +162,7 @@ export default function Navigation() {
           <div className="hidden phone:flex pad-v:flex">
             <Button
               type="text"
+              aria-label={t('NAV_OPEN_MENU')}
               icon={<MenuOutlined style={{ color: 'var(--text-muted)', fontSize: '18px' }} />}
               onClick={() => setMobileMenuOpen(true)}
             />
@@ -173,9 +181,9 @@ export default function Navigation() {
       >
         <Menu
           mode="vertical"
-          selectedKeys={[pathname]}
+          selectedKeys={[pathname.replace(/\/$/, '')]}
           items={menuData.map((item) => ({
-            key: `/${locale}${item.routerLink}`,
+            key: `/${locale}${item.routerLink === '/' ? '' : item.routerLink}`,
             label: (
               <Link href={`/${locale}${item.routerLink}`} onClick={() => setMobileMenuOpen(false)}>
                 {t(item.name)}
@@ -188,12 +196,14 @@ export default function Navigation() {
           <div className="text-xs text-[var(--text-muted)] mb-3 tracking-widest uppercase">{t('NAV_LANGUAGE')}</div>
           <div className="flex gap-4 mb-5">
             <button
+              aria-label="Switch to Chinese"
               className={`bg-transparent border-0 p-0 cursor-pointer text-sm transition-colors ${locale === 'zh' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)]'}`}
               onClick={() => { changeLanguage('zh'); setMobileMenuOpen(false); }}
             >
               中文
             </button>
             <button
+              aria-label="Switch to English"
               className={`bg-transparent border-0 p-0 cursor-pointer text-sm transition-colors ${locale === 'en' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)]'}`}
               onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
             >

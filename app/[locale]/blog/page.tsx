@@ -3,7 +3,7 @@
 import { Suspense } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pagination } from 'antd';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogSidebar from '@/components/blog/BlogSidebar';
@@ -23,25 +23,30 @@ function BlogPageContent() {
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(true);
 
+  // Prevents onChange scroll when triggered by a page-size change
+  const sizeChangingRef = useRef(false);
+
   const currentTag = searchParams.get('tag');
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
     const loadBlogs = async () => {
       setLoading(true);
       try {
-        const data = await getBlogData(locale);
+        const data = await getBlogData(locale, controller.signal);
         if (!cancelled) {
           setBlogs(data);
           setTagCounts(getTagCounts(data));
           setLoading(false);
         }
-      } catch {
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') return;
         if (!cancelled) setLoading(false);
       }
     };
     loadBlogs();
-    return () => { cancelled = true; };
+    return () => { cancelled = true; controller.abort(); };
   }, [locale]);
 
   useEffect(() => {
@@ -52,10 +57,19 @@ function BlogPageContent() {
   const startIndex = (currentPage - 1) * pageSize;
   const currentBlogs = filteredBlogs.slice(startIndex, startIndex + pageSize);
 
-  const handlePageChange = (page: number, size?: number) => {
+  const handlePageChange = (page: number) => {
+    if (sizeChangingRef.current) {
+      sizeChangingRef.current = false;
+      return; // suppress scroll triggered by Ant Design firing onChange after onShowSizeChange
+    }
     setCurrentPage(page);
-    if (size) setPageSize(size);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleSizeChange = (_current: number, size: number) => {
+    sizeChangingRef.current = true;
+    setPageSize(size);
+    setCurrentPage(1);
   };
 
   return (
@@ -111,7 +125,7 @@ function BlogPageContent() {
                   pageSize={pageSize}
                   total={filteredBlogs.length}
                   onChange={handlePageChange}
-                  onShowSizeChange={handlePageChange}
+                  onShowSizeChange={handleSizeChange}
                   pageSizeOptions={[5, 10, 20, 40]}
                   showSizeChanger
                   showQuickJumper

@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { BlogPost } from '@/lib/types/blog';
 import { getBlogImagePath, getReadTime } from '@/lib/utils/blogUtils';
 import TagBadge from '@/components/blog/TagBadge';
@@ -14,11 +13,10 @@ interface BlogCardProps {
 
 export default function BlogCard({ post, currentTag }: BlogCardProps) {
   const t = useTranslations();
-  const params = useParams();
-  const locale = params.locale as string;
+  const locale = useLocale();
 
-  const imagePath = getBlogImagePath(post.type[0]);
-  const readTime = getReadTime(post.content);
+  const imagePath = post.type.length > 0 ? getBlogImagePath(post.type[0]) : '/image/blog/default.jpg';
+  const readTime = getReadTime(post.content, locale);
   const href = `/${locale}/blog/${post.id}${currentTag ? `?from=${encodeURIComponent(currentTag)}` : ''}`;
 
   return (
@@ -30,7 +28,8 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
           <div className="hidden phone:block pad-v:block relative overflow-hidden h-32">
             <img
               src={imagePath}
-              alt={post.type[0]}
+              alt={post.title}
+              loading="lazy"
               className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
               onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
             />
@@ -41,7 +40,8 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
           <div className="shrink-0 relative overflow-hidden phone:hidden pad-v:hidden" style={{ width: '200px', minHeight: '155px' }}>
             <img
               src={imagePath}
-              alt={post.type[0]}
+              alt={post.title}
+              loading="lazy"
               className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500 absolute inset-0"
               onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
             />
@@ -58,8 +58,8 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
             </p>
             <div className="flex items-center justify-between phone:flex-col phone:items-start phone:gap-3 pad-v:flex-col pad-v:items-start pad-v:gap-3">
               <div className="flex flex-wrap gap-2">
-                {post.type.map((tag, index) => (
-                  <TagBadge key={index} tag={tag} />
+                {post.type.map((tag) => (
+                  <TagBadge key={tag} tag={tag} />
                 ))}
               </div>
               <div className="flex items-center gap-3 text-xs text-[var(--text-dim)] whitespace-nowrap">

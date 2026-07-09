@@ -57,7 +57,7 @@ export default async function LocaleLayout({
             <AntdRegistry>
               <AntdProvider locale={locale}>
                 <Navigation />
-                <main className="pt-[80px] phone:pt-[56px] pad-v:pt-[56px]">
+                <main id="main-content" tabIndex={-1} className="pt-[80px] phone:pt-[56px] pad-v:pt-[56px] outline-none">
                   {children}
                 </main>
                 <Footer />

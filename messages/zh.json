@@ -34,6 +34,8 @@
   "NAV_THEME": "主题",
   "NAV_LIGHT_MODE": "浅色",
   "NAV_DARK_MODE": "深色",
+  "NAV_OPEN_MENU": "打开菜单",
+  "SKIP_TO_CONTENT": "跳转到主内容",
   "HOME_ABOUT": "我注重代码质量与用户体验，追求简洁、可维护的实现。既能独立推进项目，也擅长在跨职能团队中协作共创。",
   "MY_PROJECTS": "我的项目",
   "KEEP_LEARNING": ["不断学习，不断成长", "一旦你停止学习，你就开始死亡。", "阿尔伯特 · 爱因斯坦"],
@@ -55,7 +57,6 @@
   "projects": {
     "title": "项目",
     "responsibilities": "工作职责",
-    "tip": "点击这里开始",
     "topInfo": "以下是我的主要工作经历与对应项目，展示了我在不同技术方向上的实践能力与贡献。",
     "visitSite": "访问网站",
     "viewCode": "查看代码",

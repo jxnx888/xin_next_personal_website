@@ -1,14 +1,13 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Footer() {
   const t = useTranslations();
-  const params = useParams();
-  const locale = params.locale as string;
+  const locale = useLocale();
   const [showWechat, setShowWechat] = useState(false);
 
   const resumeLink = locale === 'zh'
@@ -24,43 +23,75 @@ export default function Footer() {
         <div className="flex justify-center gap-5 mb-6">
           {/* WeChat — click to toggle QR */}
           <div className="relative">
-            <div
-              className="footer-icon w-9 h-9 bg-center bg-no-repeat bg-contain cursor-pointer"
-              style={{ backgroundImage: "url('/image/footer/icon_wechat.png')" }}
+            <button
+              type="button"
+              aria-label="WeChat: Xin Ning"
+              className="footer-icon w-9 h-9 cursor-pointer flex items-center justify-center bg-transparent border-0 p-0"
               onClick={() => setShowWechat((v) => !v)}
-              title="WeChat: Xin Ning"
-            />
+            >
+              <Image
+                src="/image/footer/icon_wechat.png"
+                alt=""
+                width={36}
+                height={36}
+                className="w-9 h-9 object-contain"
+              />
+            </button>
             {showWechat && (
               <div
                 className="absolute -top-[120px] left-1/2 -translate-x-1/2 p-2 rounded-lg z-10 w-[108px] h-[108px]"
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-input)' }}
               >
-                <img src="/image/footer/wechat_xin.jpg" alt="WeChat QR" className="w-[90px] h-[90px]" />
+                <Image src="/image/footer/wechat_xin.jpg" alt="WeChat QR code" width={90} height={90} />
               </div>
             )}
           </div>
 
           {/* LinkedIn */}
-          <a href="https://www.linkedin.com/in/xinning1007" target="_blank" rel="noopener noreferrer" title="LinkedIn">
-            <div
-              className="footer-icon w-9 h-9 bg-center bg-no-repeat bg-contain"
-              style={{ backgroundImage: "url('/image/footer/icon_linkedin.png')" }}
+          <a
+            href="https://www.linkedin.com/in/xinning1007"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit LinkedIn profile (opens in new tab)"
+          >
+            <Image
+              src="/image/footer/icon_linkedin.png"
+              alt=""
+              width={36}
+              height={36}
+              className="footer-icon w-9 h-9 object-contain"
             />
           </a>
 
           {/* Facebook */}
-          <a href="https://www.facebook.com/jxnx888" target="_blank" rel="noopener noreferrer" title="Facebook">
-            <div
-              className="footer-icon w-9 h-9 bg-center bg-no-repeat bg-contain"
-              style={{ backgroundImage: "url('/image/footer/icon_facebook.png')" }}
+          <a
+            href="https://www.facebook.com/jxnx888"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit Facebook profile (opens in new tab)"
+          >
+            <Image
+              src="/image/footer/icon_facebook.png"
+              alt=""
+              width={36}
+              height={36}
+              className="footer-icon w-9 h-9 object-contain"
             />
           </a>
 
           {/* GitHub */}
-          <a href="https://github.com/jxnx888" target="_blank" rel="noopener noreferrer" title="GitHub">
-            <div
-              className="footer-icon w-9 h-9 bg-center bg-no-repeat bg-contain"
-              style={{ backgroundImage: "url('/image/footer/icon_github.png')" }}
+          <a
+            href="https://github.com/jxnx888"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit GitHub profile (opens in new tab)"
+          >
+            <Image
+              src="/image/footer/icon_github.png"
+              alt=""
+              width={36}
+              height={36}
+              className="footer-icon w-9 h-9 object-contain"
             />
           </a>
         </div>

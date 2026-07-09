@@ -14,41 +14,61 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const t = useTranslations('projects');
   const [showQr, setShowQr] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (showQr && popupRef.current) popupRef.current.focus();
+  }, [showQr]);
 
   useEffect(() => {
     if (!showQr) return;
     const handleClickOutside = (e: MouseEvent) => {
-      if (qrRef.current && !qrRef.current.contains(e.target as Node)) {
-        setShowQr(false);
-      }
+      if (qrRef.current && !qrRef.current.contains(e.target as Node)) setShowQr(false);
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowQr(false);
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [showQr]);
-
-  const handleCardClick = () => {
-    if (project.url && !project.storeUrlQr) {
-      window.open(project.url, '_blank');
-    }
-  };
 
   return (
     <div
       id={project.title.replaceAll(' ', '')}
-      className="mb-6 rounded-xl overflow-hidden transition-all duration-300 group border border-[var(--border)] hover:border-[rgba(0,212,255,0.2)] hover:shadow-[0_0_24px_rgba(0,212,255,0.06)]"
+      className="project-card mb-6 rounded-xl overflow-hidden group border border-[var(--border)]"
       style={{ background: 'var(--bg-secondary)' }}
     >
       <div className="pad:flex pc:flex">
         {/* Image */}
         <div className="pad:w-2/5 pc:w-2/5 relative overflow-hidden" style={{ minHeight: '220px' }}>
-          <Image
-            src={project.img}
-            alt={project.title}
-            fill
-            className="object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500 cursor-pointer"
-            onClick={handleCardClick}
-          />
-          <div className="absolute inset-0 phone:hidden pad-v:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
+          {project.url && !project.storeUrlQr ? (
+            <a
+              href={project.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute inset-0 block"
+              aria-label={`Visit ${project.title}`}
+            >
+              <Image
+                src={project.img}
+                alt={project.title}
+                fill
+                className="object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500 cursor-pointer"
+              />
+            </a>
+          ) : (
+            <Image
+              src={project.img}
+              alt={project.title}
+              fill
+              className="object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
+            />
+          )}
+          <div className="absolute inset-0 phone:hidden pad-v:hidden pointer-events-none" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
         </div>
 
         {/* Content */}
@@ -85,13 +105,16 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               <div className="relative" ref={qrRef}>
                 <button
                   onClick={() => setShowQr(!showQr)}
-                  className="btn-glow-purple px-5 py-1.5 rounded-lg text-sm font-semibold text-white transition-all duration-200"
+                  aria-expanded={showQr}
+                  className="btn-glow-purple px-5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200"
                 >
                   {t('downloadApp')}
                 </button>
                 {showQr && (
                   <div
-                    className="absolute bottom-full left-0 mb-2 p-4 rounded-xl z-10"
+                    ref={popupRef}
+                    tabIndex={-1}
+                    className="absolute bottom-full left-0 mb-2 p-4 rounded-xl z-10 outline-none"
                     style={{ background: 'var(--bg)', border: '1px solid var(--border-input)', boxShadow: '0 0 30px rgba(0,0,0,0.3)' }}
                   >
                     <div className="space-y-3">
@@ -114,7 +137,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             )}
             {project.code > 0 && (
               <a
-                href="https://github.com/jxnx888"
+                href={project.codeUrl || 'https://github.com/jxnx888'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 py-1.5 rounded-lg text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors duration-200"
