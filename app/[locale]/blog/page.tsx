@@ -1,8 +1,8 @@
 'use client';
 
 import { Suspense } from 'react';
-import { useTranslations } from 'next-intl';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Pagination } from 'antd';
 import BlogCard from '@/components/blog/BlogCard';
@@ -13,9 +13,8 @@ import { getBlogData, getTagCounts, filterBlogsByTag } from '@/lib/utils/blogUti
 
 function BlogPageContent() {
   const t = useTranslations();
-  const params = useParams();
+  const locale = useLocale();
   const searchParams = useSearchParams();
-  const locale = params.locale as string;
 
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [filteredBlogs, setFilteredBlogs] = useState<BlogPost[]>([]);
@@ -27,14 +26,22 @@ function BlogPageContent() {
   const currentTag = searchParams.get('tag');
 
   useEffect(() => {
+    let cancelled = false;
     const loadBlogs = async () => {
       setLoading(true);
-      const data = await getBlogData(locale);
-      setBlogs(data);
-      setTagCounts(getTagCounts(data));
-      setLoading(false);
+      try {
+        const data = await getBlogData(locale);
+        if (!cancelled) {
+          setBlogs(data);
+          setTagCounts(getTagCounts(data));
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelled) setLoading(false);
+      }
     };
     loadBlogs();
+    return () => { cancelled = true; };
   }, [locale]);
 
   useEffect(() => {
@@ -82,7 +89,7 @@ function BlogPageContent() {
               <div className="text-center py-16">
                 <div
                   className="inline-block w-8 h-8 rounded-full border-2 animate-spin"
-                  style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: 'var(--accent)' }}
+                  style={{ borderColor: 'var(--accent-dim)', borderTopColor: 'var(--accent)' }}
                 />
               </div>
             )}
@@ -132,7 +139,7 @@ export default function BlogPage() {
         <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
           <div
             className="w-8 h-8 rounded-full border-2 animate-spin"
-            style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: 'var(--accent)' }}
+            style={{ borderColor: 'var(--accent-dim)', borderTopColor: 'var(--accent)' }}
           />
         </div>
       }

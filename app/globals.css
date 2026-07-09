@@ -36,6 +36,9 @@
   --skills-overlay:      rgba(13, 17, 23, 0.72);
   --glass-card:          rgba(22, 27, 34, 0.7);
   --scrollbar-thumb:     #30363d;
+  --tech-strip-sep:      linear-gradient(90deg, transparent, rgba(0,212,255,0.15), rgba(124,58,237,0.15), transparent);
+  --tech-glow-accent:    0 0 8px rgba(0,212,255,0.65), 0 0 22px rgba(0,212,255,0.22);
+  --tech-glow-purple:    0 0 8px rgba(167,139,250,0.65), 0 0 22px rgba(167,139,250,0.22);
 }
 
 html.light {
@@ -62,6 +65,9 @@ html.light {
   --skills-overlay:      rgba(240, 243, 246, 0.82);
   --glass-card:          rgba(255, 255, 255, 0.9);
   --scrollbar-thumb:     #c0c8d2;
+  --tech-strip-sep:      linear-gradient(90deg, transparent, rgba(0,119,170,0.12), rgba(109,40,217,0.12), transparent);
+  --tech-glow-accent:    0 0 6px rgba(0,119,170,0.35);
+  --tech-glow-purple:    0 0 6px rgba(109,40,217,0.3);
 }
 
 * {

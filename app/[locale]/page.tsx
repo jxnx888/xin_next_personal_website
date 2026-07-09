@@ -24,8 +24,8 @@ export default function HomePage() {
   const t = useTranslations();
   const tp = useTranslations('projects');
   const locale = useLocale();
-  const featuredI18n = t.raw('FEATURED_PROJECTS') as { title: string; desc: string }[];
-  const featuredProjects = FEATURED_PROJECTS_STATIC.map((p, i) => ({ ...p, ...featuredI18n[i] }));
+  const featuredI18n = (t.raw('FEATURED_PROJECTS') as { title: string; desc: string }[]) ?? [];
+  const featuredProjects = FEATURED_PROJECTS_STATIC.map((p, i) => ({ ...p, ...(featuredI18n[i] ?? { title: p.company, desc: '' }) }));
   const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();
 
@@ -190,9 +190,7 @@ export default function HomePage() {
                   textTransform: 'uppercase',
                   fontFamily: "'Courier New', monospace",
                   color: 'var(--accent)',
-                  textShadow: theme === 'dark'
-                    ? '0 0 8px rgba(0,212,255,0.65), 0 0 22px rgba(0,212,255,0.22)'
-                    : '0 0 6px rgba(0,119,170,0.35)',
+                  textShadow: 'var(--tech-glow-accent)',
                 }}
               >
                 <span style={{ opacity: 0.4, marginRight: '5px' }}>{'['}</span>
@@ -210,9 +208,7 @@ export default function HomePage() {
         <div style={{
           height: '1px',
           margin: '0 56px',
-          background: theme === 'dark'
-            ? 'linear-gradient(90deg, transparent, rgba(0,212,255,0.15), rgba(124,58,237,0.15), transparent)'
-            : 'linear-gradient(90deg, transparent, rgba(0,119,170,0.12), rgba(109,40,217,0.12), transparent)',
+          background: 'var(--tech-strip-sep)',
         }} />
 
         {/* Row 2 — scroll right — tooling/styling */}
@@ -230,9 +226,7 @@ export default function HomePage() {
                   textTransform: 'uppercase',
                   fontFamily: "'Courier New', monospace",
                   color: 'var(--accent-purple)',
-                  textShadow: theme === 'dark'
-                    ? '0 0 8px rgba(167,139,250,0.65), 0 0 22px rgba(167,139,250,0.22)'
-                    : '0 0 6px rgba(109,40,217,0.3)',
+                  textShadow: 'var(--tech-glow-purple)',
                 }}
               >
                 <span style={{ opacity: 0.4, marginRight: '5px' }}>{'<'}</span>
@@ -249,7 +243,7 @@ export default function HomePage() {
       <div className="max-w-6xl mx-auto px-4 py-14 phone:py-8">
 
         {/* ── Bio + Stats ──────────────────────────────── */}
-        <div className="grid pad:grid-cols-2 pc:grid-cols-2 gap-6 mb-12 phone:mb-8">
+        <div className="grid pad-v:grid-cols-2 pad:grid-cols-2 pc:grid-cols-2 gap-6 mb-12 phone:mb-8">
 
           {/* Bio card */}
           <SectionCard className="p-8 phone:p-6 flex flex-col">
@@ -330,9 +324,9 @@ export default function HomePage() {
                   <span
                     className="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest px-2 py-1 rounded"
                     style={{
-                      background: 'rgba(0,212,255,0.1)',
+                      background: 'var(--accent-dim)',
                       color: 'var(--accent)',
-                      border: '1px solid rgba(0,212,255,0.2)',
+                      border: '1px solid var(--accent-glow)',
                       fontFamily: "'Courier New', monospace",
                     }}
                   >
@@ -402,7 +396,7 @@ export default function HomePage() {
                 alt="Keep Learning"
                 className="w-full h-full object-cover opacity-60"
               />
-              <div className="absolute inset-0 phone:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
+              <div className="absolute inset-0 phone:hidden pad-v:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
             </div>
             <div className="pad:w-7/12 pc:w-7/12 p-8 pad:p-12 pc:p-12 flex items-center">
               <div>

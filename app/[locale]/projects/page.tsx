@@ -20,6 +20,7 @@ export default function ProjectsPage() {
       try {
         const url = locale === 'zh' ? '/mock/projectsCN.json' : '/mock/projects.json';
         const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data: ProjectsResponse = await response.json();
         if (data.code === 200) {
           setProjectsData(data.data);
@@ -50,7 +51,7 @@ export default function ProjectsPage() {
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div
           className="w-8 h-8 rounded-full border-2 animate-spin"
-          style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: 'var(--accent)' }}
+          style={{ borderColor: 'var(--accent-dim)', borderTopColor: 'var(--accent)' }}
         />
       </div>
     );

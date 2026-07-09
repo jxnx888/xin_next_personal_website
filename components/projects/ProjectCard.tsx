@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Project } from '@/lib/types/projects';
@@ -13,6 +13,18 @@ interface ProjectCardProps {
 export default function ProjectCard({ project }: ProjectCardProps) {
   const t = useTranslations('projects');
   const [showQr, setShowQr] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showQr) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (qrRef.current && !qrRef.current.contains(e.target as Node)) {
+        setShowQr(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showQr]);
 
   const handleCardClick = () => {
     if (project.url && !project.storeUrlQr) {
@@ -36,7 +48,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             className="object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500 cursor-pointer"
             onClick={handleCardClick}
           />
-          <div className="absolute inset-0 phone:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
+          <div className="absolute inset-0 phone:hidden pad-v:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
         </div>
 
         {/* Content */}
@@ -70,10 +82,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               </GlowButton>
             )}
             {project.storeUrlQr && (project.storeUrlQr.ios || project.storeUrlQr.android) && (
-              <div className="relative">
+              <div className="relative" ref={qrRef}>
                 <button
-                  onMouseEnter={() => setShowQr(true)}
-                  onMouseLeave={() => setShowQr(false)}
                   onClick={() => setShowQr(!showQr)}
                   className="btn-glow-purple px-5 py-1.5 rounded-lg text-sm font-semibold text-white transition-all duration-200"
                 >
