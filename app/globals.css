@@ -35,6 +35,7 @@
   --progress-track-border: rgba(255, 255, 255, 0.25);
   --skills-overlay:      rgba(13, 17, 23, 0.72);
   --glass-card:          rgba(22, 27, 34, 0.7);
+  --scrollbar-thumb:     #30363d;
 }
 
 html.light {
@@ -60,6 +61,7 @@ html.light {
   --progress-track-border: rgba(0, 0, 0, 0.2);
   --skills-overlay:      rgba(240, 243, 246, 0.82);
   --glass-card:          rgba(255, 255, 255, 0.9);
+  --scrollbar-thumb:     #c0c8d2;
 }
 
 * {
@@ -95,10 +97,8 @@ input::placeholder, textarea::placeholder { color: var(--text-dim); opacity: 1; 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-html.light ::-webkit-scrollbar-thumb { background: #c0c8d2; }
 
 /* Selection */
 ::selection { background: rgba(0, 212, 255, 0.2); color: #fff; }
@@ -127,6 +127,14 @@ html.light ::selection { background: rgba(0, 119, 170, 0.15); color: #1c2128; }
 }
 .btn-glow-outline:hover {
   background: rgba(0, 212, 255, 0.1);
+}
+.btn-glow-purple {
+  background: linear-gradient(135deg, #818cf8, #4f46e5);
+  box-shadow: 0 0 14px rgba(129, 140, 248, 0.2);
+  color: #fff;
+}
+.btn-glow-purple:hover {
+  box-shadow: 0 0 24px rgba(129, 140, 248, 0.35);
 }
 
 html.light .btn-glow-primary {
@@ -250,9 +258,9 @@ html.light .btn-glow-outline:hover {
   filter: brightness(0) invert(0.5);
   transition: filter 0.3s;
 }
-.footer-icon:hover { filter: brightness(0) invert(1) drop-shadow(0 0 6px #00d4ff); }
+.footer-icon:hover { filter: brightness(0) invert(1) drop-shadow(0 0 6px var(--accent)); }
 html.light .footer-icon { filter: brightness(0) invert(0.4); }
-html.light .footer-icon:hover { filter: brightness(0) drop-shadow(0 0 6px #0077aa); }
+html.light .footer-icon:hover { filter: brightness(0) drop-shadow(0 0 6px var(--accent)); }
 
 /* ── Pagination mobile ──────────────────────────────────── */
 @media (max-width: 1023px) {
@@ -314,7 +322,7 @@ html.light .tag-active { border-color: rgba(0, 119, 170, 0.25); }
 
 .blog-content {
   line-height: 1.85;
-  color: #c9d1d9;
+  color: var(--text);
   font-size: 15px;
 }
 .blog-content h1,
@@ -325,26 +333,26 @@ html.light .tag-active { border-color: rgba(0, 119, 170, 0.25); }
   margin-top: 2rem;
   margin-bottom: 0.75rem;
   font-weight: 700;
-  color: #e6edf3;
+  color: var(--text);
 }
 .blog-content h2 {
   font-size: 1.5rem;
   padding-bottom: 0.4rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid var(--border);
 }
 .blog-content h3 { font-size: 1.25rem; }
 .blog-content p { margin-bottom: 1rem; }
 .blog-content code {
-  background: rgba(0,212,255,0.08);
-  color: #00d4ff;
+  background: var(--accent-dim);
+  color: var(--accent);
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
   font-size: 0.85em;
   font-family: 'Courier New', monospace;
 }
 .blog-content pre {
-  background: #0d1117;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--bg);
+  border: 1px solid var(--border);
   padding: 1rem;
   border-radius: 8px;
   overflow-x: auto;
@@ -352,7 +360,7 @@ html.light .tag-active { border-color: rgba(0, 119, 170, 0.25); }
 }
 .blog-content pre code {
   background: transparent;
-  color: #e6edf3;
+  color: var(--text);
   padding: 0;
 }
 .blog-content img {
@@ -361,7 +369,7 @@ html.light .tag-active { border-color: rgba(0, 119, 170, 0.25); }
   margin: 1.5rem auto;
   display: block;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.07);
+  border: 1px solid var(--border-soft);
 }
 .blog-content ul,
 .blog-content ol {
@@ -370,20 +378,20 @@ html.light .tag-active { border-color: rgba(0, 119, 170, 0.25); }
 }
 .blog-content li { margin-bottom: 0.4rem; }
 .blog-content blockquote {
-  border-left: 3px solid #00d4ff;
+  border-left: 3px solid var(--accent);
   padding: 0.75rem 1rem;
   margin: 1.5rem 0;
   font-style: italic;
-  color: #8b949e;
-  background: rgba(0,212,255,0.04);
+  color: var(--text-muted);
+  background: var(--accent-dim);
   border-radius: 0 6px 6px 0;
 }
 .blog-content a {
-  color: #00d4ff;
+  color: var(--accent);
   text-decoration: underline;
   text-decoration-color: rgba(0,212,255,0.4);
 }
-.blog-content a:hover { color: #fff; }
+.blog-content a:hover { color: var(--text); }
 .blog-content table {
   width: 100%;
   border-collapse: collapse;
@@ -391,19 +399,19 @@ html.light .tag-active { border-color: rgba(0, 119, 170, 0.25); }
 }
 .blog-content th,
 .blog-content td {
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
   padding: 0.6rem 0.75rem;
   text-align: left;
 }
 .blog-content th {
-  background: rgba(255,255,255,0.04);
-  color: #e6edf3;
+  background: var(--bg-secondary);
+  color: var(--text);
   font-weight: 600;
 }
 .cnblogs_code,
 .cnblogs_Highlighter,
 .syntaxhighlighter {
-  background: #0d1117 !important;
+  background: var(--bg) !important;
   border-radius: 8px;
   margin: 1.5rem 0;
 }
@@ -411,25 +419,11 @@ html.light .tag-active { border-color: rgba(0, 119, 170, 0.25); }
 /* ── Light mode blog overrides ──────────────────────────── */
 
 html.light .blog-content { color: var(--text-muted); }
-html.light .blog-content h1,
-html.light .blog-content h2,
-html.light .blog-content h3,
-html.light .blog-content h4,
-html.light .blog-content h5 { color: var(--text); }
-html.light .blog-content h2 { border-bottom-color: var(--border); }
-html.light .blog-content code { background: var(--accent-dim); color: var(--accent); }
-html.light .blog-content pre { background: #f0f3f6; border-color: var(--border); }
-html.light .blog-content pre code { color: #1c2128; }
-html.light .blog-content img { border-color: var(--border); }
-html.light .blog-content blockquote { border-left-color: var(--accent); background: var(--accent-dim); color: var(--text-muted); }
-html.light .blog-content a { color: var(--accent); text-decoration-color: rgba(0,119,170,0.4); }
-html.light .blog-content a:hover { color: var(--text); }
-html.light .blog-content th { background: rgba(0,0,0,0.04); color: var(--text); }
-html.light .blog-content th,
-html.light .blog-content td { border-color: var(--border); }
+html.light .blog-content pre { background: var(--bg-deep); }
+html.light .blog-content a { text-decoration-color: rgba(0,119,170,0.4); }
 html.light .cnblogs_code,
 html.light .cnblogs_Highlighter,
-html.light .syntaxhighlighter { background: #f0f3f6 !important; }
+html.light .syntaxhighlighter { background: var(--bg-deep) !important; }
 
 /* ── Light mode Ant Design extras ──────────────────────── */
 

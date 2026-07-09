@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Project } from '@/lib/types/projects';
+import GlowButton from '@/components/ui/GlowButton';
 
 interface ProjectCardProps {
   project: Project;
@@ -22,20 +23,12 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   return (
     <div
       id={project.title.replaceAll(' ', '')}
-      className="mb-6 rounded-xl overflow-hidden transition-all duration-300 group"
-      style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.border = '1px solid rgba(0,212,255,0.2)';
-        (e.currentTarget as HTMLDivElement).style.boxShadow = '0 0 24px rgba(0,212,255,0.06)';
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLDivElement).style.border = '1px solid var(--border)';
-        (e.currentTarget as HTMLDivElement).style.boxShadow = 'none';
-      }}
+      className="mb-6 rounded-xl overflow-hidden transition-all duration-300 group border border-[var(--border)] hover:border-[rgba(0,212,255,0.2)] hover:shadow-[0_0_24px_rgba(0,212,255,0.06)]"
+      style={{ background: 'var(--bg-secondary)' }}
     >
-      <div className="md:flex">
+      <div className="pad:flex pc:flex">
         {/* Image */}
-        <div className="md:w-2/5 relative overflow-hidden" style={{ minHeight: '220px' }}>
+        <div className="pad:w-2/5 pc:w-2/5 relative overflow-hidden" style={{ minHeight: '220px' }}>
           <Image
             src={project.img}
             alt={project.title}
@@ -47,7 +40,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </div>
 
         {/* Content */}
-        <div className="md:w-3/5 p-6">
+        <div className="pad:w-3/5 pc:w-3/5 p-6">
           <h3
             className="text-xl phone:text-lg font-bold text-[var(--text)] mb-3"
             style={{ letterSpacing: '0.02em' }}
@@ -68,24 +61,13 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
           <div className="flex flex-wrap gap-3">
             {project.url && !project.storeUrlQr && (
-              <a
+              <GlowButton
                 href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-5 py-1.5 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-px"
-                style={{
-                  background: 'linear-gradient(135deg, #00d4ff, #0099b5)',
-                  boxShadow: '0 0 10px rgba(0,212,255,0.15)',
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 16px rgba(0,212,255,0.28)';
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 0 10px rgba(0,212,255,0.15)';
-                }}
+                external
+                style={{ padding: '6px 20px', fontSize: '14px' }}
               >
                 {t('visitSite')}
-              </a>
+              </GlowButton>
             )}
             {project.storeUrlQr && (project.storeUrlQr.ios || project.storeUrlQr.android) && (
               <div className="relative">
@@ -93,8 +75,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   onMouseEnter={() => setShowQr(true)}
                   onMouseLeave={() => setShowQr(false)}
                   onClick={() => setShowQr(!showQr)}
-                  className="px-5 py-1.5 rounded-lg text-sm font-semibold text-white transition-all duration-200"
-                  style={{ background: 'linear-gradient(135deg, #818cf8, #4f46e5)' }}
+                  className="btn-glow-purple px-5 py-1.5 rounded-lg text-sm font-semibold text-white transition-all duration-200"
                 >
                   {t('downloadApp')}
                 </button>

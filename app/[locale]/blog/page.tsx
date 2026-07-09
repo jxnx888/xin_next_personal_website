@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -9,7 +10,8 @@ import BlogSidebar from '@/components/blog/BlogSidebar';
 import PageBanner from '@/components/layout/PageBanner';
 import { BlogPost } from '@/lib/types/blog';
 import { getBlogData, getTagCounts, filterBlogsByTag } from '@/lib/utils/blogUtils';
-export default function BlogPage() {
+
+function BlogPageContent() {
   const t = useTranslations();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -70,7 +72,6 @@ export default function BlogPage() {
                 <span className="text-[var(--text-dim)] text-sm">({filteredBlogs.length})</span>
               </div>
               {!loading && (
-                /*Mobile dropdown — hidden on desktop, shown on phone+pad-v*/
                 <div className="hidden phone:block pad-v:block">
                   <BlogSidebar tagCounts={tagCounts} variant="mobile" />
                 </div>
@@ -81,7 +82,7 @@ export default function BlogPage() {
               <div className="text-center py-16">
                 <div
                   className="inline-block w-8 h-8 rounded-full border-2 animate-spin"
-                  style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: '#00d4ff' }}
+                  style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: 'var(--accent)' }}
                 />
               </div>
             )}
@@ -113,7 +114,7 @@ export default function BlogPage() {
             )}
           </div>
 
-          {/* Desktop sidebar — shown by default, hidden on phone+pad-v */}
+          {/* Desktop sidebar */}
           <div className="w-56 shrink-0 phone:hidden pad-v:hidden">
             {!loading && <BlogSidebar tagCounts={tagCounts} variant="desktop" />}
           </div>
@@ -121,5 +122,22 @@ export default function BlogPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function BlogPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+          <div
+            className="w-8 h-8 rounded-full border-2 animate-spin"
+            style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: 'var(--accent)' }}
+          />
+        </div>
+      }
+    >
+      <BlogPageContent />
+    </Suspense>
   );
 }

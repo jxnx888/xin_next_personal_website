@@ -1,7 +1,6 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { useTypewriter } from '@/lib/hooks/useTypewriter';
 import AnimatedName from '@/components/home/AnimatedName';
 import { useEffect, useState } from 'react';
@@ -15,37 +14,18 @@ import SectionHeader from '@/components/ui/SectionHeader';
 const TECH_ROW1 = ['React', 'Next.js', 'Vue.js', 'Three.js', 'Node.js', 'Sitecore', 'Uniform'];
 const TECH_ROW2 = ['JavaScript', 'TypeScript', 'HTML5 / CSS3', 'Tailwind CSS', 'Segment', 'Optimizely'];
 
-const FEATURED_PROJECTS = [
-  {
-    company: 'LCI Education',
-    title: 'LCI Education — Corporate Website',
-    desc: 'Official multilingual website for an international education group with 23 institutions across 5 continents.',
-    img: '/image/projects/lci.jpg',
-    tags: ['Next.js', 'TypeScript', 'React', 'i18n'],
-    url: 'https://www.lcieducation.com/',
-  },
-  {
-    company: 'Great Wall Motor',
-    title: 'GWM Online Store — Thailand',
-    desc: 'Official e-commerce platform for selling GWM vehicles in Thailand, built with React Hooks.',
-    img: '/image/projects/greatWall.jpg',
-    tags: ['React Hooks', 'Vue.js', 'JavaScript', 'CSS3'],
-    url: 'https://www.gwm.co.th/en/',
-  },
-  {
-    company: 'Kai Rong',
-    title: 'Magic Box — 3D Builder for Kids',
-    desc: 'Educational 3D builder app built with Three.js — kids assemble 3D models using geometric and cartoon shapes.',
-    img: '/image/projects/magicBox.jpg',
-    tags: ['Three.js', 'JavaScript', 'iOS', 'Android'],
-    url: null,
-  },
-];
+const FEATURED_PROJECTS_STATIC = [
+  { company: 'LCI Education',  img: '/image/projects/lci.jpg',       tags: ['Next.js', 'TypeScript', 'React', 'i18n'],            url: 'https://www.lcieducation.com/' },
+  { company: 'Great Wall Motor', img: '/image/projects/greatWall.jpg', tags: ['React Hooks', 'Vue.js', 'JavaScript', 'CSS3'],       url: 'https://www.gwm.co.th/en/' },
+  { company: 'Kai Rong',       img: '/image/projects/magicBox.jpg',  tags: ['Three.js', 'JavaScript', 'iOS', 'Android'],          url: null },
+] as const;
 
 export default function HomePage() {
   const t = useTranslations();
-  const params = useParams();
-  const locale = params.locale as string;
+  const tp = useTranslations('projects');
+  const locale = useLocale();
+  const featuredI18n = t.raw('FEATURED_PROJECTS') as { title: string; desc: string }[];
+  const featuredProjects = FEATURED_PROJECTS_STATIC.map((p, i) => ({ ...p, ...featuredI18n[i] }));
   const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();
 
@@ -209,7 +189,7 @@ export default function HomePage() {
                   whiteSpace: 'nowrap',
                   textTransform: 'uppercase',
                   fontFamily: "'Courier New', monospace",
-                  color: theme === 'dark' ? '#00d4ff' : '#0077aa',
+                  color: 'var(--accent)',
                   textShadow: theme === 'dark'
                     ? '0 0 8px rgba(0,212,255,0.65), 0 0 22px rgba(0,212,255,0.22)'
                     : '0 0 6px rgba(0,119,170,0.35)',
@@ -249,7 +229,7 @@ export default function HomePage() {
                   whiteSpace: 'nowrap',
                   textTransform: 'uppercase',
                   fontFamily: "'Courier New', monospace",
-                  color: theme === 'dark' ? '#a78bfa' : '#6d28d9',
+                  color: 'var(--accent-purple)',
                   textShadow: theme === 'dark'
                     ? '0 0 8px rgba(167,139,250,0.65), 0 0 22px rgba(167,139,250,0.22)'
                     : '0 0 6px rgba(109,40,217,0.3)',
@@ -269,7 +249,7 @@ export default function HomePage() {
       <div className="max-w-6xl mx-auto px-4 py-14 phone:py-8">
 
         {/* ── Bio + Stats ──────────────────────────────── */}
-        <div className="grid md:grid-cols-2 gap-6 mb-12 phone:mb-8">
+        <div className="grid pad:grid-cols-2 pc:grid-cols-2 gap-6 mb-12 phone:mb-8">
 
           {/* Bio card */}
           <SectionCard className="p-8 phone:p-6 flex flex-col">
@@ -328,13 +308,13 @@ export default function HomePage() {
         {/* ── Featured Work ─────────────────────────────────── */}
         <div className="mb-12">
           <SectionHeader
-            title={t('My_PROJECTS')}
+            title={t('MY_PROJECTS')}
             linkHref={`/${locale}/projects`}
-            linkLabel={locale === 'zh' ? '查看全部 →' : 'View All →'}
+            linkLabel={t('VIEW_ALL')}
           />
 
-          <div className="grid md:grid-cols-3 gap-5">
-            {FEATURED_PROJECTS.map((proj) => (
+          <div className="grid pad:grid-cols-3 pc:grid-cols-3 gap-5">
+            {featuredProjects.map((proj) => (
               <SectionCard
                 key={proj.title}
                 className="group overflow-hidden flex flex-col transition-all duration-300 hover:border-[rgba(0,212,255,0.22)]"
@@ -395,7 +375,7 @@ export default function HomePage() {
                         <polyline points="15 3 21 3 21 9" />
                         <line x1="10" y1="14" x2="21" y2="3" />
                       </svg>
-                      {locale === 'zh' ? '访问网站' : 'Visit Site'}
+                      {tp('visitSite')}
                     </GlowButton>
                   ) : (
                     <GlowButton
@@ -404,7 +384,7 @@ export default function HomePage() {
                       className="w-fit"
                       style={{ padding: '5px 12px', fontSize: '11px' }}
                     >
-                      {locale === 'zh' ? '查看详情 →' : 'View Details →'}
+                      {t('VIEW_DETAILS')}
                     </GlowButton>
                   )}
                 </div>
@@ -415,8 +395,8 @@ export default function HomePage() {
 
         {/* ── Keep Learning ─────────────────────────────── */}
         <SectionCard className="overflow-hidden">
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-5/12 relative h-64 md:h-auto">
+          <div className="flex flex-col pad:flex-row pc:flex-row">
+            <div className="pad:w-5/12 pc:w-5/12 relative h-64 pad:h-auto pc:h-auto">
               <img
                 src="/image/home/keep-learning.jpg"
                 alt="Keep Learning"
@@ -424,7 +404,7 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 phone:hidden" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
             </div>
-            <div className="md:w-7/12 p-8 md:p-12 flex items-center">
+            <div className="pad:w-7/12 pc:w-7/12 p-8 pad:p-12 pc:p-12 flex items-center">
               <div>
                 <h2 className="text-3xl phone:text-xl font-bold text-[var(--text)] mb-6 uppercase tracking-widest">
                   {keepLearningArray[0]}

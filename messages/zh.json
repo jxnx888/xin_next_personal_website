@@ -6,14 +6,15 @@
   "CONTACT": "联系我",
   "BLOG": "博客",
   "RESUME": "简历",
-  "RESUME_LOWER": "简历",
   "MY_NAME": "宁鑫",
   "MY_TITLE": "全栈开发工程师",
-  "EMAIL": "ningxin1007@hotmail.com",
+  "META_TITLE": "宁鑫 — 全栈开发工程师",
+  "META_DESCRIPTION": "宁鑫的个人网站，展示全栈开发经历、项目作品与技术博客。",
   "ARTICLES": "博文",
   "MY_TAGS": "我的标签",
-  "VIEW": "阅读",
+  "ALL_TAGS": "全部",
   "POSTED": "Posted",
+  "POSTED_AT": "发布于 {time}",
   "BACK": "返回",
   "SOMETHING_WRONG": "抱歉，出了点问题，请刷新!",
   "NO_POSTS": "暂无文章",
@@ -22,34 +23,35 @@
   "SENDING": "发送中...",
   "SECTION": "版块",
   "VIEW_WORK": "查看作品",
+  "VIEW_ALL": "查看全部 →",
+  "VIEW_DETAILS": "查看详情 →",
   "GET_IN_TOUCH": "联系我",
   "DOWNLOAD_RESUME": "下载简历",
   "STAT_YEARS": "年经验",
   "STAT_PROJECTS": "个项目",
   "STAT_COMPANIES": "家公司",
-  "HOME_WELCOME1": "欢迎来到宁鑫的个人主页，一名驻扎蒙特利尔的前端开发工程师。",
-  "HOME_WELCOME2": "在这里，您可以找到我的最新工作作品、相关技术栈，以及我的",
-  "HOME_WELCOME3": "如果您有项目或者技术问题需要帮助，请给我发送邮件，邮件地址是：",
-  "HOME_WELCOME4": "或者您可以在联系页面填写",
+  "NAV_LANGUAGE": "语言",
+  "NAV_THEME": "主题",
+  "NAV_LIGHT_MODE": "浅色",
+  "NAV_DARK_MODE": "深色",
   "HOME_ABOUT": "我注重代码质量与用户体验，追求简洁、可维护的实现。既能独立推进项目，也擅长在跨职能团队中协作共创。",
-  "CONTACTPAGE": "联系信息",
-  "My_PROJECTS": "我的项目",
+  "MY_PROJECTS": "我的项目",
   "KEEP_LEARNING": ["不断学习，不断成长", "一旦你停止学习，你就开始死亡。", "阿尔伯特 · 爱因斯坦"],
   "INTRODUCTION": ["构建并交付高质量的 Web 应用。", "8 年以上 Web 开发经验。"],
-  "home": {
-    "welcome": "欢迎来到我的个人网站",
-    "subtitle": "前端开发工程师 & 创意技术专家"
-  },
-  "footer": {
-    "copyright": "Copyright 2015 - 2026 | Xin Ning"
-  },
-  "nav": {
-    "home": "首页",
-    "skills": "技术栈",
-    "projects": "项目",
-    "contact": "联系我",
-    "blog": "博客"
-  },
+  "FEATURED_PROJECTS": [
+    {
+      "title": "LCI Education — 企业官网",
+      "desc": "国际教育集团多语言官方网站，旗下拥有遍布5大洲的23所院校。"
+    },
+    {
+      "title": "GWM 在线商城 — 泰国",
+      "desc": "使用 React Hooks 构建的 GWM 泰国官方汽车电商平台。"
+    },
+    {
+      "title": "魔法盒子 — 儿童 3D 积木",
+      "desc": "基于 Three.js 的教育类 3D 搭建应用，孩子们可以用几何形状和卡通积木拼建 3D 模型。"
+    }
+  ],
   "projects": {
     "title": "项目",
     "responsibilities": "工作职责",
@@ -62,6 +64,8 @@
   },
   "contact": {
     "topTitle": ["想要联系宁鑫", "以下是与我联系的几种方式"],
+    "sectionGetInTouch": "联系方式",
+    "sectionSendMessage": "发送消息",
     "getInTouch": ["随时欢迎联系我——无论是项目合作、技术问题，还是普通交流。", "可以致电、发邮件，或者直接填写下方的联系表单。"],
     "message": ["您的姓名", "电子邮件地址", "电话号码", "主题", "您的消息", "提交"],
     "validation": ["* 请输入您的姓名", "* 请输入您的电子邮件地址", "* 请输入有效的电子邮件地址", "* 请输入您的电话号码", "* 请输入主题", "* 请输入您的消息", "* 网络错误，请稍后再试", "提交成功，我会在24小时内回复您，谢谢！"]

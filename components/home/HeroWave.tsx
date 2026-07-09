@@ -8,7 +8,8 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || window.innerWidth < 768) return;
+    const PHONE_MAX = 767; // matches Tailwind phone: { max: '767px' }
+    if (!container || window.innerWidth <= PHONE_MAX) return;
 
     const w = container.clientWidth;
     const h = container.clientHeight;

@@ -130,7 +130,7 @@ export default function ContactPage() {
 
           {/* Get In Touch */}
           <SectionCard className="p-8 phone:p-6">
-            <SectionLabel num="01" title="GET IN TOUCH" />
+            <SectionLabel num="01" title={tc('sectionGetInTouch')} />
 
             <p className="text-[var(--text-muted)] mb-2 text-sm leading-relaxed">{getInTouch[0]}</p>
             <p className="text-[var(--text-muted)] mb-8 text-sm leading-relaxed">{getInTouch[1]}</p>
@@ -157,7 +157,7 @@ export default function ContactPage() {
 
           {/* Send Message */}
           <SectionCard className="p-8 phone:p-6">
-            <SectionLabel num="02" title="SEND A MESSAGE" />
+            <SectionLabel num="02" title={tc('sectionSendMessage')} />
 
             <form onSubmit={handleSubmit} className="space-y-3">
               {[
@@ -205,7 +205,7 @@ export default function ContactPage() {
                   {submitState === 'submitting' ? t('SENDING') : msg[5]}
                 </button>
                 {submitState === 'success' && (
-                  <p className="mt-2 text-sm text-center" style={{ color: '#3fb950' }}>{validation[7]}</p>
+                  <p className="mt-2 text-sm text-center text-green-400">{validation[7]}</p>
                 )}
                 {submitState === 'error' && (
                   <p className="mt-2 text-sm text-center text-red-400">{validation[6]}</p>

@@ -65,7 +65,7 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
               <div className="flex items-center gap-3 text-xs text-[var(--text-dim)] whitespace-nowrap">
                 <span>{readTime} {t('MIN_READ')}</span>
                 <span className="opacity-40">·</span>
-                <span>{t('POSTED')} @ {post.time}</span>
+                <span>{t('POSTED_AT', { time: post.time })}</span>
               </div>
             </div>
           </div>

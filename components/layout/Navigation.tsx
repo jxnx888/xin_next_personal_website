@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Menu, Drawer, Button } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { menuData } from '@/lib/constants/menuData';
@@ -19,7 +19,7 @@ export default function Navigation() {
 
   const [scrolled, setScrolled] = useState(false);
   const [hideNav, setHideNav] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -27,16 +27,16 @@ export default function Navigation() {
       const currentScrollY = window.scrollY;
       if (currentScrollY >= 80) {
         setScrolled(true);
-        setHideNav(currentScrollY > lastScrollY);
+        setHideNav(currentScrollY > lastScrollYRef.current);
       } else {
         setScrolled(false);
         setHideNav(false);
       }
-      setLastScrollY(currentScrollY);
+      lastScrollYRef.current = currentScrollY;
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const changeLanguage = (newLocale: string) => {
     const currentPath = pathname.replace(`/${locale}`, '');
@@ -50,7 +50,7 @@ export default function Navigation() {
   };
 
   const SunIcon = () => (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="5"/>
       <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
       <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
@@ -60,7 +60,7 @@ export default function Navigation() {
   );
 
   const MoonIcon = () => (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
     </svg>
   );
@@ -125,26 +125,26 @@ export default function Navigation() {
               className="ml-4 flex items-center gap-2 px-3 py-1 rounded-full text-sm"
               style={{ border: '1px solid var(--border-input)' }}
             >
-              <a
-                className={`cursor-pointer transition-colors ${locale === 'zh' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text)]'}`}
+              <button
+                className={`bg-transparent border-0 p-0 cursor-pointer transition-colors ${locale === 'zh' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text)]'}`}
                 onClick={() => changeLanguage('zh')}
               >
                 中文
-              </a>
+              </button>
               <span className="text-[var(--text-dim)]">|</span>
-              <a
-                className={`cursor-pointer transition-colors ${locale === 'en' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text)]'}`}
+              <button
+                className={`bg-transparent border-0 p-0 cursor-pointer transition-colors ${locale === 'en' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text)]'}`}
                 onClick={() => changeLanguage('en')}
               >
                 EN
-              </a>
+              </button>
             </div>
 
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
               className="ml-2 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110"
-              style={{ border: '1px solid var(--border-input)' }}
+              style={{ border: '1px solid var(--border-input)', color: 'var(--text-muted)' }}
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
@@ -171,38 +171,47 @@ export default function Navigation() {
         open={mobileMenuOpen}
         width={240}
       >
-        <Menu mode="vertical" selectedKeys={[pathname]}>
-          {menuData.map((item) => (
-            <Menu.Item key={`/${locale}${item.routerLink}`}>
+        <Menu
+          mode="vertical"
+          selectedKeys={[pathname]}
+          items={menuData.map((item) => ({
+            key: `/${locale}${item.routerLink}`,
+            label: (
               <Link href={`/${locale}${item.routerLink}`} onClick={() => setMobileMenuOpen(false)}>
                 {t(item.name)}
               </Link>
-            </Menu.Item>
-          ))}
-        </Menu>
+            ),
+          }))}
+        />
 
         <div className="mt-6 pt-4" style={{ borderTop: '1px solid var(--border-soft)' }}>
-          <div className="text-xs text-[var(--text-muted)] mb-3 tracking-widest uppercase">Language</div>
+          <div className="text-xs text-[var(--text-muted)] mb-3 tracking-widest uppercase">{t('NAV_LANGUAGE')}</div>
           <div className="flex gap-4 mb-5">
-            <a
-              className={`cursor-pointer text-sm transition-colors ${locale === 'zh' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)]'}`}
+            <button
+              className={`bg-transparent border-0 p-0 cursor-pointer text-sm transition-colors ${locale === 'zh' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)]'}`}
               onClick={() => { changeLanguage('zh'); setMobileMenuOpen(false); }}
             >
               中文
-            </a>
-            <a
-              className={`cursor-pointer text-sm transition-colors ${locale === 'en' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)]'}`}
+            </button>
+            <button
+              className={`bg-transparent border-0 p-0 cursor-pointer text-sm transition-colors ${locale === 'en' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)]'}`}
               onClick={() => { changeLanguage('en'); setMobileMenuOpen(false); }}
             >
               English
-            </a>
+            </button>
           </div>
-          <div className="text-xs text-[var(--text-muted)] mb-3 tracking-widest uppercase">Theme</div>
+          <div className="text-xs text-[var(--text-muted)] mb-3 tracking-widest uppercase">{t('NAV_THEME')}</div>
           <button
             onClick={toggleTheme}
-            className="flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors"
+            className="bg-transparent border-0 p-0 flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors"
           >
-            {theme === 'dark' ? <><SunIcon /> Light Mode</> : <><MoonIcon /> Dark Mode</>}
+            <span
+              className="w-8 h-8 flex items-center justify-center rounded-full"
+              style={{ border: '1px solid var(--border-input)', color: 'var(--text-muted)' }}
+            >
+              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+            </span>
+            {theme === 'dark' ? t('NAV_LIGHT_MODE') : t('NAV_DARK_MODE')}
           </button>
         </div>
       </Drawer>

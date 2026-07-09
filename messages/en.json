@@ -6,14 +6,15 @@
   "CONTACT": "Contact",
   "BLOG": "Blog",
   "RESUME": "Resume",
-  "RESUME_LOWER": "resume",
   "MY_NAME": "Xin Ning",
   "MY_TITLE": "Full-Stack Developer",
-  "EMAIL": "ningxin1007@hotmail.com",
+  "META_TITLE": "Xin Ning — Full-Stack Developer",
+  "META_DESCRIPTION": "Personal website of Xin Ning — Full-Stack Developer with 8+ years of experience in React, Next.js, Vue.js and more.",
   "ARTICLES": "Articles",
   "MY_TAGS": "My Tags",
-  "VIEW": "View",
+  "ALL_TAGS": "All",
   "POSTED": "Posted",
+  "POSTED_AT": "Posted @ {time}",
   "BACK": "Back",
   "SOMETHING_WRONG": "Sorry, something went wrong, please refresh!",
   "NO_POSTS": "No posts found.",
@@ -22,34 +23,35 @@
   "SENDING": "Sending...",
   "SECTION": "Section",
   "VIEW_WORK": "View My Work",
+  "VIEW_ALL": "View All →",
+  "VIEW_DETAILS": "View Details →",
   "GET_IN_TOUCH": "Get In Touch",
   "DOWNLOAD_RESUME": "Download Resume",
   "STAT_YEARS": "Years Exp.",
   "STAT_PROJECTS": "Projects",
   "STAT_COMPANIES": "Companies",
-  "HOME_WELCOME1": "You've found the online home of Xin Ning, a Front-end Developer based in Montreal.",
-  "HOME_WELCOME2": "Here you'll find a selection of my latest work, stats about my skills and a link to my ",
-  "HOME_WELCOME3": "If you have a project or need some extra help, please drop me an email at",
-  "HOME_WELCOME4": " alternatively you can fill out my contact form in the ",
+  "NAV_LANGUAGE": "Language",
+  "NAV_THEME": "Theme",
+  "NAV_LIGHT_MODE": "Light Mode",
+  "NAV_DARK_MODE": "Dark Mode",
   "HOME_ABOUT": "I write clean, maintainable code and care deeply about performance and user experience. I work well independently and thrive in collaborative, cross-functional teams.",
-  "CONTACTPAGE": "Contact page.",
-  "My_PROJECTS": "My Projects",
+  "MY_PROJECTS": "My Projects",
   "KEEP_LEARNING": ["KEEP LEARNING, KEEP GROWING", "Once you stop learning, you start dying.", "Albert Einstein"],
   "INTRODUCTION": ["I Build & Ship for the Web.", "8+ Years of Web Development Experience."],
-  "home": {
-    "welcome": "Welcome to my personal website",
-    "subtitle": "Front-end Developer & Creative Technologist"
-  },
-  "footer": {
-    "copyright": "Copyright 2015 - 2026 | Xin Ning"
-  },
-  "nav": {
-    "home": "Home",
-    "skills": "Skills",
-    "projects": "Portfolio",
-    "contact": "Contact",
-    "blog": "Blog"
-  },
+  "FEATURED_PROJECTS": [
+    {
+      "title": "LCI Education — Corporate Website",
+      "desc": "Official multilingual website for an international education group with 23 institutions across 5 continents."
+    },
+    {
+      "title": "GWM Online Store — Thailand",
+      "desc": "Official e-commerce platform for selling GWM vehicles in Thailand, built with React Hooks."
+    },
+    {
+      "title": "Magic Box — 3D Builder for Kids",
+      "desc": "Educational 3D builder app built with Three.js — kids assemble 3D models using geometric and cartoon shapes."
+    }
+  ],
   "projects": {
     "title": "Portfolio",
     "responsibilities": "Responsibilities",
@@ -62,6 +64,8 @@
   },
   "contact": {
     "topTitle": ["Want to contact Xin Ning", "Here are a few ways to get in touch with me"],
+    "sectionGetInTouch": "GET IN TOUCH",
+    "sectionSendMessage": "SEND A MESSAGE",
     "getInTouch": ["I'm always happy to connect — whether it's a project idea, a question, or just a chat.", "Feel free to call, send me an email, or simply fill out the contact form below."],
     "message": ["YOUR NAME", "EMAIL ADDRESS", "TELEPHONE NUMBER", "SUBJECT", "YOUR MESSAGE", "SUBMIT"],
     "validation": ["* Please input your name", "* Please input your email address", "* Please enter a valid email address.", "* Please input your telephone number", "* Please input your subject", "* Please input your message", "* Network error, please try again later", "Succeeded, I will get back to you within 24 hours. Thanks!"]

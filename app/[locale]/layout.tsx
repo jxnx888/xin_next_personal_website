@@ -1,5 +1,6 @@
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, getTranslations } from 'next-intl/server';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import AntdProvider from '@/components/AntdProvider';
 import { notFound } from 'next/navigation';
@@ -9,6 +10,22 @@ import Footer from '@/components/layout/Footer';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
 const antiFlashScript = `(function(){try{var s=localStorage.getItem('theme');if(s==='light'){document.documentElement.classList.add('light');}else if(!s&&!window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('light');}}catch(e){}})();`;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale });
+  const title = t('META_TITLE');
+  const description = t('META_DESCRIPTION');
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: 'website' },
+  };
+}
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));

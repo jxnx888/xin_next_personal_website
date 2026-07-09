@@ -10,8 +10,10 @@ import { ProjectsResponse, ProjectsData } from '@/lib/types/projects';
 export default function ProjectsPage() {
   const locale = useLocale();
   const t = useTranslations('projects');
+  const tg = useTranslations();
   const [projectsData, setProjectsData] = useState<ProjectsData | null>(null);
   const [menuItems, setMenuItems] = useState<{ [key: string]: string }>({});
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -24,20 +26,31 @@ export default function ProjectsPage() {
           const menu: { [key: string]: string } = {};
           Object.entries(data.data).forEach(([key, value]) => { menu[key] = value.companySC; });
           setMenuItems(menu);
+        } else {
+          setLoadError(true);
         }
       } catch (error) {
         console.error('Failed to load projects:', error);
+        setLoadError(true);
       }
     };
     fetchProjects();
   }, [locale]);
+
+  if (loadError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+        <p className="text-[var(--text-muted)]">{tg('SOMETHING_WRONG')}</p>
+      </div>
+    );
+  }
 
   if (!projectsData) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div
           className="w-8 h-8 rounded-full border-2 animate-spin"
-          style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: '#00d4ff' }}
+          style={{ borderColor: 'rgba(0,212,255,0.2)', borderTopColor: 'var(--accent)' }}
         />
       </div>
     );
@@ -51,7 +64,7 @@ export default function ProjectsPage() {
       <div className="relative max-w-6xl mx-auto py-12 phone:py-8 projects-main">
         <ScrollMenu menuItems={menuItems} />
 
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-5xl mx-auto px-4 pad:pr-40">
           {Object.entries(projectsData).map(([key, career]) => (
             <div key={key} id={key.replace(/ /g, '')} className="mb-16 phone:mb-12">
               {/* Career Header */}

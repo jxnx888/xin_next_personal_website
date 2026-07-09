@@ -41,7 +41,7 @@ export default function BlogSidebar({ tagCounts, variant }: BlogSidebarProps) {
           </div>
           <div className="p-3 space-y-1">
             <div className={`tag-item ${!currentTag ? 'tag-active' : ''}`} onClick={clearTag}>
-              All <span className="opacity-60 text-xs">({total})</span>
+              {t('ALL_TAGS')} <span className="opacity-60 text-xs">({total})</span>
             </div>
             {tagList.map(([tag, count]) => (
               <div
@@ -60,7 +60,7 @@ export default function BlogSidebar({ tagCounts, variant }: BlogSidebarProps) {
 
   // Mobile dropdown
   const menuItems = [
-    { key: 'all', label: <div onClick={clearTag}>All ({total})</div> },
+    { key: 'all', label: <div onClick={clearTag}>{t('ALL_TAGS')} ({total})</div> },
     ...tagList.map(([tag, count]) => ({
       key: tag,
       label: <div onClick={() => goToTag(tag)}>{tag} ({count})</div>,
