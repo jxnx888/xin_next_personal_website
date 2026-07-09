@@ -16,6 +16,7 @@
   "POSTED_AT": "Posted @ {time}",
   "BACK": "Back",
   "SOMETHING_WRONG": "Sorry, something went wrong, please refresh!",
+  "TRY_AGAIN": "Try Again",
   "NO_POSTS": "No posts found.",
   "POSTS_TOTAL": "{count} posts",
   "MIN_READ": "min read",

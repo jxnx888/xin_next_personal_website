@@ -57,6 +57,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 src={project.img}
                 alt={project.title}
                 fill
+                sizes="(max-width: 767px) 100vw, 40vw"
                 className="object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500 cursor-pointer"
               />
             </a>
@@ -65,6 +66,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               src={project.img}
               alt={project.title}
               fill
+              sizes="(max-width: 767px) 100vw, 40vw"
               className="object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
             />
           )}

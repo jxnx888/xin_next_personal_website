@@ -4,9 +4,12 @@ interface PageBannerProps {
   title: string;
   subtitle?: string;
   imageSrc?: string;
+  /** Override the title element. Use 'p' when the page already has an <h1>. */
+  titleAs?: 'h1' | 'p';
 }
 
-export default function PageBanner({ title, subtitle, imageSrc }: PageBannerProps) {
+export default function PageBanner({ title, subtitle, imageSrc, titleAs = 'h1' }: PageBannerProps) {
+  const TitleTag = titleAs;
   return (
     <div
       className="relative h-52 phone:h-36 overflow-hidden"
@@ -42,12 +45,12 @@ export default function PageBanner({ title, subtitle, imageSrc }: PageBannerProp
       {/* Content */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="text-center px-4">
-          <h1
+          <TitleTag
             className="text-4xl phone:text-2xl font-bold tracking-widest uppercase"
             style={{ color: 'var(--text)', textShadow: '0 0 20px var(--accent-glow)' }}
           >
             {title}
-          </h1>
+          </TitleTag>
           {subtitle && (
             <p className="mt-2 text-sm text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed">{subtitle}</p>
           )}

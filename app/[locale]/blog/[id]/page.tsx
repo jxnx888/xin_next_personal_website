@@ -81,7 +81,7 @@ function BlogDetailContent({ id }: { id: string }) {
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <PageBanner title={t('BLOG')} imageSrc="/image/banner3.png" subtitle={blog.title} />
+      <PageBanner title={t('BLOG')} imageSrc="/image/banner3.png" subtitle={blog.title} titleAs="p" />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Link

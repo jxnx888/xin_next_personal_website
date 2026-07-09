@@ -29,7 +29,6 @@ export async function generateMetadata({
       description,
       type: 'website',
       locale: locale === 'zh' ? 'zh_CN' : 'en_US',
-      url: `/${locale}`,
       images: [{ url: '/image/banner1.png', width: 1200, height: 630, alt: title }],
     },
     twitter: {
@@ -39,8 +38,7 @@ export async function generateMetadata({
       images: ['/image/banner1.png'],
     },
     alternates: {
-      canonical: `/${locale}`,
-      languages: { en: '/en', zh: '/zh' },
+      languages: { 'x-default': '/en', en: '/en', zh: '/zh' },
     },
   };
 }

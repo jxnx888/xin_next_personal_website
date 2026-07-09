@@ -22,6 +22,7 @@ function BlogPageContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   // Prevents onChange scroll when triggered by a page-size change
   const sizeChangingRef = useRef(false);
@@ -42,7 +43,7 @@ function BlogPageContent() {
         }
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') return;
-        if (!cancelled) setLoading(false);
+        if (!cancelled) { setLoadError(true); setLoading(false); }
       }
     };
     loadBlogs();
@@ -108,17 +109,21 @@ function BlogPageContent() {
               </div>
             )}
 
-            {!loading && currentBlogs.length > 0 && (
-              <div>{currentBlogs.map((post) => <BlogCard key={post.id} post={post} currentTag={currentTag} />)}</div>
+            {!loading && loadError && (
+              <div className="text-center py-16 text-[var(--text-muted)]">{t('SOMETHING_WRONG')}</div>
             )}
 
-            {!loading && currentBlogs.length === 0 && (
+            {!loading && !loadError && currentBlogs.length > 0 && (
+              <div>{currentBlogs.map((post, index) => <BlogCard key={post.id} post={post} currentTag={currentTag} isPriority={index === 0} />)}</div>
+            )}
+
+            {!loading && !loadError && currentBlogs.length === 0 && (
               <div className="text-center py-16 text-[var(--text-dim)]">
                 {t('NO_POSTS')}
               </div>
             )}
 
-            {!loading && filteredBlogs.length > 0 && (
+            {!loading && !loadError && filteredBlogs.length > 0 && (
               <div className="mt-8 flex justify-center">
                 <Pagination
                   current={currentPage}

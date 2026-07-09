@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   output: 'standalone',
   images: {
     remotePatterns: [],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 2592000,
   },
   eslint: {
     ignoreDuringBuilds: false,

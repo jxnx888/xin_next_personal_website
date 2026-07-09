@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { BlogPost } from '@/lib/types/blog';
 import { getBlogImagePath, getReadTime } from '@/lib/utils/blogUtils';
@@ -10,9 +11,10 @@ import TagBadge from '@/components/blog/TagBadge';
 interface BlogCardProps {
   post: BlogPost;
   currentTag?: string | null;
+  isPriority?: boolean;
 }
 
-export default function BlogCard({ post, currentTag }: BlogCardProps) {
+export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -27,24 +29,26 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
 
           {/* Mobile top cover — shown on phone+pad-v */}
           <div className="hidden phone:block pad-v:block relative overflow-hidden h-32">
-            <img
+            <Image
               src={imagePath}
               alt=""
-              loading="lazy"
-              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
+              fill
+              sizes="100vw"
+              priority={isPriority}
+              className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, transparent 40%, var(--bg-secondary))' }} />
           </div>
 
           {/* Desktop side image */}
           <div className="shrink-0 relative overflow-hidden phone:hidden pad-v:hidden" style={{ width: '200px', minHeight: '155px' }}>
-            <img
+            <Image
               src={imagePath}
               alt=""
-              loading="lazy"
-              className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500 absolute inset-0"
-              onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
+              fill
+              sizes="200px"
+              priority={isPriority}
+              className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent, var(--bg-secondary))' }} />
           </div>
