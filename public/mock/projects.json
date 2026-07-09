@@ -107,7 +107,6 @@
           "img": "/image/projects/luggage.jpg",
           "desc": "A Three.js web app for customizing luggage with decals — users can upload images and adjust the size, rotation and position in real time.",
           "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5",
-          "url": "/threeDimensionalBuilder",
           "code": 4
         }
       ]

@@ -8,8 +8,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
 
   useEffect(() => {
     const container = containerRef.current;
-    const PHONE_MAX = 767; // matches Tailwind phone: { max: '767px' }
-    if (!container || window.innerWidth <= PHONE_MAX) return;
+    if (!container) return;
 
     const w = container.clientWidth;
     const h = container.clientHeight;
@@ -52,6 +51,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
     });
     const mesh = new THREE.Mesh(geometry, wireMat);
     mesh.rotation.x = -Math.PI / 3;
+    mesh.frustumCulled = false;
     scene.add(mesh);
 
     // Particle dots — same geometry, rides the same vertex updates
@@ -63,6 +63,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
     });
     const points = new THREE.Points(geometry, pointsMat);
     points.rotation.x = -Math.PI / 3;
+    points.frustumCulled = false;
     scene.add(points);
 
 

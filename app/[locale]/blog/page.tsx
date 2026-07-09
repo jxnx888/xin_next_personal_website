@@ -94,7 +94,7 @@ function BlogPageContent() {
               </div>
               {!loading && (
                 <div className="hidden phone:block pad-v:block">
-                  <BlogSidebar tagCounts={tagCounts} variant="mobile" />
+                  <BlogSidebar tagCounts={tagCounts} totalCount={blogs.length} variant="mobile" />
                 </div>
               )}
             </div>
@@ -137,7 +137,7 @@ function BlogPageContent() {
 
           {/* Desktop sidebar */}
           <div className="w-56 shrink-0 phone:hidden pad-v:hidden">
-            {!loading && <BlogSidebar tagCounts={tagCounts} variant="desktop" />}
+            {!loading && <BlogSidebar tagCounts={tagCounts} totalCount={blogs.length} variant="desktop" />}
           </div>
 
         </div>

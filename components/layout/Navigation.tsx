@@ -50,7 +50,7 @@ export default function Navigation() {
       }
       lastScrollYRef.current = currentScrollY;
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -184,7 +184,10 @@ export default function Navigation() {
       >
         <Menu
           mode="vertical"
-          selectedKeys={[pathname.replace(/\/$/, '')]}
+          selectedKeys={menuData
+            .filter(item => isActive(item.routerLink))
+            .map(item => `/${locale}${item.routerLink === '/' ? '' : item.routerLink}`)
+          }
           items={menuData.map((item) => ({
             key: `/${locale}${item.routerLink === '/' ? '' : item.routerLink}`,
             label: (

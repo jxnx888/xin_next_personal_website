@@ -47,7 +47,7 @@ function BlogDetailContent({ id }: { id: string }) {
         if (foundBlog) {
           // Add referrerpolicy to all img tags to prevent referrer leaking
           const fixedContent = foundBlog.content.replace(
-            /(<img\b[^>]*)(\bsrc=)/gi,
+            /(<img\b(?![^>]*\breferrerpolicy)[^>]*)(\bsrc=)/gi,
             '$1 referrerpolicy="no-referrer" $2'
           );
           setBlog({ ...foundBlog, content: fixedContent });

@@ -11,7 +11,14 @@ export function getBlogData(locale: string, signal?: AbortSignal): Promise<BlogP
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
       })
-      .then(data => (data.code === 200 ? (data.data as BlogPost[]) : []))
+      .then(data => {
+        if (data.code !== 200) return [];
+        return (data.data as BlogPost[]).map((post: BlogPost) => ({
+          ...post,
+          // Strip cnblogs copy-code toolbar buttons (onclick="copyCnblogsCode" is undefined here)
+          content: post.content.replace(/<div class="cnblogs_code_toolbar">[\s\S]*?<\/div>/g, ''),
+        }));
+      })
       .catch(err => {
         delete blogCachePromise[locale]; // allow retry on error
         console.error('Error loading blog data:', err);
@@ -52,7 +59,11 @@ export function getBlogImagePath(tag: string): string {
 }
 
 export function getReadTime(content: string, locale?: string): number {
-  const text = content.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+  const text = content
+    .replace(/<[^>]+>/g, '')
+    .replace(/&[a-z]+;|&#\d+;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   if (locale === 'zh') {
     // Chinese reading speed ~350 characters per minute
     const charCount = text.replace(/\s/g, '').length;

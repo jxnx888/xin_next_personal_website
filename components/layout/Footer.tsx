@@ -14,6 +14,7 @@ export default function Footer() {
 
   useEffect(() => {
     if (!showWechat) return;
+    wechatPopupRef.current?.focus();
     const handleClickOutside = (e: MouseEvent) => {
       if (wechatRef.current && !wechatRef.current.contains(e.target as Node)) setShowWechat(false);
     };
@@ -61,6 +62,7 @@ export default function Footer() {
                 ref={wechatPopupRef}
                 role="dialog"
                 aria-label="WeChat QR code"
+                aria-modal="true"
                 tabIndex={-1}
                 className="absolute -top-[120px] left-1/2 -translate-x-1/2 p-2 rounded-lg z-10 w-[108px] h-[108px] outline-none"
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-input)' }}

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { BlogPost } from '@/lib/types/blog';
@@ -16,7 +17,7 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
   const locale = useLocale();
 
   const imagePath = post.type.length > 0 ? getBlogImagePath(post.type[0]) : '/image/blog/default.jpg';
-  const readTime = getReadTime(post.content, locale);
+  const readTime = useMemo(() => getReadTime(post.content, locale), [post.content, locale]);
   const href = `/${locale}/blog/${post.id}${currentTag ? `?from=${encodeURIComponent(currentTag)}` : ''}`;
 
   return (

@@ -9,10 +9,11 @@ import SectionCard from '@/components/ui/SectionCard';
 
 interface BlogSidebarProps {
   tagCounts: TagCount;
+  totalCount: number;
   variant: 'mobile' | 'desktop';
 }
 
-export default function BlogSidebar({ tagCounts, variant }: BlogSidebarProps) {
+export default function BlogSidebar({ tagCounts, totalCount, variant }: BlogSidebarProps) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
@@ -26,7 +27,6 @@ export default function BlogSidebar({ tagCounts, variant }: BlogSidebarProps) {
   const clearTag = () => router.push(`/${locale}/blog`);
 
   const tagList = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
-  const total = Object.values(tagCounts).reduce((a, b) => a + b, 0);
 
   if (variant === 'desktop') {
     // top = nav(80px) + 8px gap
@@ -41,7 +41,7 @@ export default function BlogSidebar({ tagCounts, variant }: BlogSidebarProps) {
           </div>
           <div className="p-3 space-y-1">
             <button type="button" className={`tag-item ${!currentTag ? 'tag-active' : ''}`} onClick={clearTag}>
-              {t('ALL_TAGS')} <span className="opacity-60 text-xs">({total})</span>
+              {t('ALL_TAGS')} <span className="opacity-60 text-xs">({totalCount})</span>
             </button>
             {tagList.map(([tag, count]) => (
               <button
@@ -61,7 +61,7 @@ export default function BlogSidebar({ tagCounts, variant }: BlogSidebarProps) {
 
   // Mobile dropdown — use item-level onClick for keyboard accessibility
   const menuItems = [
-    { key: 'all', label: `${t('ALL_TAGS')} (${total})`, onClick: clearTag },
+    { key: 'all', label: `${t('ALL_TAGS')} (${totalCount})`, onClick: clearTag },
     ...tagList.map(([tag, count]) => ({
       key: tag,
       label: `${tag} (${count})`,

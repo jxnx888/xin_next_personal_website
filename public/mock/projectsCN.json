@@ -92,7 +92,7 @@
         },
         {
           "title": "Magic Box - 儿童3D搭建 App",
-          "img": "/image/home/3dprinting.jpg",
+          "img": "/image/projects/magicBox.jpg",
           "desc": "基于 Three.js 的儿童教育 3D 搭建 App，孩子可以用几何或卡通模型自由组合搭建作品。",
           "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5, Android, iOS",
           "url": "/threeDimensionalBuilder",
@@ -107,7 +107,6 @@
           "img": "/image/projects/luggage.jpg",
           "desc": "Three.js 行李箱涂鸦定制 Web App，用户可挑选或上传图片涂鸦于行李，实时调整大小、角度与位置。",
           "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5",
-          "url": "/threeDimensionalBuilder",
           "code": 4
         }
       ]
