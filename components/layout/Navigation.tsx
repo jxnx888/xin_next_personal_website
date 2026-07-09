@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Menu, Drawer, Button } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { menuData } from '@/lib/constants/menuData';
@@ -54,14 +54,16 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const localePrefix = useMemo(() => new RegExp(`^/${locale}`), [locale]);
+
   const changeLanguage = (newLocale: string) => {
-    const currentPath = pathname.replace(new RegExp(`^/${locale}`), '');
+    const currentPath = pathname.replace(localePrefix, '');
     const qs = window.location.search;
     router.push(`/${newLocale}${currentPath}${qs}`);
   };
 
   const isActive = (path: string) => {
-    const cleanPath = pathname.replace(new RegExp(`^/${locale}`), '');
+    const cleanPath = pathname.replace(localePrefix, '');
     if (path === '/') return cleanPath === '' || cleanPath === '/';
     return cleanPath.startsWith(path);
   };
@@ -71,6 +73,7 @@ export default function Navigation() {
       <a href="#main-content" className="skip-to-content">{t('SKIP_TO_CONTENT')}</a>
       {/* scroll-hide only on desktop (pad+pc); phone/pad-v always visible */}
       <nav
+        aria-label="Main navigation"
         className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
           scrolled && hideNav
             ? '-translate-y-full phone:translate-y-0 pad-v:translate-y-0'
@@ -152,7 +155,7 @@ export default function Navigation() {
               onClick={toggleTheme}
               className="ml-2 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110"
               style={{ border: '1px solid var(--border-input)', color: 'var(--text-muted)' }}
-              aria-label="Toggle theme"
+              aria-label={theme === 'dark' ? t('NAV_LIGHT_MODE') : t('NAV_DARK_MODE')}
             >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
             </button>

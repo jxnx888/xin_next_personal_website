@@ -104,7 +104,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             {project.storeUrlQr && (project.storeUrlQr.ios || project.storeUrlQr.android) && (
               <div className="relative" ref={qrRef}>
                 <button
-                  onClick={() => setShowQr(!showQr)}
+                  onClick={() => setShowQr(v => !v)}
                   aria-expanded={showQr}
                   className="btn-glow-purple px-5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200"
                 >

@@ -105,9 +105,12 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
     };
     window.addEventListener('mousemove', onMouseMove, { passive: true });
 
-    let isVisible = true;
+    let isVisible = document.visibilityState === 'visible';
+    const onVisibilityChange = () => { isVisible = document.visibilityState === 'visible'; };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
     const observer = new IntersectionObserver(
-      ([entry]) => { isVisible = entry.isIntersecting; },
+      ([entry]) => { isVisible = entry.isIntersecting && document.visibilityState === 'visible'; },
       { threshold: 0 }
     );
     observer.observe(container);
@@ -160,6 +163,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
     return () => {
       cancelAnimationFrame(animId);
       observer.disconnect();
+      document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('mousemove', onMouseMove);
       geometry.dispose();

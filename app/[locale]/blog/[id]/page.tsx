@@ -98,7 +98,7 @@ function BlogDetailContent({ id }: { id: string }) {
             </h1>
             <div className="flex flex-wrap items-center justify-center gap-3 text-sm">
               <span className="text-[var(--text-dim)]">
-                {t('POSTED')} @ <span className="text-[var(--text-muted)]">{blog.time}</span>
+                {t('POSTED_AT', { time: blog.time })}
               </span>
               <span className="text-[var(--text-dim)] opacity-40">·</span>
               <span className="text-[var(--text-dim)]">

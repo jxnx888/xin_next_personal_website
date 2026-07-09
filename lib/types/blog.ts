@@ -27,7 +27,6 @@ export const TAG_COLORS: { [key: string]: string } = {
   'CSS': '#38bdf8',
   'React': '#22d3ee',
   'Vue.js': '#34d399',
-  'Next.js': '#94a3b8',
   'Nextjs': '#94a3b8',
   'GraphQL': '#e879f9',
   'Vercel': '#94a3b8',

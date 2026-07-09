@@ -18,6 +18,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
   const mobileBarRef = useRef<HTMLDivElement>(null);
   const desktopBarRef = useRef<HTMLDivElement>(null);
   const lastTopRef = useRef(500);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   // Sync initial top immediately after bars mount (prevents top:auto flash)
   useLayoutEffect(() => {
@@ -34,8 +35,9 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
   }, []);
 
   useEffect(() => {
+    sectionRef.current = document.querySelector('.projects-main');
     const update = () => {
-      const section = document.querySelector('.projects-main') as HTMLElement | null;
+      const section = sectionRef.current;
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
@@ -44,7 +46,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
       const vh = window.innerHeight;
 
       const visible = top < vh - 80 && bottom > 200;
-      setSectionInView(visible);
+      setSectionInView(prev => prev !== visible ? visible : prev);
 
       if (visible) {
         lastTopRef.current = top;
@@ -64,7 +66,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
           if (scrollTop >= elTop - 120) cur = i;
         }
       });
-      setActiveIndex(cur);
+      setActiveIndex(prev => prev !== cur ? cur : prev);
     };
 
     update();
@@ -119,7 +121,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
             <button
               key={key}
               onClick={() => handleMenuClick(key, index)}
-              aria-current={activeIndex === index ? 'true' : undefined}
+              aria-current={activeIndex === index ? 'location' : undefined}
               className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap bg-transparent cursor-pointer transition-all duration-200"
               style={activeIndex === index ? activeStyle : inactiveStyle}
             >
@@ -144,7 +146,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
             type="button"
             key={key}
             onClick={() => handleMenuClick(key, index)}
-            aria-current={activeIndex === index ? 'true' : undefined}
+            aria-current={activeIndex === index ? 'location' : undefined}
             className="w-full h-9 leading-9 text-center text-xs font-semibold rounded-lg mb-2.5 cursor-pointer transition-all duration-200"
             style={activeIndex === index ? { ...activeStyle, border: undefined } : inactiveStyle}
             onMouseEnter={(e) => {

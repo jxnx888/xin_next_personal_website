@@ -34,7 +34,7 @@ export default function AnimatedName({ name, className = '', style }: AnimatedNa
     <h1 className={className} style={style} aria-label={name}>
       {name.split('').map((char, i) => (
         <span
-          key={i}
+          key={`${char}_${i}`}
           aria-hidden="true"
           ref={el => { letterRefs.current[i] = el; }}
           style={{ opacity: 0, display: 'inline-block', minWidth: char === ' ' ? '0.3em' : undefined }}

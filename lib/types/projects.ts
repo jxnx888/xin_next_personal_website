@@ -3,7 +3,7 @@ export interface Project {
   img: string;
   desc: string;
   tags: string;
-  url: string;
+  url?: string;
   code: number;
   codeUrl?: string;
   storeUrlQr?: {

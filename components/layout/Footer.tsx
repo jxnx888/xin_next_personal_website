@@ -3,12 +3,30 @@
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Footer() {
   const t = useTranslations();
   const locale = useLocale();
   const [showWechat, setShowWechat] = useState(false);
+  const wechatRef = useRef<HTMLDivElement>(null);
+  const wechatPopupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!showWechat) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (wechatRef.current && !wechatRef.current.contains(e.target as Node)) setShowWechat(false);
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowWechat(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [showWechat]);
 
   const resumeLink = locale === 'zh'
     ? '/file/XinNing-Resume-CN.pdf'
@@ -22,10 +40,11 @@ export default function Footer() {
         {/* Social Icons */}
         <div className="flex justify-center gap-5 mb-6">
           {/* WeChat — click to toggle QR */}
-          <div className="relative">
+          <div className="relative" ref={wechatRef}>
             <button
               type="button"
               aria-label="WeChat: Xin Ning"
+              aria-expanded={showWechat}
               className="footer-icon w-9 h-9 cursor-pointer flex items-center justify-center bg-transparent border-0 p-0"
               onClick={() => setShowWechat((v) => !v)}
             >
@@ -39,7 +58,11 @@ export default function Footer() {
             </button>
             {showWechat && (
               <div
-                className="absolute -top-[120px] left-1/2 -translate-x-1/2 p-2 rounded-lg z-10 w-[108px] h-[108px]"
+                ref={wechatPopupRef}
+                role="dialog"
+                aria-label="WeChat QR code"
+                tabIndex={-1}
+                className="absolute -top-[120px] left-1/2 -translate-x-1/2 p-2 rounded-lg z-10 w-[108px] h-[108px] outline-none"
                 style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-input)' }}
               >
                 <Image src="/image/footer/wechat_xin.jpg" alt="WeChat QR code" width={90} height={90} />

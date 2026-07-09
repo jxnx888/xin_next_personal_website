@@ -28,7 +28,7 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
           <div className="hidden phone:block pad-v:block relative overflow-hidden h-32">
             <img
               src={imagePath}
-              alt={post.title}
+              alt=""
               loading="lazy"
               className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
               onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
@@ -40,7 +40,7 @@ export default function BlogCard({ post, currentTag }: BlogCardProps) {
           <div className="shrink-0 relative overflow-hidden phone:hidden pad-v:hidden" style={{ width: '200px', minHeight: '155px' }}>
             <img
               src={imagePath}
-              alt={post.title}
+              alt=""
               loading="lazy"
               className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500 absolute inset-0"
               onError={(e) => { (e.target as HTMLImageElement).src = '/image/blog/default.jpg'; }}
