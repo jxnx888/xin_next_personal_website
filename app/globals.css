@@ -479,7 +479,6 @@ html.light .ant-select-item-option-active {
   width: 1px;
   height: 1px;
   overflow: hidden;
-  z-index: 9999;
   text-decoration: none;
 }
 .skip-to-content:focus {
@@ -495,4 +494,5 @@ html.light .ant-select-item-option-active {
   border-radius: 6px;
   font-weight: 600;
   font-size: 14px;
+  z-index: 9999;
 }

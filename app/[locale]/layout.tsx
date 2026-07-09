@@ -21,9 +21,27 @@ export async function generateMetadata({
   const title = t('META_TITLE');
   const description = t('META_DESCRIPTION');
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
     title,
     description,
-    openGraph: { title, description, type: 'website' },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      url: `/${locale}`,
+      images: [{ url: '/image/banner1.png', width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: ['/image/banner1.png'],
+    },
+    alternates: {
+      canonical: `/${locale}`,
+      languages: { en: '/en', zh: '/zh' },
+    },
   };
 }
 

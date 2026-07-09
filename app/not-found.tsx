@@ -31,7 +31,7 @@ export default function NotFound() {
               The page you&apos;re looking for doesn&apos;t exist or has been moved.
             </p>
 
-            <GlowButton href="/en">← Back to Home</GlowButton>
+            <GlowButton href="/">← Back to Home</GlowButton>
           </div>
         </div>
       </body>

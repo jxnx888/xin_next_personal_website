@@ -21,45 +21,51 @@ export function useTypewriter({
   const [isDeleting, setIsDeleting] = useState(false);
   const [loopNum, setLoopNum] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
+  // Stores the delay to use for the NEXT effect-scheduled timeout.
+  // Set inside the timeout callback before any setState, so the re-run reads
+  // the intended delay rather than always defaulting to typeSpeed.
+  const nextDelay = useRef(typeSpeed);
+  const stopped = useRef(false);
 
   useEffect(() => {
-    if (words.length === 0) return;
+    if (words.length === 0 || stopped.current) return;
 
-    let timeout: NodeJS.Timeout;
+    const currentWord = words[loopNum % words.length];
 
-    const handleType = () => {
-      const currentWordIndex = loopNum % words.length;
-      const currentWord = words[currentWordIndex];
-
+    const timeout = setTimeout(() => {
       if (isDeleting) {
-        setText(currentWord.substring(0, text.length - 1));
-        setShowCursor(text.length <= 1);
+        const newText = currentWord.substring(0, text.length - 1);
+        setText(newText);
+
+        if (text.length <= 1) {
+          // Last character deleted — transition to next word
+          if (!loop && loopNum >= words.length - 1) {
+            stopped.current = true;
+            return;
+          }
+          nextDelay.current = 500;
+          setIsDeleting(false);
+          setLoopNum(n => n + 1);
+          setShowCursor(false);
+        } else {
+          nextDelay.current = deleteSpeed;
+          setShowCursor(text.length <= 2);
+        }
       } else {
-        setText(currentWord.substring(0, text.length + 1));
-        setShowCursor(text.length >= currentWord.length - 1);
-      }
+        const newText = currentWord.substring(0, text.length + 1);
+        setText(newText);
 
-      let speed = isDeleting ? deleteSpeed : typeSpeed;
-
-      if (!isDeleting && text === currentWord) {
-        speed = delayBetweenWords;
-        setIsDeleting(true);
-        setShowCursor(true);
-      } else if (isDeleting && text === '') {
-        setIsDeleting(false);
-        setLoopNum(loopNum + 1);
-        speed = 500;
-        setShowCursor(false);
-
-        if (!loop && loopNum >= words.length - 1) {
-          return;
+        if (newText.length >= currentWord.length) {
+          // Word fully typed — pause before deleting
+          nextDelay.current = delayBetweenWords;
+          setIsDeleting(true);
+          setShowCursor(true);
+        } else {
+          nextDelay.current = typeSpeed;
+          setShowCursor(false);
         }
       }
-
-      timeout = setTimeout(handleType, speed);
-    };
-
-    timeout = setTimeout(handleType, typeSpeed);
+    }, nextDelay.current);
 
     return () => clearTimeout(timeout);
   }, [text, isDeleting, loopNum, words, loop, typeSpeed, deleteSpeed, delayBetweenWords]);

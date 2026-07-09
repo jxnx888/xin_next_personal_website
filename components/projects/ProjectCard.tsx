@@ -114,6 +114,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   <div
                     ref={popupRef}
                     tabIndex={-1}
+                    role="dialog"
+                    aria-label={t('downloadApp')}
+                    aria-modal="true"
                     className="absolute bottom-full left-0 mb-2 p-4 rounded-xl z-10 outline-none"
                     style={{ background: 'var(--bg)', border: '1px solid var(--border-input)', boxShadow: '0 0 30px rgba(0,0,0,0.3)' }}
                   >
@@ -140,6 +143,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 href={project.codeUrl || 'https://github.com/jxnx888'}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`${t('viewCode')} — ${project.title}`}
                 className="px-5 py-1.5 rounded-lg text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors duration-200"
                 style={{ background: 'var(--bg)', border: '1px solid var(--border-input)' }}
               >

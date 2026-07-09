@@ -164,6 +164,7 @@ export default function ContactPage() {
                     {item.icon}
                   </span>
                   <span>{item.text}</span>
+                  {item.external && <span className="sr-only"> (opens in new tab)</span>}
                 </a>
               ))}
             </div>
@@ -181,6 +182,7 @@ export default function ContactPage() {
                 { name: 'subject', type: 'text',  placeholder: msg[3] ?? '', hasError: errors.subject, errMsg: validation[4] ?? '' },
               ].map((field) => (
                 <div key={field.name}>
+                  <label htmlFor={field.name} className="sr-only">{field.placeholder}</label>
                   <input
                     id={field.name}
                     type={field.type}
@@ -188,7 +190,6 @@ export default function ContactPage() {
                     value={formData[field.name as keyof typeof formData]}
                     onChange={handleInputChange}
                     placeholder={field.placeholder}
-                    aria-label={field.placeholder}
                     aria-invalid={field.hasError || undefined}
                     aria-describedby={field.hasError ? `${field.name}-error` : undefined}
                     className={INPUT_CLASS}
@@ -200,6 +201,7 @@ export default function ContactPage() {
               ))}
 
               <div>
+                <label htmlFor="message" className="sr-only">{msg[4] ?? ''}</label>
                 <textarea
                   id="message"
                   name="message"
@@ -207,7 +209,6 @@ export default function ContactPage() {
                   onChange={handleInputChange}
                   placeholder={msg[4] ?? ''}
                   rows={4}
-                  aria-label={msg[4] ?? ''}
                   aria-invalid={errors.message || undefined}
                   aria-describedby={errors.message ? 'message-error' : undefined}
                   className={INPUT_CLASS}
