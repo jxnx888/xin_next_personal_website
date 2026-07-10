@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 interface ScrollMenuProps {
-  menuItems: { [key: string]: string };
+  menuItems: Record<string, string>;
 }
 
 const MOBILE_NAV = 56;
@@ -116,19 +116,22 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
           transition: 'top 0.05s linear',
         }}
       >
-        <div className="flex flex-wrap gap-2 px-4 py-2">
-          {entries.map(([key, label], index) => (
-            <button
-              key={key}
-              onClick={() => handleMenuClick(key, index)}
-              aria-current={activeIndex === index ? 'location' : undefined}
-              className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap bg-transparent cursor-pointer transition-all duration-200"
-              style={activeIndex === index ? activeStyle : inactiveStyle}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <nav aria-label="Project sections">
+          <div className="flex flex-wrap gap-2 px-4 py-2">
+            {entries.map(([key, label], index) => (
+              <button
+                type="button"
+                key={key}
+                onClick={() => handleMenuClick(key, index)}
+                aria-current={activeIndex === index ? 'location' : undefined}
+                className="shrink-0 px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap bg-transparent cursor-pointer transition-all duration-200"
+                style={activeIndex === index ? activeStyle : inactiveStyle}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </nav>
       </div>
 
       {/* Desktop: follows section top then sticks — pad and pc only */}
@@ -141,6 +144,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
           transition: 'top 0.05s linear',
         }}
       >
+        <nav aria-label="Project sections">
         {entries.map(([key, label], index) => (
           <button
             type="button"
@@ -148,7 +152,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
             onClick={() => handleMenuClick(key, index)}
             aria-current={activeIndex === index ? 'location' : undefined}
             className="w-full h-9 leading-9 text-center text-xs font-semibold rounded-lg mb-2.5 cursor-pointer transition-all duration-200"
-            style={activeIndex === index ? { ...activeStyle, border: undefined } : inactiveStyle}
+            style={activeIndex === index ? activeStyle : inactiveStyle}
             onMouseEnter={(e) => {
               if (activeIndex !== index) {
                 e.currentTarget.style.color = 'var(--text)';
@@ -177,6 +181,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
             {label}
           </button>
         ))}
+        </nav>
       </div>
     </>
   );

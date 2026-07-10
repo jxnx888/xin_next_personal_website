@@ -15,12 +15,7 @@ export default {
       'pad': {'min': '1024px', 'max': '1279px'},
       'pc': {'min': '1280px'},
     },
-    extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-      },
-    },
+    extend: {},
   },
   plugins: [],
   corePlugins: {

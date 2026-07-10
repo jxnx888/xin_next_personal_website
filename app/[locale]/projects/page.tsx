@@ -12,10 +12,12 @@ export default function ProjectsPage() {
   const t = useTranslations('projects');
   const tg = useTranslations();
   const [projectsData, setProjectsData] = useState<ProjectsData | null>(null);
-  const [menuItems, setMenuItems] = useState<{ [key: string]: string }>({});
+  const [menuItems, setMenuItems] = useState<Record<string, string>>({});
   const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    setProjectsData(null);
+    setLoadError(false);
     const controller = new AbortController();
     const fetchProjects = async () => {
       try {
@@ -25,7 +27,7 @@ export default function ProjectsPage() {
         const data: ProjectsResponse = await response.json();
         if (data.code === 200) {
           setProjectsData(data.data);
-          const menu: { [key: string]: string } = {};
+          const menu: Record<string, string> = {};
           Object.entries(data.data).forEach(([key, value]) => { menu[key] = value.companySC; });
           setMenuItems(menu);
         } else {

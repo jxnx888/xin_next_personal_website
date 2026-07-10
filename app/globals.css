@@ -31,7 +31,6 @@
   --grid-line:     rgba(0, 212, 255, 0.04);
   --hero-gradient:       linear-gradient(135deg, #0d1117 0%, #091427 25%, #0e1838 55%, #091427 80%, #0d1117 100%);
   --name-shadow:         0 0 20px rgba(0,212,255,0.25), 0 0 55px rgba(0,212,255,0.08);
-  --glass-card:          rgba(22, 27, 34, 0.7);
   --scrollbar-thumb:     #30363d;
   --tech-strip-sep:      linear-gradient(90deg, transparent, rgba(0,212,255,0.15), rgba(124,58,237,0.15), transparent);
   --tech-glow-accent:    0 0 8px rgba(0,212,255,0.65), 0 0 22px rgba(0,212,255,0.22);
@@ -78,7 +77,6 @@ html.light {
   --grid-line:     rgba(0, 119, 170, 0.06);
   --hero-gradient:       linear-gradient(135deg, #e8f4fb 0%, #daeef8 30%, #cde7f5 60%, #daeef8 80%, #e8f4fb 100%);
   --name-shadow:         0 0 20px rgba(0,119,170,0.3), 0 0 40px rgba(0,119,170,0.1);
-  --glass-card:          rgba(255, 255, 255, 0.9);
   --scrollbar-thumb:     #c0c8d2;
   --tech-strip-sep:      linear-gradient(90deg, transparent, rgba(0,119,170,0.12), rgba(109,40,217,0.12), transparent);
   --tech-glow-accent:    0 0 6px rgba(0,119,170,0.35);
@@ -431,7 +429,10 @@ html.light .footer-icon:hover { filter: brightness(0) drop-shadow(0 0 6px var(--
 }
 .blog-content a:hover { color: var(--text); }
 .blog-content table {
-  width: 100%;
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-collapse: collapse;
   margin: 1.5rem 0;
 }

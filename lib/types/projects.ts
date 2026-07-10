@@ -14,6 +14,7 @@ export interface Project {
 
 export interface Career {
   companyName: string;
+  /** Short company label used in the section scroll-menu */
   companySC: string;
   jobtitle: string;
   responsibilities: string[];
@@ -23,9 +24,7 @@ export interface Career {
   projects: Project[];
 }
 
-export interface ProjectsData {
-  [key: string]: Career;
-}
+export type ProjectsData = Record<string, Career>;
 
 export interface ProjectsResponse {
   code: number;

@@ -12,11 +12,9 @@ export interface BlogData {
   data: BlogPost[];
 }
 
-export interface TagCount {
-  [key: string]: number;
-}
+export type TagCount = Record<string, number>;
 
-export const TAG_COLORS: { [key: string]: string } = {
+export const TAG_COLORS: Record<string, string> = {
   'Coveo': '#1a6bff',
   'JavaScript': '#f59e0b',
   'TypeScript': '#3b82f6',

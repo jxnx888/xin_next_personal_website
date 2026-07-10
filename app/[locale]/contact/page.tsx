@@ -195,7 +195,7 @@ export default function ContactPage() {
                     className={INPUT_CLASS}
                   />
                   {field.hasError && errorOverlay(field.errMsg, `${field.name}-error`, () =>
-                    setErrors(e => ({ ...e, [field.name]: false, emailInvalid: false }))
+                    setErrors(e => ({ ...e, [field.name]: false, ...(field.name === 'email' ? { emailInvalid: false } : {}) }))
                   )}
                 </div>
               ))}
@@ -228,10 +228,10 @@ export default function ContactPage() {
                   {submitState === 'submitting' ? t('SENDING') : msg[5]}
                 </button>
                 {submitState === 'success' && (
-                  <p className="mt-2 text-sm text-center" style={{ color: 'var(--success-text)' }}>{validation[7]}</p>
+                  <p role="status" className="mt-2 text-sm text-center" style={{ color: 'var(--success-text)' }}>{validation[7]}</p>
                 )}
                 {submitState === 'error' && (
-                  <p className="mt-2 text-sm text-center" style={{ color: 'var(--error-text)' }}>{validation[6]}</p>
+                  <p role="alert" className="mt-2 text-sm text-center" style={{ color: 'var(--error-text)' }}>{validation[6]}</p>
                 )}
               </div>
             </form>

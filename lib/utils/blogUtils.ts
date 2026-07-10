@@ -6,6 +6,8 @@ const blogCachePromise: Record<string, Promise<BlogPost[]>> = {};
 export function getBlogData(locale: string, signal?: AbortSignal): Promise<BlogPost[]> {
   if (!blogCachePromise[locale]) {
     const url = locale === 'zh' ? '/mock/blogCN.json' : '/mock/blogEN.json';
+    // Signal is intentionally not passed to fetch: the promise is shared across all callers.
+    // Cancellation is handled via Promise.race below so callers can abort without poisoning the cache.
     blogCachePromise[locale] = fetch(url)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -13,7 +15,7 @@ export function getBlogData(locale: string, signal?: AbortSignal): Promise<BlogP
       })
       .then(data => {
         if (data.code !== 200) return [];
-        return (data.data as BlogPost[]).map((post: BlogPost) => ({
+        return (data.data as BlogPost[]).map((post) => ({
           ...post,
           // Strip cnblogs copy-code toolbar buttons (onclick="copyCnblogsCode" is undefined here)
           content: post.content.replace(/<div class="cnblogs_code_toolbar">[\s\S]*?<\/div>/g, ''),
