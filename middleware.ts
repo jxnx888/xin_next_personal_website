@@ -14,6 +14,6 @@ export default createMiddleware({
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|woff2?|ttf|css|js|mjs|pdf)).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|woff2?|ttf|eot|otf|css|js|mjs|json|pdf|txt|xml|mp3|mp4|webm|ogg|wav|stl|obj|mtl|html|zip|wasm|map)).*)',
   ],
 };
