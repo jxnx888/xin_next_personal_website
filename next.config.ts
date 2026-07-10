@@ -17,9 +17,11 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   async headers() {
+    const isDev = process.env.NODE_ENV === 'development';
     const csp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      // dev mode uses eval() for source maps — blocked without 'unsafe-eval'
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://img2023.cnblogs.com https://img2022.cnblogs.com https://common.cnblogs.com",
       "font-src 'self'",
