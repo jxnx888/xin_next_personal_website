@@ -10,10 +10,10 @@ interface ContactPayload {
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.ELASTIC_EMAIL_API_KEY;
-  const fromEmail = process.env.CONTACT_FROM_EMAIL;
-  const toEmail = process.env.CONTACT_TO_EMAIL;
+  const fromEmail = 'jxnx888@gmail.com';
+  const toEmail = 'ningxin1007@hotmail.com';
 
-  if (!apiKey || !fromEmail || !toEmail) {
+  if (!apiKey) {
     return NextResponse.json({ error: 'Server email config missing' }, { status: 500 });
   }
 
