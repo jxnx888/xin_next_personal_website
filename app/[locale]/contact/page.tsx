@@ -96,7 +96,7 @@ export default function ContactPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = {
       name:         !formData.name,
@@ -109,12 +109,24 @@ export default function ContactPage() {
     setErrors(newErrors);
     if (Object.values(newErrors).some(Boolean)) return;
     setSubmitState('submitting');
-    // TODO: replace timeout with real API call: fetch('/api/contact', { method: 'POST', body: JSON.stringify(formData) })
-    timerRef.current = setTimeout(() => {
-      setSubmitState('success');
-      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
-      timerRef.current = setTimeout(() => setSubmitState('idle'), 3000);
-    }, 1000);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (res.ok) {
+        setSubmitState('success');
+        setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+        timerRef.current = setTimeout(() => setSubmitState('idle'), 3000);
+      } else {
+        setSubmitState('error');
+        timerRef.current = setTimeout(() => setSubmitState('idle'), 4000);
+      }
+    } catch {
+      setSubmitState('error');
+      timerRef.current = setTimeout(() => setSubmitState('idle'), 4000);
+    }
   };
 
   const errorOverlay = (errMsg: string, id: string, onClear: () => void) => (
