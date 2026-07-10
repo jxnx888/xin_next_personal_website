@@ -6,6 +6,13 @@ import * as THREE from 'three';
 export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Refs expose live Three.js objects to the theme-update effect without
+  // triggering a full renderer teardown and rebuild on every theme change.
+  const wireMatRef = useRef<THREE.MeshBasicMaterial | null>(null);
+  const pointsMatRef = useRef<THREE.PointsMaterial | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+
+  // ── Main setup effect — runs once on mount ─────────────────────────────
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -15,6 +22,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
 
     // ── Scene ──────────────────────────────────────────────
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
 
     // Fog — far edge fades into the hero gradient colour
     const fogColor = theme === 'dark' ? 0x091427 : 0xdaeef8;
@@ -49,6 +57,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
       transparent: true,
       opacity: theme === 'dark' ? 0.14 : 0.18,
     });
+    wireMatRef.current = wireMat;
     const mesh = new THREE.Mesh(geometry, wireMat);
     mesh.rotation.x = -Math.PI / 3;
     mesh.frustumCulled = false;
@@ -61,11 +70,11 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
       transparent: true,
       opacity: theme === 'dark' ? 0.32 : 0.38,
     });
+    pointsMatRef.current = pointsMat;
     const points = new THREE.Points(geometry, pointsMat);
     points.rotation.x = -Math.PI / 3;
     points.frustumCulled = false;
     scene.add(points);
-
 
     // ── Hit plane for raycasting ───────────────────────────
     const hitGeo = new THREE.PlaneGeometry(300, 200);
@@ -116,7 +125,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
     );
     observer.observe(container);
 
-    let animId: number;
+    let animId = 0;
     let time = 0;
 
     const animate = () => {
@@ -167,16 +176,44 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
       document.removeEventListener('visibilitychange', onVisibilityChange);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('mousemove', onMouseMove);
+      scene.remove(mesh, points, hitPlane);
       geometry.dispose();
       wireMat.dispose();
       pointsMat.dispose();
       hitGeo.dispose();
       hitMat.dispose();
       renderer.dispose();
+      wireMatRef.current = null;
+      pointsMatRef.current = null;
+      sceneRef.current = null;
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // empty — renderer is created once; theme changes handled below
+
+  // ── Theme update effect — updates colors in place, no renderer teardown ──
+  useEffect(() => {
+    const wireMat = wireMatRef.current;
+    const pointsMat = pointsMatRef.current;
+    const scene = sceneRef.current;
+    if (!wireMat || !pointsMat || !scene) return;
+
+    const accentColor = theme === 'dark' ? 0x00d4ff : 0x0077aa;
+    const fogColor = theme === 'dark' ? 0x091427 : 0xdaeef8;
+
+    wireMat.color.set(accentColor);
+    wireMat.opacity = theme === 'dark' ? 0.14 : 0.18;
+    wireMat.needsUpdate = true;
+
+    pointsMat.color.set(accentColor);
+    pointsMat.opacity = theme === 'dark' ? 0.32 : 0.38;
+    pointsMat.needsUpdate = true;
+
+    if (scene.fog instanceof THREE.Fog) {
+      scene.fog.color.set(fogColor);
+    }
   }, [theme]);
 
   return <div ref={containerRef} aria-hidden="true" className="absolute inset-0 pointer-events-none" />;

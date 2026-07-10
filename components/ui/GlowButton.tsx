@@ -11,9 +11,10 @@ interface GlowButtonProps {
   external?: boolean;
   type?: 'button' | 'submit';
   disabled?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   className?: string;
   style?: CSSProperties;
+  'aria-label'?: string;
 }
 
 export default function GlowButton({
@@ -27,26 +28,27 @@ export default function GlowButton({
   onClick,
   className = '',
   style,
+  'aria-label': ariaLabel,
 }: GlowButtonProps) {
   const cls = `btn-glow-${variant} inline-flex items-center gap-2 rounded-lg font-bold tracking-wider transition-all duration-200 ${className}`;
   const baseStyle: CSSProperties = { padding: '11px 28px', fontSize: '13px', letterSpacing: '0.08em', textDecoration: 'none', ...style };
 
   if (download && href)
-    return <a href={href} download className={cls} style={baseStyle}>{children}</a>;
+    return <a href={href} download aria-label={ariaLabel} className={cls} style={baseStyle}>{children}</a>;
 
   if (href && (external || href.startsWith('http')))
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={cls} style={baseStyle}>
+      <a href={href} target="_blank" rel="noopener noreferrer" aria-label={ariaLabel} className={cls} style={baseStyle}>
         {children}
         <span className="sr-only"> (opens in new tab)</span>
       </a>
     );
 
   if (href)
-    return <Link href={href} className={cls} style={baseStyle}>{children}</Link>;
+    return <Link href={href} aria-label={ariaLabel} className={cls} style={baseStyle}>{children}</Link>;
 
   return (
-    <button type={type} disabled={disabled} onClick={onClick} className={cls} style={baseStyle}>
+    <button type={type} disabled={disabled} onClick={onClick} aria-label={ariaLabel} className={cls} style={baseStyle}>
       {children}
     </button>
   );

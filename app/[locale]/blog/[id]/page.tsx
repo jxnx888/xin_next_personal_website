@@ -44,14 +44,7 @@ function BlogDetailContent({ id }: { id: string }) {
         const blogs = await getBlogData(locale, controller.signal);
         if (cancelled) return;
         const foundBlog = blogs.find((b) => b.id.toString() === id);
-        if (foundBlog) {
-          // Add referrerpolicy to all img tags to prevent referrer leaking
-          const fixedContent = foundBlog.content.replace(
-            /(<img\b(?![^>]*\breferrerpolicy)[^>]*)(\bsrc=)/gi,
-            '$1 referrerpolicy="no-referrer" $2'
-          );
-          setBlog({ ...foundBlog, content: fixedContent });
-        }
+        if (foundBlog) setBlog(foundBlog);
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') return;
         if (!cancelled) console.error('Error loading blog:', error);
