@@ -77,7 +77,11 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
   const handleMenuClick = (key: string, index: number) => {
     const el = document.getElementById(key.replace(/ /g, ''));
     if (el) {
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' });
+      const isMobile = viewportWidth < 1024;
+      const offset = isMobile
+        ? MOBILE_NAV + (mobileBarRef.current?.offsetHeight ?? 0) + 8
+        : 120;
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
       setActiveIndex(index);
     }
   };
