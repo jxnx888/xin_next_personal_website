@@ -1,24 +1,23 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
-import { TagCount } from '@/lib/types/blog';
+import type { TagCount } from '@/lib/types/blog';
 import SectionCard from '@/components/ui/SectionCard';
 
 interface BlogSidebarProps {
   tagCounts: TagCount;
   totalCount: number;
   variant: 'mobile' | 'desktop';
+  currentTag: string | null;
 }
 
-export default function BlogSidebar({ tagCounts, totalCount, variant }: BlogSidebarProps) {
+export default function BlogSidebar({ tagCounts, totalCount, variant, currentTag }: BlogSidebarProps) {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentTag = searchParams.get('tag');
 
   const goToTag = (tag: string) => {
     if (currentTag === tag) return;
@@ -29,7 +28,6 @@ export default function BlogSidebar({ tagCounts, totalCount, variant }: BlogSide
   const tagList = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 
   if (variant === 'desktop') {
-    // top = nav(80px) + 8px gap
     return (
       <div className="sticky top-[88px]">
         <SectionCard className="overflow-hidden">
@@ -59,7 +57,6 @@ export default function BlogSidebar({ tagCounts, totalCount, variant }: BlogSide
     );
   }
 
-  // Mobile dropdown — use item-level onClick for keyboard accessibility
   const menuItems = [
     { key: 'all', label: `${t('ALL_TAGS')} (${totalCount})`, onClick: clearTag },
     ...tagList.map(([tag, count]) => ({

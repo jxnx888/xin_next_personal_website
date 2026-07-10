@@ -1,122 +1,36 @@
-'use client';
+import { getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
+import { getServerProjectsData } from '@/lib/utils/serverData';
+import ProjectsPageClient from './ProjectsPageClient';
 
-import { useEffect, useState } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
-import ProjectCard from '@/components/projects/ProjectCard';
-import ScrollMenu from '@/components/projects/ScrollMenu';
-import PageBanner from '@/components/layout/PageBanner';
-import { ProjectsResponse, ProjectsData } from '@/lib/types/projects';
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'projects' });
+  const tg = await getTranslations({ locale });
+  return {
+    title: `${t('title')} | ${tg('MY_NAME')}`,
+    description: t('topInfo'),
+    alternates: { canonical: `/${locale}/projects` },
+    openGraph: { url: `/${locale}/projects` },
+  };
+}
 
-export default function ProjectsPage() {
-  const locale = useLocale();
-  const t = useTranslations('projects');
-  const tg = useTranslations();
-  const [projectsData, setProjectsData] = useState<ProjectsData | null>(null);
-  const [menuItems, setMenuItems] = useState<Record<string, string>>({});
-  const [loadError, setLoadError] = useState(false);
+export default async function ProjectsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const projectsData = getServerProjectsData(locale);
 
-  useEffect(() => {
-    setProjectsData(null);
-    setLoadError(false);
-    const controller = new AbortController();
-    const fetchProjects = async () => {
-      try {
-        const url = locale === 'zh' ? '/mock/projectsCN.json' : '/mock/projects.json';
-        const response = await fetch(url, { signal: controller.signal });
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data: ProjectsResponse = await response.json();
-        if (data.code === 200) {
-          setProjectsData(data.data);
-          const menu: Record<string, string> = {};
-          Object.entries(data.data).forEach(([key, value]) => { menu[key] = value.companySC; });
-          setMenuItems(menu);
-        } else {
-          setLoadError(true);
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name === 'AbortError') return;
-        console.error('Failed to load projects:', error);
-        setLoadError(true);
-      }
-    };
-    fetchProjects();
-    return () => controller.abort();
-  }, [locale]);
+  const menuItems: Record<string, string> = {};
+  Object.entries(projectsData).forEach(([key, career]) => {
+    menuItems[key] = career.companySC;
+  });
 
-  if (loadError) {
-    return (
-      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-        <PageBanner title={t('title')} subtitle={t('topInfo')} imageSrc="/image/banner2.png" />
-        <div className="flex items-center justify-center py-24">
-          <p className="text-[var(--text-muted)]">{tg('SOMETHING_WRONG')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!projectsData) {
-    return (
-      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-        <PageBanner title={t('title')} subtitle={t('topInfo')} imageSrc="/image/banner2.png" />
-        <div className="flex items-center justify-center py-24">
-          <div
-            className="w-8 h-8 rounded-full border-2 animate-spin"
-            style={{ borderColor: 'var(--accent-dim)', borderTopColor: 'var(--accent)' }}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
-      <PageBanner title={t('title')} subtitle={t('topInfo')} imageSrc="/image/banner2.png" />
-
-      {/* Projects Content */}
-      <div className="relative max-w-6xl mx-auto py-12 phone:py-8 projects-main">
-        <ScrollMenu menuItems={menuItems} />
-
-        <div className="max-w-5xl mx-auto px-4 pad:pr-40">
-          {Object.entries(projectsData).map(([key, career]) => (
-            <div key={key} id={key.replace(/ /g, '')} className="mb-16 phone:mb-12">
-              {/* Career Header */}
-              <div
-                className="mb-8 phone:mb-6 pb-6"
-                style={{ borderBottom: '1px solid var(--border-soft)' }}
-              >
-                <h2
-                  className="text-2xl phone:text-xl font-bold text-[var(--text)] mb-1"
-                  style={{ letterSpacing: '0.03em' }}
-                >
-                  {career.jobtitle}
-                </h2>
-                <h3 className="text-base text-[var(--accent)] mb-4 opacity-80">
-                  {career.companyName}
-                </h3>
-                <div className="text-[var(--text-muted)] text-sm">
-                  <p
-                    className="font-semibold mb-2 text-[var(--text)] text-xs tracking-widest uppercase"
-                  >
-                    {t('responsibilities')}
-                  </p>
-                  <ul className="space-y-1.5 ml-4 phone:ml-2">
-                    {career.responsibilities.map((resp, index) => (
-                      <li key={index} className="leading-relaxed flex gap-2">
-                        <span style={{ color: 'var(--accent)', opacity: 0.6 }}>›</span>
-                        <span>{resp}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {career.projects.map((project) => (
-                <ProjectCard key={project.title} project={project} />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  return <ProjectsPageClient projectsData={projectsData} menuItems={menuItems} />;
 }
