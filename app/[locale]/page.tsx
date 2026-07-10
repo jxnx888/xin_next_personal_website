@@ -30,16 +30,10 @@ export default function HomePage() {
   const featuredI18n = (t.raw('FEATURED_PROJECTS') as { title: string; desc: string }[]) ?? [];
   const featuredProjects = FEATURED_PROJECTS_STATIC.map((p, i) => ({ ...p, ...(featuredI18n[i] ?? { title: p.company, desc: '' }) }));
   const [mounted, setMounted] = useState(false);
-  const [isWide, setIsWide] = useState(false);
   const { theme } = useTheme();
 
   useEffect(() => {
-    const PHONE_MAX = 767;
     setMounted(true);
-    setIsWide(window.innerWidth > PHONE_MAX);
-    const onResize = () => setIsWide(window.innerWidth > PHONE_MAX);
-    window.addEventListener('resize', onResize, { passive: true });
-    return () => window.removeEventListener('resize', onResize);
   }, []);
 
   const words = t.raw('INTRODUCTION') as string[];
@@ -79,7 +73,7 @@ export default function HomePage() {
         }}
       >
         {/* Three.js wave mesh — only mounted on wide viewports */}
-        {mounted && isWide && <HeroWave theme={theme} />}
+        {mounted && <HeroWave theme={theme} />}
 
         <GridBackground />
 

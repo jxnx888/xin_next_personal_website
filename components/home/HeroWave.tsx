@@ -19,6 +19,7 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
 
     const w = container.clientWidth;
     const h = container.clientHeight;
+    const isMobile = w < 768;
 
     // ── Scene ──────────────────────────────────────────────
     const scene = new THREE.Scene();
@@ -34,12 +35,12 @@ export default function HeroWave({ theme }: { theme: 'dark' | 'light' }) {
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(w, h);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1 : 2));
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
 
     // ── Wave geometry (shared by mesh + points) ────────────
-    const geometry = new THREE.PlaneGeometry(200, 120, 72, 40);
+    const geometry = new THREE.PlaneGeometry(200, 120, isMobile ? 40 : 72, isMobile ? 24 : 40);
     const pos = geometry.attributes.position as THREE.BufferAttribute;
     const origX = new Float32Array(pos.count);
     const origY = new Float32Array(pos.count);
