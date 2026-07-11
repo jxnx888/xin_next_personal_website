@@ -77,14 +77,15 @@ export default function ContactPage() {
   const validation = (tc.raw('validation') as string[]) || [];
 
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
-  const [errors, setErrors]     = useState({ name: false, email: false, emailInvalid: false, phone: false, subject: false, message: false });
+  const [errors, setErrors]     = useState({ name: false, nameInvalid: false, email: false, emailInvalid: false, phone: false, phoneInvalid: false, subject: false, message: false });
   const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
-  const validateEmail = (email: string) =>
-    /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/.test(email);
+  const validateName  = (v: string) => /^[a-zA-Z一-龥\s]+$/.test(v);
+  const validateEmail = (v: string) => /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/.test(v);
+  const validatePhone = (v: string) => /^\+?[\d\s\-().]{6,20}$/.test(v);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -92,7 +93,9 @@ export default function ContactPage() {
     setErrors(prev => ({
       ...prev,
       [name]: false,
+      ...(name === 'name'  ? { nameInvalid: false } : {}),
       ...(name === 'email' ? { emailInvalid: false } : {}),
+      ...(name === 'phone' ? { phoneInvalid: false } : {}),
     }));
   };
 
@@ -100,9 +103,11 @@ export default function ContactPage() {
     e.preventDefault();
     const newErrors = {
       name:         !formData.name,
+      nameInvalid:  !!(formData.name  && !validateName(formData.name)),
       email:        !formData.email,
       emailInvalid: !!(formData.email && !validateEmail(formData.email)),
       phone:        !formData.phone,
+      phoneInvalid: !!(formData.phone && !validatePhone(formData.phone)),
       subject:      !formData.subject,
       message:      !formData.message,
     };
@@ -188,10 +193,10 @@ export default function ContactPage() {
 
             <form onSubmit={handleSubmit} className="space-y-3">
               {[
-                { name: 'name',    type: 'text',  placeholder: msg[0] ?? '', hasError: errors.name,    errMsg: validation[0] ?? '' },
-                { name: 'email',   type: 'email', placeholder: msg[1] ?? '', hasError: emailHasError,  errMsg: emailErrMsg ?? '' },
-                { name: 'phone',   type: 'tel',   placeholder: msg[2] ?? '', hasError: errors.phone,   errMsg: validation[3] ?? '' },
-                { name: 'subject', type: 'text',  placeholder: msg[3] ?? '', hasError: errors.subject, errMsg: validation[4] ?? '' },
+                { name: 'name',    type: 'text',  placeholder: msg[0] ?? '', hasError: errors.name || errors.nameInvalid,   errMsg: errors.name ? (validation[0] ?? '') : (validation[8] ?? '') },
+                { name: 'email',   type: 'email', placeholder: msg[1] ?? '', hasError: emailHasError,                           errMsg: emailErrMsg ?? '' },
+                { name: 'phone',   type: 'tel',   placeholder: msg[2] ?? '', hasError: errors.phone || errors.phoneInvalid,  errMsg: errors.phone ? (validation[3] ?? '') : (validation[9] ?? '') },
+                { name: 'subject', type: 'text',  placeholder: msg[3] ?? '', hasError: errors.subject,                          errMsg: validation[4] ?? '' },
               ].map((field) => (
                 <div key={field.name}>
                   <label htmlFor={field.name} className="sr-only">{field.placeholder}</label>
@@ -207,7 +212,7 @@ export default function ContactPage() {
                     className={INPUT_CLASS}
                   />
                   {field.hasError && errorOverlay(field.errMsg, `${field.name}-error`, () =>
-                    setErrors(e => ({ ...e, [field.name]: false, ...(field.name === 'email' ? { emailInvalid: false } : {}) }))
+                    setErrors(e => ({ ...e, [field.name]: false, ...(field.name === 'name' ? { nameInvalid: false } : {}), ...(field.name === 'email' ? { emailInvalid: false } : {}), ...(field.name === 'phone' ? { phoneInvalid: false } : {}) }))
                   )}
                 </div>
               ))}
