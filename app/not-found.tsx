@@ -5,13 +5,7 @@ export default function NotFound() {
   return (
     <html lang="en" suppressHydrationWarning>
       <body style={{ margin: 0, background: '#0d1117', color: '#e6edf3', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" }}>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=localStorage.getItem('theme');if(s==='light'){document.documentElement.classList.add('light');document.body.style.background='#f6f8fa';document.body.style.color='#1c2128';}}catch(e){}})();`,
-          }}
-        />
-
-        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 24px', position: 'relative', overflow: 'hidden' }}>
+<div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '0 24px', position: 'relative', overflow: 'hidden' }}>
           <GridBackground />
 
           <div style={{ position: 'relative' }}>

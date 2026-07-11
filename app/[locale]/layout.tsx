@@ -9,7 +9,6 @@ import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
-const antiFlashScript = `(function(){try{var s=localStorage.getItem('theme');if(s==='light'){document.documentElement.classList.add('light');}else if(!s&&!window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('light');}}catch(e){}})();`;
 
 export async function generateMetadata({
   params,
@@ -67,8 +66,7 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <script dangerouslySetInnerHTML={{ __html: antiFlashScript }} />
-        <NextIntlClientProvider messages={messages}>
+<NextIntlClientProvider messages={messages}>
           <ThemeProvider>
             <AntdRegistry>
               <AntdProvider locale={locale}>

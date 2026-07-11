@@ -8,30 +8,12 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { Menu, Drawer, Button } from 'antd';
 import { MenuOutlined } from '@ant-design/icons';
 import { menuData } from '@/lib/constants/menuData';
-import { useTheme } from '@/components/ThemeProvider';
-
-const SunIcon = () => (
-  <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="5"/>
-    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-  </svg>
-);
-
-const MoonIcon = () => (
-  <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-  </svg>
-);
 
 export default function Navigation() {
   const t = useTranslations();
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, toggle: toggleTheme } = useTheme();
 
   const [scrolled, setScrolled] = useState(false);
   const [hideNav, setHideNav] = useState(false);
@@ -71,7 +53,6 @@ export default function Navigation() {
   return (
     <>
       <a href="#main-content" className="skip-to-content">{t('SKIP_TO_CONTENT')}</a>
-      {/* scroll-hide only on desktop (pad+pc); phone/pad-v always visible */}
       <nav
         aria-label="Main navigation"
         className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ${
@@ -86,7 +67,6 @@ export default function Navigation() {
           borderBottom: '1px solid var(--border-soft)',
         }}
       >
-        {/* Default: desktop height + padding; phone/pad-v: compact */}
         <div className="h-[80px] phone:h-[56px] pad-v:h-[56px] max-w-[1200px] mx-auto flex items-center justify-between px-6 phone:px-4 pad-v:px-4">
 
           {/* Logo */}
@@ -98,11 +78,11 @@ export default function Navigation() {
               height={60}
               priority
               className="h-[60px] phone:h-[44px] pad-v:h-[44px] w-auto object-contain"
-              style={{ filter: theme === 'dark' ? 'brightness(0) invert(1)' : 'brightness(0)', opacity: 0.9 }}
+              style={{ filter: 'brightness(0) invert(1)', opacity: 0.9 }}
             />
           </Link>
 
-          {/* Desktop menu — default flex, hidden on phone + pad-v */}
+          {/* Desktop menu */}
           <div className="flex items-center gap-1 phone:hidden pad-v:hidden">
             {menuData.map((item) => (
               <Link
@@ -149,19 +129,9 @@ export default function Navigation() {
                 EN
               </button>
             </div>
-
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="ml-2 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 hover:scale-110"
-              style={{ border: '1px solid var(--border-input)', color: 'var(--text-muted)' }}
-              aria-label={theme === 'dark' ? t('NAV_LIGHT_MODE') : t('NAV_DARK_MODE')}
-            >
-              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-            </button>
           </div>
 
-          {/* Mobile hamburger — default hidden, shown on phone + pad-v */}
+          {/* Mobile hamburger */}
           <div className="hidden phone:flex pad-v:flex">
             <Button
               type="text"
@@ -200,7 +170,7 @@ export default function Navigation() {
 
         <div className="mt-6 pt-4" style={{ borderTop: '1px solid var(--border-soft)' }}>
           <div className="text-xs text-[var(--text-muted)] mb-3 tracking-widest uppercase">{t('NAV_LANGUAGE')}</div>
-          <div className="flex gap-4 mb-5">
+          <div className="flex gap-4">
             <button
               aria-label="Switch to Chinese"
               className={`bg-transparent border-0 p-0 cursor-pointer text-sm transition-colors ${locale === 'zh' ? 'text-[var(--accent)] font-bold' : 'text-[var(--text-muted)]'}`}
@@ -216,19 +186,6 @@ export default function Navigation() {
               English
             </button>
           </div>
-          <div className="text-xs text-[var(--text-muted)] mb-3 tracking-widest uppercase">{t('NAV_THEME')}</div>
-          <button
-            onClick={toggleTheme}
-            className="bg-transparent border-0 p-0 flex items-center gap-2 text-sm text-[var(--text-muted)] transition-colors"
-          >
-            <span
-              className="w-8 h-8 flex items-center justify-center rounded-full"
-              style={{ border: '1px solid var(--border-input)', color: 'var(--text-muted)' }}
-            >
-              {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-            </span>
-            {theme === 'dark' ? t('NAV_LIGHT_MODE') : t('NAV_DARK_MODE')}
-          </button>
         </div>
       </Drawer>
     </>

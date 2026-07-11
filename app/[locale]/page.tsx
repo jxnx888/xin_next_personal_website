@@ -4,7 +4,6 @@ import { useTranslations, useLocale } from 'next-intl';
 import { useTypewriter } from '@/lib/hooks/useTypewriter';
 import AnimatedName from '@/components/home/AnimatedName';
 import { useEffect, useState } from 'react';
-import { useTheme } from '@/components/ThemeProvider';
 import HeroWave from '@/components/home/HeroWave';
 import GlowButton from '@/components/ui/GlowButton';
 import SectionCard from '@/components/ui/SectionCard';
@@ -30,7 +29,6 @@ export default function HomePage() {
   const featuredI18n = (t.raw('FEATURED_PROJECTS') as { title: string; desc: string }[]) ?? [];
   const featuredProjects = FEATURED_PROJECTS_STATIC.map((p, i) => ({ ...p, ...(featuredI18n[i] ?? { title: p.company, desc: '' }) }));
   const [mounted, setMounted] = useState(false);
-  const { theme } = useTheme();
 
   useEffect(() => {
     setMounted(true);
@@ -73,7 +71,7 @@ export default function HomePage() {
         }}
       >
         {/* Three.js wave mesh — only mounted on wide viewports */}
-        {mounted && <HeroWave theme={theme} />}
+        {mounted && <HeroWave />}
 
         <GridBackground />
 
