@@ -99,6 +99,17 @@ export default function ContactPage() {
     }));
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    if (!value) return;
+    setErrors(prev => ({
+      ...prev,
+      ...(name === 'name'  ? { nameInvalid:  !validateName(value)  } : {}),
+      ...(name === 'email' ? { emailInvalid: !validateEmail(value) } : {}),
+      ...(name === 'phone' ? { phoneInvalid: !validatePhone(value) } : {}),
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors = {
@@ -206,6 +217,7 @@ export default function ContactPage() {
                     name={field.name}
                     value={formData[field.name as keyof typeof formData]}
                     onChange={handleInputChange}
+                    onBlur={handleBlur}
                     placeholder={field.placeholder}
                     aria-invalid={field.hasError || undefined}
                     aria-describedby={field.hasError ? `${field.name}-error` : undefined}
@@ -224,6 +236,7 @@ export default function ContactPage() {
                   name="message"
                   value={formData.message}
                   onChange={handleInputChange}
+                  onBlur={handleBlur}
                   placeholder={msg[4] ?? ''}
                   rows={4}
                   aria-invalid={errors.message || undefined}
