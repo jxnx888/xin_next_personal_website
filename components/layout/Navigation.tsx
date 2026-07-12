@@ -5,8 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Menu, Drawer, Button } from 'antd';
-import { MenuOutlined } from '@ant-design/icons';
+import { Menu, Drawer } from 'antd';
 import { menuData } from '@/lib/constants/menuData';
 
 export default function Navigation() {
@@ -19,6 +18,7 @@ export default function Navigation() {
   const [hideNav, setHideNav] = useState(false);
   const lastScrollYRef = useRef(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -35,6 +35,8 @@ export default function Navigation() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const localePrefix = useMemo(() => new RegExp(`^/${locale}`), [locale]);
 
@@ -133,19 +135,23 @@ export default function Navigation() {
 
           {/* Mobile hamburger */}
           <div className="hidden phone:flex pad-v:flex">
-            <Button
-              type="text"
+            <button
+              type="button"
               aria-label={t('NAV_OPEN_MENU')}
-              icon={<MenuOutlined style={{ color: 'var(--text-muted)', fontSize: '18px' }} />}
               onClick={() => setMobileMenuOpen(true)}
-            />
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '6px', lineHeight: 1 }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="var(--text-muted)" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
           </div>
 
         </div>
       </nav>
 
-      {/* Mobile Drawer */}
-      <Drawer
+      {/* Mobile Drawer — client-only to avoid AntD CSS-in-JS hydration mismatch */}
+      {mounted && <Drawer
         title={<span style={{ color: 'var(--text)', letterSpacing: '2px', fontWeight: 700 }}>XIN NING</span>}
         placement="right"
         onClose={() => setMobileMenuOpen(false)}
@@ -187,7 +193,7 @@ export default function Navigation() {
             </button>
           </div>
         </div>
-      </Drawer>
+      </Drawer>}
     </>
   );
 }

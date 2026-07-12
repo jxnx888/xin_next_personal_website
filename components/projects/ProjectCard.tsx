@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
+import Link from 'next/link';
 import { Project } from '@/lib/types/projects';
 import GlowButton from '@/components/ui/GlowButton';
 
@@ -12,6 +14,7 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ project }: ProjectCardProps) {
   const t = useTranslations('projects');
+  const locale = useLocale();
   const [showQr, setShowQr] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
@@ -94,6 +97,15 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
 
           <div className="flex flex-wrap gap-3">
+            {project.routeLink && (
+              <Link
+                href={`/${locale}${project.routeLink}`}
+                className="btn-glow-primary px-5 py-1.5 rounded-lg text-sm font-semibold transition-all duration-200"
+                style={{ display: 'inline-block' }}
+              >
+                Try It →
+              </Link>
+            )}
             {project.url && !project.storeUrlQr && (
               <GlowButton
                 href={project.url}
