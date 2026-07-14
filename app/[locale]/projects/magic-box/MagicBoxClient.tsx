@@ -125,7 +125,9 @@ export default function MagicBoxClient() {
   const curGeomRef      = useRef<THREE.BufferGeometry | null>(null);
   const curMatRef       = useRef<THREE.MeshLambertMaterial>(new THREE.MeshLambertMaterial({ color: 0xdddddd }));
   const stlFlagRef      = useRef(0);   // 0=basic geo, 1=STL
+  const curCodeRef      = useRef(0);   // current shape/stl code
   const shootedRef      = useRef(true); // true=select mode, false=place mode
+  const pendingTextRestoreRef = useRef<any[]>([]); // text objects pending font load
 
   // Sidebar drag state
   const dragItemRef     = useRef<DragItem | null>(null);
@@ -153,12 +155,18 @@ export default function MagicBoxClient() {
   const saveFlagRef     = useRef(false);
   const goHomeRef       = useRef(false);
   const saveNameRef     = useRef<HTMLInputElement>(null);
+  const toastTimerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── React UI state ──
   const [shapesOpen, setShapesOpen]       = useState(true);
   const [cartoonOpen, setCartoonOpen]     = useState(false);
   const [showSidebar, setShowSidebar]     = useState(true);
   const [isPortrait, setIsPortrait]       = useState(false);
+  const [showGuide, setShowGuide]         = useState(() =>
+    typeof window !== 'undefined'
+      ? localStorage.getItem('mb_guide_seen') !== '1'
+      : false
+  );
   const [dragItem, setDragItem]           = useState<DragItem | null>(null);
   const [dragPos, setDragPos]             = useState({ x: 0, y: 0 });
   const [showBottomBar, setShowBottomBar] = useState(false);
@@ -175,8 +183,11 @@ export default function MagicBoxClient() {
   const [textInput, setTextInput]         = useState('');
   const [showLoading, setShowLoading]     = useState(true);
   const [loadingPct, setLoadingPct]       = useState(0);
+  const [stlLoading, setStlLoading]       = useState(false);
+  const [toast, setToast]                 = useState('');
   const [activeSave, setActiveSave]       = useState(false);
   const [statusTxt, setStatusTxt]         = useState('Status: Move');
+  const [resetConfirm, setResetConfirm]   = useState(false);
 
   // ── Three.js init ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -292,7 +303,7 @@ export default function MagicBoxClient() {
     sceneRef.current = scene;
 
     // ── Renderer ──
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(el.clientWidth, el.clientHeight);
     renderer.shadowMap.enabled = true;
@@ -381,6 +392,7 @@ export default function MagicBoxClient() {
       if (tcMoveRef.current) addOpFromTransform();
       syncColor();
       if (focusedObjRef.current) (tc as any).object = focusedObjRef.current;
+      saveSceneToStorage();
     });
 
     // ── Render loop ──
@@ -399,9 +411,74 @@ export default function MagicBoxClient() {
     };
     window.addEventListener('resize', onResize, { passive: true });
 
-    // ── Pre-load font ──
+    // ── Pre-load font + restore text objects ──
     const fontLoader = new FontLoader();
-    fontLoader.load('/font/SimHei_Regular.json', (font) => { fontRef.current = font; });
+    fontLoader.load('/font/SimHei_Regular.json', (font) => {
+      fontRef.current = font;
+      for (const item of pendingTextRestoreRef.current) {
+        const word = item.text as string;
+        if (!word) continue;
+        const fs = word.length <= 2 ? 60 : word.length === 3 ? 50 : word.length === 4 ? 45
+          : word.length === 5 ? 40 : word.length === 6 ? 35 : word.length === 7 ? 30 : 20;
+        const geo = new TextGeometry(word, { font, size: fs, depth: 10, curveSegments: 22, bevelEnabled: false });
+        geo.computeBoundingBox(); geo.computeVertexNormals();
+        const xMid = -0.5 * (geo.boundingBox!.max.x - geo.boundingBox!.min.x);
+        geo.translate(xMid, -25, 0); geo.rotateX(-Math.PI / 2);
+        const mat = new THREE.MeshPhongMaterial({ color: item.color, flatShading: true });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.name = 'shapes';
+        mesh.userData = { module: 'text', geoCode: 222, text: word };
+        mesh.position.set(item.px, item.py, item.pz);
+        mesh.rotation.set(item.rx, item.ry, item.rz);
+        mesh.scale.set(item.sx, item.sy, item.sz);
+        mesh.receiveShadow = true; mesh.castShadow = true;
+        scene.add(mesh); objectsRef.current.push(mesh);
+      }
+      pendingTextRestoreRef.current = [];
+      if (objectsRef.current.length > 1) {
+        setShowBottomBar(true); setActiveSave(true); setUndoActive(true);
+      }
+    });
+
+    // ── Restore scene from localStorage ──
+    try {
+      const saved = JSON.parse(localStorage.getItem('mb_scene') || '[]') as any[];
+      for (const item of saved) {
+        if (item.module === 'shape') {
+          const geo = makeGeometry(item.geoCode);
+          const mat = new THREE.MeshLambertMaterial({ color: item.color });
+          const mesh = new THREE.Mesh(geo, mat);
+          mesh.name = 'shapes';
+          mesh.userData = { module: 'shape', geoCode: item.geoCode };
+          mesh.position.set(item.px, item.py, item.pz);
+          mesh.rotation.set(item.rx, item.ry, item.rz);
+          mesh.scale.set(item.sx, item.sy, item.sz);
+          mesh.receiveShadow = true; mesh.castShadow = true;
+          scene.add(mesh); objectsRef.current.push(mesh);
+        } else if (item.module === 'stl') {
+          const loader = new STLLoader();
+          loader.load(STL_FILES[item.geoCode] ?? STL_FILES[4], (geo) => {
+            if (!sceneRef.current) return;
+            const mat = new THREE.MeshLambertMaterial({ color: item.color });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.name = 'stl';
+            mesh.userData = { module: 'stl', geoCode: item.geoCode };
+            mesh.position.set(item.px, item.py, item.pz);
+            mesh.rotation.set(item.rx, item.ry, item.rz);
+            mesh.scale.set(item.sx, item.sy, item.sz);
+            mesh.receiveShadow = true; mesh.castShadow = true;
+            sceneRef.current.add(mesh); objectsRef.current.push(mesh);
+            setShowBottomBar(true); setActiveSave(true); setUndoActive(true);
+          });
+        } else if (item.module === 'text') {
+          pendingTextRestoreRef.current.push(item);
+        }
+      }
+      if (saved.some(i => i.module !== 'text') && saved.length > 0) {
+        setShowBottomBar(true); setActiveSave(true); setUndoActive(true);
+      }
+    } catch {}
+    shootedRef.current = true;
 
     // ── Loading bar ──
     let pct = 0;
@@ -420,46 +497,42 @@ export default function MagicBoxClient() {
     };
   }, []);
 
-  // ── Sidebar drag-to-place global listeners ────────────────────────────────
+  // ── Sidebar drag-to-place global listeners (mouse + touch) ──────────────
   useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      if (dragItemRef.current) setDragPos({ x: e.clientX, y: e.clientY });
-    };
-    const onUp = (e: MouseEvent) => {
-      const item = dragItemRef.current;
-      if (!item) return;
-      dragItemRef.current = null;
-      setDragItem(null);
-
-      // Only place if released over the canvas area and geometry is ready
+    const placeAt = (clientX: number, clientY: number) => {
       const el = containerRef.current;
-      if (!el || !sceneRef.current || !cameraRef.current || !curGeomRef.current) return;
+      if (!el || !sceneRef.current || !cameraRef.current) return;
+      if (!curGeomRef.current) {
+        setToast('Still loading, please try again');
+        if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = setTimeout(() => setToast(''), 2000);
+        return;
+      }
       const rect = el.getBoundingClientRect();
-      if (e.clientX < rect.left || e.clientX > rect.right ||
-          e.clientY < rect.top  || e.clientY > rect.bottom) return;
-
-      const ndcX = ((e.clientX - rect.left) / rect.width)  * 2 - 1;
-      const ndcY = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+      if (clientX < rect.left || clientX > rect.right ||
+          clientY < rect.top  || clientY > rect.bottom) return;
+      const ndcX = ((clientX - rect.left) / rect.width)  * 2 - 1;
+      const ndcY = -((clientY - rect.top)  / rect.height) * 2 + 1;
       const raycaster = new THREE.Raycaster();
       raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), cameraRef.current);
       const hits = raycaster.intersectObjects(objectsRef.current);
       if (!hits.length) return;
-
       const hit = hits[0];
       const mesh = new THREE.Mesh(curGeomRef.current!, curMatRef.current.clone());
       mesh.position.copy(hit.point).add(hit.face!.normal);
       if (stlFlagRef.current === 0) {
         mesh.position.divideScalar(SHAPE_SIZE).floor().multiplyScalar(SHAPE_SIZE).addScalar(SHAPE_SIZE / 2);
         mesh.name = 'shapes';
+        mesh.userData = { module: 'shape', geoCode: curCodeRef.current };
       } else {
         mesh.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
         mesh.name = 'stl';
+        mesh.userData = { module: 'stl', geoCode: curCodeRef.current };
       }
       mesh.receiveShadow = true;
       mesh.castShadow = true;
       sceneRef.current!.add(mesh);
       objectsRef.current.push(mesh);
-      // afterPlace equivalent (inline to avoid stale-closure issues)
       allOpsRef.current.push({
         uuid: mesh.uuid, position: mesh.position.clone(), rotation: mesh.rotation.clone(),
         quaternion: mesh.quaternion.clone(), scale: mesh.scale.clone(),
@@ -478,17 +551,27 @@ export default function MagicBoxClient() {
       shootedRef.current = true;
       curGeomRef.current = null;
       curMatRef.current = new THREE.MeshLambertMaterial({ color: 0xdddddd });
-      setShowBottomBar(true);
-      setActiveSave(true);
-      setUndoActive(true);
-      setColorControl(true);
-      setCurrentColor('#dddddd');
+      setShowBottomBar(true); setActiveSave(true); setUndoActive(true);
+      setColorControl(true); setCurrentColor('#dddddd');
+      saveSceneToStorage();
     };
+
+    // Mouse
+    const onMove    = (e: MouseEvent)     => { if (dragItemRef.current) setDragPos({ x: e.clientX, y: e.clientY }); };
+    const onUp      = (e: MouseEvent)     => { const i = dragItemRef.current; if (!i) return; dragItemRef.current = null; setDragItem(null); placeAt(e.clientX, e.clientY); };
+    // Touch
+    const onTMove   = (e: TouchEvent)     => { if (!dragItemRef.current) return; const t = e.touches[0]; setDragPos({ x: t.clientX, y: t.clientY }); };
+    const onTEnd    = (e: TouchEvent)     => { const i = dragItemRef.current; if (!i) return; dragItemRef.current = null; setDragItem(null); const t = e.changedTouches[0]; placeAt(t.clientX, t.clientY); };
+
     window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
+    window.addEventListener('mouseup',   onUp);
+    window.addEventListener('touchmove', onTMove, { passive: true });
+    window.addEventListener('touchend',  onTEnd);
     return () => {
       window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
+      window.removeEventListener('mouseup',   onUp);
+      window.removeEventListener('touchmove', onTMove);
+      window.removeEventListener('touchend',  onTEnd);
     };
   }, []); // refs are always current — no deps needed
 
@@ -498,14 +581,53 @@ export default function MagicBoxClient() {
     const check = (e: MediaQueryListEvent | MediaQueryList) => setIsPortrait(e.matches);
     check(mq);
     mq.addEventListener('change', check);
-    // Try to lock landscape on supporting browsers (Android Chrome, Samsung)
     try { (screen.orientation as any).lock('landscape').catch(() => {}); } catch {}
     return () => mq.removeEventListener('change', check);
   }, []);
 
+  // ── Keyboard shortcuts ────────────────────────────────────────────────────
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        if (focusedObjRef.current) handleDelete();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ── Helpers (read refs, update state) ─────────────────────────────────────
+  const showToast = (msg: string) => {
+    setToast(msg);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToast(''), 2000);
+  };
+
+  const saveSceneToStorage = () => {
+    const items = objectsRef.current.filter(o => o.name === 'shapes' || o.name === 'stl');
+    const data = items.map(o => {
+      const mat = (o as THREE.Mesh).material as THREE.MeshLambertMaterial;
+      return {
+        module:  o.userData.module  as string,
+        geoCode: o.userData.geoCode as number,
+        text:    o.userData.text    as string | undefined,
+        px: o.position.x, py: o.position.y, pz: o.position.z,
+        rx: o.rotation.x, ry: o.rotation.y, rz: o.rotation.z,
+        sx: o.scale.x,    sy: o.scale.y,    sz: o.scale.z,
+        color: '#' + mat.color.getHexString(),
+      };
+    });
+    try { localStorage.setItem('mb_scene', JSON.stringify(data)); } catch {}
+  };
+
   const syncBottomBar = () => setShowBottomBar(objectsRef.current.length > 1);
-  const syncSave      = () => setActiveSave(objectsRef.current.length > 1);
+  const syncSave      = () => {
+    setActiveSave(objectsRef.current.length > 1);
+    saveSceneToStorage();
+  };
   const syncUndo      = () => setUndoActive(allOpsRef.current.length > 0);
   const syncRedo      = () => setRedoActive(redoOpsRef.current.length > 0);
 
@@ -558,6 +680,8 @@ export default function MagicBoxClient() {
     syncBottomBar();
     syncSave();
     setUndoActive(true);
+    const objCount = objectsRef.current.filter(o => o.name === 'shapes' || o.name === 'stl').length;
+    if (objCount >= 50) showToast('Scene is getting large — consider removing some objects');
     const mat = mesh.material as THREE.MeshLambertMaterial;
     setCurrentColor('#' + mat.color.getHexString());
     setColorControl(true);
@@ -589,9 +713,11 @@ export default function MagicBoxClient() {
         if (stlFlagRef.current === 0) {
           mesh.position.divideScalar(SHAPE_SIZE).floor().multiplyScalar(SHAPE_SIZE).addScalar(SHAPE_SIZE / 2);
           mesh.name = 'shapes';
+          mesh.userData = { module: 'shape', geoCode: curCodeRef.current };
         } else {
           mesh.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25);
           mesh.name = 'stl';
+          mesh.userData = { module: 'stl', geoCode: curCodeRef.current };
         }
         mesh.receiveShadow = true;
         mesh.castShadow = true;
@@ -635,29 +761,33 @@ export default function MagicBoxClient() {
     if (tc?.object) focusedObjRef.current = tc.object;
   };
 
-  // ── Sidebar: drag or click a module ──────────────────────────────────────
-  const handleSidebarMouseDown = (e: React.MouseEvent, item: DragItem) => {
-    e.preventDefault();
-    if (item.module === 'text') {
-      setShowTextModal(true);
-      curGeomRef.current = null;
-      return;
-    }
-    if (item.module === 'shape') {
-      curGeomRef.current = makeGeometry(item.code);
-      stlFlagRef.current = 0;
-    } else {
-      loadSTL(item.code); // async — sets curGeomRef when done
-    }
+  // ── Sidebar: drag or tap a module ────────────────────────────────────────
+  const startSidebarDrag = (item: DragItem, clientX: number, clientY: number) => {
+    if (item.module === 'text') { setShowTextModal(true); curGeomRef.current = null; return; }
+    curCodeRef.current = item.code;
+    if (item.module === 'shape') { curGeomRef.current = makeGeometry(item.code); stlFlagRef.current = 0; }
+    else { loadSTL(item.code); }
     shootedRef.current = false;
     dragItemRef.current = item;
     setDragItem(item);
-    setDragPos({ x: e.clientX, y: e.clientY });
+    setDragPos({ x: clientX, y: clientY });
+  };
+
+  const handleSidebarMouseDown = (e: React.MouseEvent, item: DragItem) => {
+    e.preventDefault();
+    startSidebarDrag(item, e.clientX, e.clientY);
+  };
+
+  const handleSidebarTouchStart = (e: React.TouchEvent, item: DragItem) => {
+    e.preventDefault(); // prevent scroll while dragging
+    const t = e.touches[0];
+    startSidebarDrag(item, t.clientX, t.clientY);
   };
 
   const loadSTL = (code: number) => {
     const file = STL_FILES[code] ?? STL_FILES[4];
-    setShowLoading(true);
+    curCodeRef.current = code;
+    setStlLoading(true);
     const loader = new STLLoader();
     loader.load(
       file,
@@ -665,10 +795,10 @@ export default function MagicBoxClient() {
         curGeomRef.current = geo;
         stlFlagRef.current = 1;
         shootedRef.current = false;
-        setShowLoading(false);
+        setStlLoading(false);
       },
-      (xhr) => { if (xhr.total > 0) setLoadingPct((xhr.loaded / xhr.total) * 100); },
-      () => setShowLoading(false)
+      undefined,
+      () => { setStlLoading(false); showToast('Failed to load model'); },
     );
   };
 
@@ -687,6 +817,7 @@ export default function MagicBoxClient() {
     const mat = new THREE.MeshPhongMaterial({ color: 0xdddddd, flatShading: true });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.name = 'shapes';
+    mesh.userData = { module: 'text', geoCode: 222, text: word };
     mesh.receiveShadow = true;
     mesh.castShadow = true;
     sceneRef.current!.add(mesh);
@@ -788,6 +919,41 @@ export default function MagicBoxClient() {
     syncBottomBar();
   };
 
+  const handleDuplicate = () => {
+    const tc = tcRef.current!;
+    if (!tc.object || !sceneRef.current) return;
+    const src = tc.object as THREE.Mesh;
+    const clonedGeo  = src.geometry.clone();
+    const clonedMat  = (src.material as THREE.MeshLambertMaterial).clone();
+    const mesh = new THREE.Mesh(clonedGeo, clonedMat);
+    mesh.position.copy(src.position).add(new THREE.Vector3(SHAPE_SIZE, 0, 0));
+    mesh.rotation.copy(src.rotation);
+    mesh.scale.copy(src.scale);
+    mesh.name = src.name;
+    mesh.userData = { ...src.userData };
+    mesh.receiveShadow = true;
+    mesh.castShadow = true;
+    sceneRef.current.add(mesh);
+    objectsRef.current.push(mesh);
+    allOpsRef.current.push({
+      uuid: mesh.uuid, position: mesh.position.clone(), rotation: mesh.rotation.clone(),
+      quaternion: mesh.quaternion.clone(), scale: mesh.scale.clone(),
+      color: clonedMat.color.clone(), operation: 'add', mesh,
+    });
+    if (!objHistRef.current[mesh.uuid]) objHistRef.current[mesh.uuid] = [];
+    objHistRef.current[mesh.uuid].push({
+      uuid: mesh.uuid, position: mesh.position.clone(), rotation: mesh.rotation.clone(),
+      quaternion: mesh.quaternion.clone(), scale: mesh.scale.clone(),
+      color: clonedMat.color.clone(), mesh, time: Date.now(), index: 0,
+    });
+    tc.detach();
+    tc.attach(mesh);
+    focusedObjRef.current = mesh;
+    setActiveSave(true);
+    setUndoActive(true);
+    showToast('Duplicated!');
+  };
+
   const handleChangeColor = (hex: string) => {
     const tc = tcRef.current;
     if (!tc?.object) return;
@@ -845,6 +1011,60 @@ export default function MagicBoxClient() {
     if (goHomeRef.current) { goHomeRef.current = false; router.push(`/${locale}/projects`); }
   };
 
+  // ── Screenshot ────────────────────────────────────────────────────────────
+  const handleReset = () => {
+    if (!resetConfirm) { setResetConfirm(true); setTimeout(() => setResetConfirm(false), 3000); return; }
+    setResetConfirm(false);
+    const scene = sceneRef.current;
+    if (!scene) return;
+    const keep = new Set([planeRef.current, gridRef.current, ground0Ref.current, ground1Ref.current]);
+    objectsRef.current.filter(o => !keep.has(o as any)).forEach(o => scene.remove(o));
+    objectsRef.current = objectsRef.current.filter(o => keep.has(o as any));
+    allOpsRef.current = []; redoOpsRef.current = [];
+    objHistRef.current = {}; redoHistRef.current = {};
+    tcRef.current?.detach();
+    focusedObjRef.current = null;
+    try { localStorage.removeItem('mb_scene'); } catch {}
+    setShowBottomBar(false); setActiveSave(false);
+    setUndoActive(false); setRedoActive(false);
+    setColorControl(false); shootedRef.current = true;
+    showToast('Scene cleared');
+  };
+
+  const handleCameraReset = () => {
+    const camera = cameraRef.current;
+    const orbit  = orbitRef.current;
+    if (!camera || !orbit) return;
+    camera.position.set(170, 145, 255);
+    camera.lookAt(0, 0, 0);
+    orbit.target.set(0, 0, 0);
+    orbit.update();
+  };
+
+  const handleScreenshot = () => {
+    const renderer = rendererRef.current;
+    const scene    = sceneRef.current;
+    const camera   = cameraRef.current;
+    const tc       = tcRef.current;
+    if (!renderer || !scene || !camera) return;
+
+    // Hide gizmo for a clean shot
+    const helper = tc?.getHelper();
+    if (helper) helper.visible = false;
+    renderer.render(scene, camera);
+
+    const url = renderer.domElement.toDataURL('image/png');
+    if (helper) helper.visible = true;
+
+    const a = document.createElement('a');
+    const d = new Date();
+    const p = (n: number) => String(n).padStart(2, '0');
+    a.download = `magicbox_${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}.png`;
+    a.href = url;
+    a.click();
+    showToast('Screenshot saved!');
+  };
+
   // ── Leave / back button ───────────────────────────────────────────────────
   const handleLeave = () => {
     if (objectsRef.current.length > 1 && !saveFlagRef.current) {
@@ -898,12 +1118,33 @@ export default function MagicBoxClient() {
   return (
     <div style={styles.root}>
 
+      {/* ── Toast ── */}
+      {toast && (
+        <div style={styles.toast}>{toast}</div>
+      )}
+
       {/* ── Portrait overlay ── */}
       {isPortrait && (
         <div style={styles.portraitOverlay}>
           <div style={{ fontSize: 56, marginBottom: 16 }}>📱➡️</div>
           <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Please rotate your device</div>
           <div style={{ fontSize: 13, opacity: 0.75 }}>Magic Box works best in landscape mode</div>
+        </div>
+      )}
+
+      {/* ── Onboarding modal ── */}
+      {showGuide && !showLoading && (
+        <div style={styles.guideBg} onClick={() => { localStorage.setItem('mb_guide_seen', '1'); setShowGuide(false); }}>
+          <div style={styles.guideCard}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🧱</div>
+            <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 10 }}>Welcome to Magic Box!</div>
+            <div style={{ fontSize: 13, lineHeight: 1.9, opacity: 0.9 }}>
+              👉 Pick a shape from the <strong>right panel</strong><br />
+              🖱️ <strong>Drag</strong> or <strong>tap</strong> it into the workspace<br />
+              ✨ Select any object to move, scale or rotate
+            </div>
+            <div style={{ marginTop: 18, fontSize: 11, opacity: 0.55 }}>Tap anywhere to close</div>
+          </div>
         </div>
       )}
 
@@ -932,10 +1173,6 @@ export default function MagicBoxClient() {
       {/* ── Right sidebar ── */}
       {showSidebar && (
         <div style={styles.sidebar}>
-          {/* Hint */}
-          <div style={styles.sidebarHint}>
-            <span>🖱️ Drag or Click</span>
-          </div>
           {/* Basic Models section */}
           <button style={styles.collapseHeader} onClick={() => setShapesOpen(v => !v)}>
             <span>Basic</span>
@@ -946,6 +1183,7 @@ export default function MagicBoxClient() {
               key={item.title}
               style={styles.moduleItem}
               onMouseDown={(e) => handleSidebarMouseDown(e, item)}
+              onTouchStart={(e) => handleSidebarTouchStart(e, item)}
             >
               <div style={styles.moduleImgWrap}>
                 <img
@@ -968,6 +1206,7 @@ export default function MagicBoxClient() {
               key={item.title}
               style={styles.moduleItem}
               onMouseDown={(e) => handleSidebarMouseDown(e, { module: 'stl', code: item.code, title: item.title })}
+              onTouchStart={(e) => handleSidebarTouchStart(e, { module: 'stl', code: item.code, title: item.title })}
             >
               <div style={styles.moduleImgWrap}>
                 <img
@@ -986,15 +1225,22 @@ export default function MagicBoxClient() {
       {/* ── Top-left buttons ── */}
       <div style={styles.topBtns}>
         <button style={styles.topBtn} onClick={handleLeave}>
-          <span style={styles.topBtnIcon}>⬅</span>
+          <svg style={styles.topBtnSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
           <span style={styles.topBtnLabel}>Back</span>
         </button>
         <button
           style={{ ...styles.topBtn, opacity: activeSave ? 1 : 0.35, pointerEvents: activeSave ? 'auto' : 'none' }}
           onClick={() => activeSave && setShowSaveModal(true)}
         >
-          <span style={styles.topBtnIcon}>💾</span>
+          <svg style={styles.topBtnSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           <span style={styles.topBtnLabel}>Save</span>
+        </button>
+        <button
+          style={{ ...styles.topBtn, opacity: activeSave ? 1 : 0.35, pointerEvents: activeSave ? 'auto' : 'none' }}
+          onClick={handleScreenshot}
+        >
+          <svg style={styles.topBtnSvg} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span style={styles.topBtnLabel}>Photo</span>
         </button>
       </div>
 
@@ -1009,6 +1255,7 @@ export default function MagicBoxClient() {
           <div style={styles.toolbar}>
             <ToolBtn active={undoActive} onClick={handleUndo}   icon="↺" label="Undo" />
             <ToolBtn active={redoActive} onClick={handleRedo}   icon="↻" label="Redo" />
+            <ToolBtn active={true} onClick={handleCameraReset} icon="⌂" label="View" />
             <ToolBtn active={true} onClick={() => handleChangeMode('scale')}
               icon="⊞" label="Scale" highlight={controlMode === 'scale'} />
             <ToolBtn active={true} onClick={() => handleChangeMode('translate')}
@@ -1026,7 +1273,15 @@ export default function MagicBoxClient() {
                 </div>
               )}
             </div>
+            <ToolBtn active={!!focusedObjRef.current || colorControl} onClick={handleDuplicate} icon="⧉" label="Copy" />
             <ToolBtn active={true} onClick={handleDelete} icon="✕" label="Delete" />
+            <ToolBtn
+              active={activeSave}
+              onClick={handleReset}
+              icon="🗑"
+              label={resetConfirm ? 'Sure?' : 'Clear'}
+              danger={resetConfirm}
+            />
             {/* Color */}
             {colorControl && (
               <div style={{ position: 'relative' }}>
@@ -1164,6 +1419,15 @@ export default function MagicBoxClient() {
             draggable={false}
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'right center' }}
           />
+          {stlLoading && (
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: 'rgba(0,0,0,.45)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={styles.spinner} />
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -1171,28 +1435,56 @@ export default function MagicBoxClient() {
 }
 
 // ─── Small toolbar button component ──────────────────────────────────────────
-function ToolBtn({ active, onClick, icon, label, highlight }: {
-  active: boolean; onClick: () => void; icon: string; label: string; highlight?: boolean;
+function ToolBtn({ active, onClick, icon, label, highlight, danger }: {
+  active: boolean; onClick: () => void; icon: string; label: string; highlight?: boolean; danger?: boolean;
 }) {
+  const iconColor  = danger ? '#ff6b6b' : highlight ? '#2B9CFF' : '#79c2de';
+  const labelColor = danger ? '#ff9090' : highlight ? '#FFB93F' : '#79c2de';
+  const bg         = danger ? 'rgba(255,80,80,0.18)' : highlight ? 'rgba(121,194,222,0.25)' : 'transparent';
   return (
     <button
       style={{
         ...styles.toolBtn,
         opacity: active ? 1 : 0.35,
         pointerEvents: active ? 'auto' : 'none',
-        background: highlight ? 'rgba(121,194,222,0.25)' : 'transparent',
-        borderRadius: 8,
+        background: bg, borderRadius: 8,
       }}
       onClick={onClick}
     >
-      <span style={{ ...styles.toolIcon, color: highlight ? '#2B9CFF' : '#79c2de' }}>{icon}</span>
-      <div style={{ ...styles.toolLabel, color: highlight ? '#FFB93F' : '#79c2de' }}>{label}</div>
+      <span style={{ ...styles.toolIcon, color: iconColor }}>{icon}</span>
+      <div style={{ ...styles.toolLabel, color: labelColor }}>{label}</div>
     </button>
   );
 }
 
 // ─── Inline styles ────────────────────────────────────────────────────────────
 const styles: Record<string, React.CSSProperties> = {
+  guideBg: {
+    position: 'absolute', inset: 0, zIndex: 50,
+    background: 'rgba(0,0,0,0.5)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    cursor: 'pointer',
+  },
+  guideCard: {
+    background: '#fff',
+    borderRadius: 18, padding: '32px 40px',
+    color: '#2a4a7f', textAlign: 'center' as const,
+    boxShadow: '0 8px 40px rgba(0,0,0,0.35)',
+    pointerEvents: 'none' as const,
+    maxWidth: 320,
+  },
+  toast: {
+    position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+    background: 'rgba(0,0,0,.72)', color: '#fff', borderRadius: 20,
+    padding: '8px 18px', fontSize: 13, zIndex: 300, whiteSpace: 'nowrap' as const,
+    pointerEvents: 'none' as const,
+  },
+  spinner: {
+    width: 22, height: 22, borderRadius: '50%',
+    border: '3px solid rgba(255,255,255,.3)',
+    borderTopColor: '#fff',
+    animation: 'spin 0.7s linear infinite',
+  },
   portraitOverlay: {
     position: 'fixed', inset: 0, zIndex: 200,
     background: 'linear-gradient(to bottom, #4E92EF, #2a6fd4)',
@@ -1205,7 +1497,7 @@ const styles: Record<string, React.CSSProperties> = {
     overflow: 'hidden',
   },
   canvas: {
-    position: 'absolute', inset: 0, cursor: 'crosshair',
+    position: 'absolute', inset: 0, cursor: 'crosshair', touchAction: 'none',
   },
   arrow: {
     position: 'absolute', top: '50%', transform: 'translateY(-50%)',
@@ -1252,6 +1544,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#fff', gap: 2,
   },
   topBtnIcon: { fontSize: 28, lineHeight: 1 },
+  topBtnSvg: { width: 26, height: 26, display: 'block', color: '#fff', filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.35))' },
   topBtnLabel: { fontSize: 10, color: '#fff', textShadow: '0 1px 2px rgba(0,0,0,.4)' },
   status: {
     position: 'absolute', top: 90, left: 10, zIndex: 8,
