@@ -94,13 +94,13 @@
           "title": "Magic Box - App for Children",
           "img": "/image/projects/magicBox.jpg",
           "desc": "An educational 3D builder app for kids built with Three.js — children can assemble 3D models using geometric and cartoon shapes.",
-          "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5, Android, iOS",
-          "url": "/threeDimensionalBuilder",
+          "tags": "Three.js, Next.js, React, TypeScript",
+          "routeLink": "/projects/magic-box",
           "storeUrlQr": {
             "ios": "/image/qr/magicboxQR.png",
             "android": ""
           },
-          "code": 3
+          "code": 0
         },
         {
           "title": "Luggage Decal Splatter",

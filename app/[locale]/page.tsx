@@ -19,7 +19,7 @@ const TECH_MARQUEE_ROW2 = Array(8).fill(TECH_ROW2).flat();
 const FEATURED_PROJECTS_STATIC = [
   { company: 'LCI Education',  img: '/image/projects/lci.jpg',       tags: ['Next.js', 'TypeScript', 'React', 'i18n'],            url: 'https://www.lcieducation.com/' },
   { company: 'Great Wall Motor', img: '/image/projects/greatWall.jpg', tags: ['React Hooks', 'Vue.js', 'JavaScript', 'CSS3'],       url: 'https://www.gwm.co.th/en/' },
-  { company: 'Kai Rong',       img: '/image/projects/magicBox.jpg',  tags: ['Three.js', 'JavaScript', 'iOS', 'Android'],          url: null },
+  { company: 'Kai Rong',       img: '/image/projects/magicBox.jpg',  tags: ['Three.js', 'Next.js', 'React', 'TypeScript'],        url: null, routeLink: '/projects/magic-box' },
 ] as const;
 
 export default function HomePage() {
@@ -379,6 +379,14 @@ export default function HomePage() {
                         <line x1="10" y1="14" x2="21" y2="3" />
                       </svg>
                       {tp('visitSite')}
+                    </GlowButton>
+                  ) : ('routeLink' in proj && proj.routeLink) ? (
+                    <GlowButton
+                      href={`/${locale}${proj.routeLink}`}
+                      className="w-fit"
+                      style={{ padding: '5px 12px', fontSize: '11px' }}
+                    >
+                      Try It →
                     </GlowButton>
                   ) : (
                     <GlowButton
