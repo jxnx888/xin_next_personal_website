@@ -380,9 +380,9 @@ export default function HomePage() {
                       </svg>
                       {tp('visitSite')}
                     </GlowButton>
-                  ) : (proj as any).routeLink ? (
+                  ) : ('routeLink' in proj && proj.routeLink) ? (
                     <GlowButton
-                      href={`/${locale}${(proj as any).routeLink}`}
+                      href={`/${locale}${proj.routeLink}`}
                       className="w-fit"
                       style={{ padding: '5px 12px', fontSize: '11px' }}
                     >

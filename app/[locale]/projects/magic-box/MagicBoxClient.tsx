@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
@@ -238,14 +239,6 @@ export default function MagicBoxClient() {
         if (!redoHistRef.current[e.uuid]) redoHistRef.current[e.uuid] = [];
         redoHistRef.current[e.uuid].push({ ...e, time: now });
       }
-    };
-
-    const applyOp = (op: any) => {
-      op.mesh.position.copy(op.position);
-      op.mesh.rotation.copy(op.rotation);
-      op.mesh.quaternion.copy(op.quaternion);
-      op.mesh.scale.copy(op.scale);
-      (op.mesh.material as THREE.MeshLambertMaterial).color.copy(op.color);
     };
 
     const addOpFromTransform = () => {
