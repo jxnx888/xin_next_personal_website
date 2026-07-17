@@ -1,6 +1,6 @@
 {
   "HOME": "Home",
-  "PROJECTS": "Portfolio",
+  "PROJECTS": "Projects",
   "ABOUT_ME": "About Me",
   "CONTACT": "Contact",
   "BLOG": "Blog",
@@ -56,7 +56,6 @@
     "responsibilities": "Responsibilities",
     "topInfo": "The following are some of my main work experience and corresponding projects, showcasing my technical skills and contributions.",
     "visitSite": "Visit Website",
-    "viewCode": "View Code",
     "downloadApp": "Download App",
     "techLabel": "Tech"
   },

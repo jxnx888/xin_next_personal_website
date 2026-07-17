@@ -152,18 +152,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 )}
               </div>
             )}*/}
-            {project.code > 0 && (
-              <a
-                href={project.codeUrl || 'https://github.com/jxnx888'}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${t('viewCode')} — ${project.title}`}
-                className="px-5 py-1.5 rounded-lg text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)] transition-colors duration-200"
-                style={{ background: 'var(--bg)', border: '1px solid var(--border-input)' }}
-              >
-                {t('viewCode')}
-              </a>
-            )}
           </div>
         </div>
       </div>

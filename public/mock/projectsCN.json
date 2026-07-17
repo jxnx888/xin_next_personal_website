@@ -20,8 +20,7 @@
           "img": "/image/projects/lci.jpg",
           "desc": "LCI Education 官方多语言网站，LCI Education 是一家拥有23所院校、业务遍及5大洲的国际教育集团。",
           "tags": "前端开发, JavaScript, TypeScript, 响应式设计, CMS 集成, 国际化",
-          "url": "https://www.lcieducation.com/",
-          "code": 0
+          "url": "https://www.lcieducation.com/"
         }
       ]
     },
@@ -46,8 +45,7 @@
           "img": "/image/projects/greatWall.jpg",
           "desc": "长城汽车泰国官方线上售车平台 — 基于 React 构建的全响应式电商网站。",
           "tags": "React Hooks, Vue.js, JavaScript, CSS3, HTML5",
-          "url": "https://www.gwm.co.th/en/",
-          "code": 0
+          "url": "https://www.gwm.co.th/en/"
         }
       ]
     },
@@ -71,24 +69,21 @@
           "img": "/image/projects/import.jpg",
           "desc": "面向小企业的 B2B 跨境电商平台，涵盖服装、电子、珠宝、运动、家居等品类。",
           "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
-          "url": "https://www.import-express.com/",
-          "code": 0
+          "url": "https://www.import-express.com/"
         },
         {
           "title": "Kids Charming - Ecommerce",
           "img": "/image/projects/kids.jpg",
           "desc": "专注儿童品类的中国批发平台，连接国际买家与国内供应商。",
           "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
-          "url": "https://www.kidscharming.com/",
-          "code": 1
+          "url": "https://www.kidscharming.com/"
         },
         {
           "title": "Pet Store - Ecommerce",
           "img": "/image/projects/pet.jpg",
           "desc": "宠物用品中国批发平台，连接国际买家与国内厂商。",
           "tags": "JavaScript, jQuery, CSS3, HTML5, JSP, Thymeleaf",
-          "url": "https://www.petstoreinc.com/",
-          "code": 2
+          "url": "https://www.petstoreinc.com/"
         },
         {
           "title": "Magic Box - 儿童3D搭建 App",
@@ -99,16 +94,14 @@
           "storeUrlQr": {
             "ios": "/image/qr/magicboxQR.png",
             "android": ""
-          },
-          "code": 0
+          }
         },
         {
           "title": "Luggage Decal Splatter",
           "img": "/image/projects/luggage.jpg",
           "desc": "Three.js 行李箱涂鸦定制 Web App，用户可挑选或上传图片涂鸦于行李，实时调整大小、角度与位置。",
           "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5",
-          "routeLink": "/projects/decal_splatter",
-          "code": 4
+          "routeLink": "/projects/decal_splatter"
         }
       ]
     },
@@ -129,8 +122,7 @@
           "title": "微信 H5 — 病毒式测试营销",
           "img": "/image/projects/mice.jpg",
           "desc": "微信 H5 裂变营销活动，用户通过填写或选择信息获取个性化测试结果，并通过二维码分享引流。",
-          "tags": "Vue.js, JavaScript, jQuery, CSS3, HTML5",
-          "code": 5
+          "tags": "Vue.js, JavaScript, jQuery, CSS3, HTML5"
         }
       ]
     }
