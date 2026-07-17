@@ -1,69 +1,59 @@
-# Xin Ning Personal Website - Next.js Version
+# Xin Ning — Personal Website
 
-This is a modern personal website built with Next.js 15, TypeScript, and Tailwind CSS. Migrated from Vue.js.
+Personal portfolio site built with Next.js 15, TypeScript, and Three.js. Bilingual (EN / ZH), dark-only design.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Library**: Ant Design
-- **State Management**: Zustand
-- **Internationalization**: next-intl (English & Chinese)
-- **Maps**: Mapbox GL
-- **Video Player**: Video.js
-- **Animations**: Fireworks.js, custom animations
+| | |
+|---|---|
+| Framework | Next.js 15 (App Router) |
+| Language | TypeScript 5 |
+| Styling | Tailwind CSS + CSS custom properties |
+| i18n | next-intl (en / zh) |
+| 3D | Three.js 0.185 |
+| UI | Ant Design 5 |
+| State | Zustand 5 |
+| Analytics | Vercel Analytics |
+
+## Pages
+
+| Route | Description |
+|---|---|
+| `/` | Home — hero, skills, featured projects |
+| `/projects` | Portfolio — career timeline + project cards |
+| `/projects/magic-box` | Magic Box — interactive 3D builder |
+| `/projects/decal_splatter` | Luggage Decal Splatter — Three.js decal customizer |
+| `/blog` | Blog list with tag filtering |
+| `/blog/[id]` | Blog post detail |
+| `/resume` | PDF resume viewer |
+| `/contact` | Contact form |
 
 ## Getting Started
 
-1. Install dependencies:
 ```bash
 npm install
-```
-
-2. Run the development server:
-```bash
 npm run dev
+# → http://localhost:3000
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Scripts
+
+```bash
+npm run dev      # Development server
+npm run build    # Production build
+npm run start    # Production server
+npm run lint     # ESLint
+```
 
 ## Project Structure
 
 ```
-├── app/                    # Next.js App Router pages
-│   ├── [locale]/          # Internationalized routes
-│   │   ├── layout.tsx     # Locale-specific layout
-│   │   └── page.tsx       # Home page
-│   └── globals.css        # Global styles
-├── components/            # React components
-├── lib/                   # Utility functions
-├── messages/              # i18n translations
-│   ├── en.json           # English translations
-│   └── zh.json           # Chinese translations
-├── public/               # Static assets
-├── store/                # Zustand stores
-└── i18n.ts              # i18n configuration
+app/[locale]/          # All routes (SSR server components + client wrappers)
+components/            # Layout, UI, page-specific components
+lib/                   # Types, utils, hooks, constants
+messages/              # i18n strings — en.json / zh.json (UI strings only)
+public/mock/           # Content data — projects, blog posts (simulated CMS)
+public/models/         # Three.js STL models
+public/image/          # Static images and decal stickers
+store/                 # Zustand global store
 ```
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-
-## Features
-
-- ✅ Responsive design (mobile, tablet, desktop)
-- ✅ Internationalization (EN/CN)
-- ✅ Dark mode support
-- ✅ Blog system
-- ✅ Project showcase
-- ✅ Skills visualization
-- ✅ Contact form with map
-- ✅ Animations and effects
-
-## Migration Notes
-
-This project was migrated from Vue.js 2 to Next.js 15. Three.js 3D components were intentionally excluded from this migration.
