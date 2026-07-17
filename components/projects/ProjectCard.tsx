@@ -115,7 +115,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                 {t('visitSite')}
               </GlowButton>
             )}
-            {project.storeUrlQr && (project.storeUrlQr.ios || project.storeUrlQr.android) && (
+         {/*   {project.storeUrlQr && (project.storeUrlQr.ios || project.storeUrlQr.android) && (
               <div className="relative" ref={qrRef}>
                 <button
                   onClick={() => setShowQr(v => !v)}
@@ -151,7 +151,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   </div>
                 )}
               </div>
-            )}
+            )}*/}
             {project.code > 0 && (
               <a
                 href={project.codeUrl || 'https://github.com/jxnx888'}

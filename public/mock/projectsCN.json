@@ -107,6 +107,7 @@
           "img": "/image/projects/luggage.jpg",
           "desc": "Three.js 行李箱涂鸦定制 Web App，用户可挑选或上传图片涂鸦于行李，实时调整大小、角度与位置。",
           "tags": "Three.js, JavaScript, jQuery, CSS3, HTML5",
+          "routeLink": "/projects/decal_splatter",
           "code": 4
         }
       ]
