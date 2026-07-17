@@ -9,6 +9,7 @@ Personal portfolio site. Next.js 15, TypeScript, Three.js, next-intl (en/zh), da
 - Active branch: `develop`. Features go here, PR into `master`.
 - Commit style: `feat(scope):`, `fix(scope):`, `chore:` — concise, imperative.
 - Always push `develop` before creating a PR.
+- **Before every commit: run `/pre-commit` (ESLint check).** Fix all Errors before committing. Warnings in Three.js client files (`*Client.tsx`, `*Loader.tsx`) for `<img>` are acceptable — suppress with `eslint-disable-next-line` if needed.
 
 ---
 

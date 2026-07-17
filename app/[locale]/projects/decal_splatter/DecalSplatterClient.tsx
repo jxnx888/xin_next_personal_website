@@ -89,7 +89,7 @@ export default function DecalSplatterClient() {
 
     let decals: THREE.Mesh[] = [];
     let removedDecals: THREE.Mesh[] = [];
-    let decalsPR: Record<string, { position: THREE.Vector3; orientation: THREE.Euler; baseZ: number; size: number; uuid: string }> = {};
+    const decalsPR: Record<string, { position: THREE.Vector3; orientation: THREE.Euler; baseZ: number; size: number; uuid: string }> = {};
     // baseZ: the Euler-z from _tempObj.lookAt(), before user rotation is added.
     // Stored separately so onMenuRotRef can replace only the user-rotation part.
     let lookAtOrientationZ = 0;
