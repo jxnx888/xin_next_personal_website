@@ -1,28 +1,44 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useRef, useState, useMemo } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Pagination } from 'antd';
 import BlogCard from '@/components/blog/BlogCard';
 import BlogSidebar from '@/components/blog/BlogSidebar';
 import PageBanner from '@/components/layout/PageBanner';
+import { filterBlogsByTag } from '@/lib/utils/blogUtils';
 import type { BlogPost, TagCount } from '@/lib/types/blog';
 
 interface BlogPageClientProps {
   blogs: BlogPost[];
   tagCounts: TagCount;
   totalCount: number;
-  currentTag: string | null;
 }
 
-export default function BlogPageClient({ blogs, tagCounts, totalCount, currentTag }: BlogPageClientProps) {
+export default function BlogPageClient({ blogs, tagCounts, totalCount }: BlogPageClientProps) {
   const t = useTranslations();
+  const locale = useLocale();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  // Initialize from URL so refresh / shared links restore the selected tag
+  const [currentTag, setCurrentTag] = useState<string | null>(searchParams.get('tag'));
+  const filteredBlogs = useMemo(() => filterBlogsByTag(blogs, currentTag ?? undefined), [blogs, currentTag]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const sizeChangingRef = useRef(false);
 
   const startIndex = (currentPage - 1) * pageSize;
-  const currentBlogs = blogs.slice(startIndex, startIndex + pageSize);
+  const currentBlogs = filteredBlogs.slice(startIndex, startIndex + pageSize);
+
+  const handleTagChange = (tag: string | null) => {
+    // Update state immediately (instant filter, no lag)
+    setCurrentTag(tag);
+    setCurrentPage(1);
+    // Sync URL in the background — server component is ISR so no server round-trip
+    const url = tag ? `/${locale}/blog?tag=${encodeURIComponent(tag)}` : `/${locale}/blog`;
+    router.replace(url, { scroll: false });
+  };
 
   const handlePageChange = (page: number) => {
     if (sizeChangingRef.current) {
@@ -55,10 +71,10 @@ export default function BlogPageClient({ blogs, tagCounts, totalCount, currentTa
               <div className="flex items-baseline gap-3">
                 <h2 className="text-2xl font-bold text-[var(--text)]">{t('ARTICLES')}</h2>
                 {currentTag && <span className="text-[var(--text-muted)] text-base">#{currentTag}</span>}
-                <span className="text-[var(--text-dim)] text-sm">({blogs.length})</span>
+                <span className="text-[var(--text-dim)] text-sm">({filteredBlogs.length})</span>
               </div>
               <div className="hidden phone:block pad-v:block">
-                <BlogSidebar tagCounts={tagCounts} totalCount={totalCount} variant="mobile" currentTag={currentTag} />
+                <BlogSidebar tagCounts={tagCounts} totalCount={totalCount} variant="mobile" currentTag={currentTag} onTagChange={handleTagChange} />
               </div>
             </div>
 
@@ -76,12 +92,12 @@ export default function BlogPageClient({ blogs, tagCounts, totalCount, currentTa
               </div>
             )}
 
-            {blogs.length > pageSize && (
+            {filteredBlogs.length > pageSize && (
               <div className="mt-8 flex justify-center">
                 <Pagination
                   current={currentPage}
                   pageSize={pageSize}
-                  total={blogs.length}
+                  total={filteredBlogs.length}
                   onChange={handlePageChange}
                   onShowSizeChange={handleSizeChange}
                   pageSizeOptions={[5, 10, 20, 40]}
@@ -95,7 +111,7 @@ export default function BlogPageClient({ blogs, tagCounts, totalCount, currentTa
 
           {/* Desktop sidebar */}
           <div className="w-56 shrink-0 phone:hidden pad-v:hidden">
-            <BlogSidebar tagCounts={tagCounts} totalCount={totalCount} variant="desktop" currentTag={currentTag} />
+            <BlogSidebar tagCounts={tagCounts} totalCount={totalCount} variant="desktop" currentTag={currentTag} onTagChange={handleTagChange} />
           </div>
 
         </div>

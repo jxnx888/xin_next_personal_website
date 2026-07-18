@@ -1,7 +1,6 @@
 'use client';
 
-import { useLocale, useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import type { TagCount } from '@/lib/types/blog';
@@ -12,19 +11,11 @@ interface BlogSidebarProps {
   totalCount: number;
   variant: 'mobile' | 'desktop';
   currentTag: string | null;
+  onTagChange: (tag: string | null) => void;
 }
 
-export default function BlogSidebar({ tagCounts, totalCount, variant, currentTag }: BlogSidebarProps) {
+export default function BlogSidebar({ tagCounts, totalCount, variant, currentTag, onTagChange }: BlogSidebarProps) {
   const t = useTranslations();
-  const locale = useLocale();
-  const router = useRouter();
-
-  const goToTag = (tag: string) => {
-    if (currentTag === tag) return;
-    router.push(`/${locale}/blog?tag=${encodeURIComponent(tag)}`);
-  };
-  const clearTag = () => router.push(`/${locale}/blog`);
-
   const tagList = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]);
 
   if (variant === 'desktop') {
@@ -38,7 +29,7 @@ export default function BlogSidebar({ tagCounts, totalCount, variant, currentTag
             {t('MY_TAGS')}
           </div>
           <div className="p-3 space-y-1">
-            <button type="button" className={`tag-item ${!currentTag ? 'tag-active' : ''}`} onClick={clearTag}>
+            <button type="button" className={`tag-item ${!currentTag ? 'tag-active' : ''}`} onClick={() => onTagChange(null)}>
               {t('ALL_TAGS')} <span className="opacity-60 text-xs">({totalCount})</span>
             </button>
             {tagList.map(([tag, count]) => (
@@ -46,7 +37,7 @@ export default function BlogSidebar({ tagCounts, totalCount, variant, currentTag
                 type="button"
                 key={tag}
                 className={`tag-item ${currentTag === tag ? 'tag-active' : ''}`}
-                onClick={() => goToTag(tag)}
+                onClick={() => onTagChange(tag)}
               >
                 {tag} <span className="opacity-60 text-xs">({count})</span>
               </button>
@@ -58,11 +49,11 @@ export default function BlogSidebar({ tagCounts, totalCount, variant, currentTag
   }
 
   const menuItems = [
-    { key: 'all', label: `${t('ALL_TAGS')} (${totalCount})`, onClick: clearTag },
+    { key: 'all', label: `${t('ALL_TAGS')} (${totalCount})`, onClick: () => onTagChange(null) },
     ...tagList.map(([tag, count]) => ({
       key: tag,
       label: `${tag} (${count})`,
-      onClick: () => goToTag(tag),
+      onClick: () => onTagChange(tag),
     })),
   ];
 

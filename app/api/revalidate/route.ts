@@ -1,3 +1,22 @@
+/**
+ * On-demand ISR revalidation endpoint.
+ *
+ * Requires ?secret=<REVALIDATE_SECRET> on every request.
+ *
+ * Usage
+ * -----
+ * Revalidate everything (all pages):
+ *   GET /api/revalidate?secret=xxx&type=all
+ *
+ * Revalidate blog list only (both locales):
+ *   GET /api/revalidate?secret=xxx
+ *
+ * Revalidate one post + its blog list (both locales):
+ *   GET /api/revalidate?secret=xxx&slug=<notion-page-id>
+ *
+ * Supports POST as well for webhook integrations.
+ */
+
 import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -23,8 +42,7 @@ function revalidateBlog(slug?: string) {
 }
 
 function revalidateAll() {
-  // Revalidates every page in the application
-  revalidatePath('/', 'layout');
+  revalidatePath('/', 'layout'); // purges every page in the app
   return { revalidated: true, type: 'all' };
 }
 
@@ -40,12 +58,12 @@ async function handle(request: NextRequest) {
   return NextResponse.json(result);
 }
 
-// POST — intended for Notion webhooks / CI scripts
+// POST — for webhook integrations (e.g. triggered by a CI script after publishing)
 export async function POST(request: NextRequest) {
   return handle(request);
 }
 
-// GET — convenient for manual browser testing
+// GET — for quick manual revalidation from the browser
 export async function GET(request: NextRequest) {
   return handle(request);
 }
