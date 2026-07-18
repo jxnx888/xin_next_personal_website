@@ -1,7 +1,9 @@
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
-import { getServerBlogData } from '@/lib/utils/serverData';
+import { getServerBlogBySlug } from '@/lib/utils/serverData';
+
+export const revalidate = 2592000; // 30 days
 import BlogDetailClient from './BlogDetailClient';
 
 export async function generateMetadata({
@@ -10,8 +12,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; id: string }>;
 }): Promise<Metadata> {
   const { locale, id } = await params;
-  const blogs = getServerBlogData(locale);
-  const blog = blogs.find((b) => b.id.toString() === id);
+  const blog = await getServerBlogBySlug(id, locale);
   if (!blog) return {};
   const t = await getTranslations({ locale });
   return {
@@ -32,8 +33,7 @@ export default async function BlogDetailPage({
   const { locale, id } = await params;
   const { from } = await searchParams;
 
-  const blogs = getServerBlogData(locale);
-  const blog = blogs.find((b) => b.id.toString() === id);
+  const blog = await getServerBlogBySlug(id, locale);
   if (!blog) notFound();
 
   return <BlogDetailClient blog={blog} locale={locale} fromTag={from ?? null} />;

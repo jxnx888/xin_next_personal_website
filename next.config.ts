@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
       // dev mode uses eval() for source maps — blocked without 'unsafe-eval'
       `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: blob: https://img2023.cnblogs.com https://img2022.cnblogs.com https://common.cnblogs.com",
+      "img-src 'self' data: blob: https://img2023.cnblogs.com https://img2022.cnblogs.com https://common.cnblogs.com https://*.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com",
       "font-src 'self'",
       "connect-src 'self'",
       "frame-ancestors 'none'",
