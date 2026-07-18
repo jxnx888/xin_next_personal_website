@@ -1,5 +1,5 @@
 export interface BlogPost {
-  id: number;
+  id: string; // slug for Notion posts, stringified number for JSON fallback
   title: string;
   time: string;
   type: string[]; // Array of tags
