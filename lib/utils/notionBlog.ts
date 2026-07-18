@@ -1,8 +1,20 @@
 import { Client } from '@notionhq/client';
 import { NotionToMarkdown } from 'notion-to-md';
 import { marked } from 'marked';
+import hljs from 'highlight.js/lib/common';
 import type { BlogPost } from '@/lib/types/blog';
 import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+
+// Configure marked to syntax-highlight fenced code blocks via highlight.js
+marked.use({
+  renderer: {
+    code({ text, lang }: { text: string; lang?: string }) {
+      const validLang = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
+      const highlighted = hljs.highlight(text, { language: validLang }).value;
+      return `<pre><code class="hljs language-${validLang}">${highlighted}</code></pre>`;
+    },
+  },
+});
 
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 const n2m = new NotionToMarkdown({ notionClient: notion });

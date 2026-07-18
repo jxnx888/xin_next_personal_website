@@ -356,6 +356,12 @@ input::placeholder, textarea::placeholder { color: var(--text-dim); opacity: 1; 
   color: var(--text);
   padding: 0;
 }
+/* Let pre block provide background/padding; hljs provides only token colors */
+.blog-content .hljs {
+  background: transparent;
+  padding: 0;
+  font-size: 0.875em;
+}
 .blog-content img {
   max-width: 100%;
   height: auto;
