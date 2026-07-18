@@ -118,15 +118,38 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, 
   const readTime = getReadTime(blog.content, locale);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Client-side syntax highlighting — runs after HTML is injected into DOM.
-  // Catches any code blocks the server-side marked renderer may have missed.
+  // Syntax highlighting + copy buttons — run together after content mounts.
   useEffect(() => {
     const div = contentRef.current;
     if (!div) return;
+
+    // Syntax highlighting
     const blocks = div.querySelectorAll<HTMLElement>('pre code');
-    if (!blocks.length) return;
-    import('highlight.js/lib/common').then(({ default: hljs }) => {
-      blocks.forEach((block) => hljs.highlightElement(block));
+    if (blocks.length) {
+      import('highlight.js/lib/common').then(({ default: hljs }) => {
+        blocks.forEach((block) => hljs.highlightElement(block));
+      });
+    }
+
+    // Copy buttons — one per <pre>, skips pre blocks that already have one
+    div.querySelectorAll<HTMLElement>('pre').forEach((pre) => {
+      if (pre.querySelector('.copy-code-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'copy-code-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.addEventListener('click', () => {
+        const text = pre.querySelector('code')?.textContent ?? '';
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+      pre.appendChild(btn);
     });
   }, [blog.content]);
 
