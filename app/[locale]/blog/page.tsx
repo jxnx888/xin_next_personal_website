@@ -15,8 +15,11 @@ export async function generateMetadata({
   const t = await getTranslations({ locale });
   return {
     title: `${t('BLOG')} | ${t('MY_NAME')}`,
-    description: t('META_DESCRIPTION'),
-    alternates: { canonical: `/${locale}/blog` },
+    description: t('BLOG_META_DESCRIPTION'),
+    alternates: {
+      canonical: `/${locale}/blog`,
+      languages: { 'x-default': '/en/blog', en: '/en/blog', zh: '/zh/blog' },
+    },
     openGraph: { url: `/${locale}/blog` },
   };
 }

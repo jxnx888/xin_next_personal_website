@@ -11,9 +11,12 @@ const MagicBoxClient = dynamic(() => import('./MagicBoxClient'), {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'rgba(79,147,240,.7)',
+      background: 'var(--bg)',
     }}>
-      <img src="/image/3dBuilder/loading.gif" alt="Loading" style={{ width: 64, height: 64 }} />
+      <div
+        className="animate-spin"
+        style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid rgba(0,212,255,0.15)', borderTopColor: '#00d4ff' }}
+      />
     </div>
   ),
 });

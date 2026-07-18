@@ -14,7 +14,10 @@ export async function generateMetadata({
   return {
     title: `${t('title')} | ${tg('MY_NAME')}`,
     description: t('topInfo'),
-    alternates: { canonical: `/${locale}/projects` },
+    alternates: {
+      canonical: `/${locale}/projects`,
+      languages: { 'x-default': '/en/projects', en: '/en/projects', zh: '/zh/projects' },
+    },
     openGraph: { url: `/${locale}/projects` },
   };
 }

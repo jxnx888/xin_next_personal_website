@@ -11,9 +11,12 @@ const DecalSplatterClient = dynamic(() => import('./DecalSplatterClient'), {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#cce0ff',
+      background: 'var(--bg)',
     }}>
-      <img src="/image/decals/loading.gif" alt="Loading" style={{ width: 64, height: 64 }} />
+      <div
+        className="animate-spin"
+        style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid rgba(0,212,255,0.15)', borderTopColor: '#00d4ff' }}
+      />
     </div>
   ),
 });

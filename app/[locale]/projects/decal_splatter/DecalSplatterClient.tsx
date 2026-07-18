@@ -754,6 +754,7 @@ export default function DecalSplatterClient() {
                 onClick={() => handleSelectDecal(url)}
                 title={url}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={url} alt="" style={S.decalImg} draggable={false} />
               </button>
             ))
@@ -767,6 +768,7 @@ export default function DecalSplatterClient() {
         onClick={() => setSidebarOpen(v => !v)}
         aria-label="Toggle sidebar"
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/image/decals/showmore.png"
           alt=""
@@ -865,7 +867,7 @@ export default function DecalSplatterClient() {
       {/* ── Loading overlay ── */}
       {showLoading && (
         <div style={S.loading}>
-          <img src="/image/decals/loading.gif" alt="loading" style={{ width: 64, height: 64 }} />
+          <div className="animate-spin" style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid rgba(0,212,255,0.15)', borderTopColor: '#00d4ff', marginBottom: 12 }} />
           <p style={{ color: '#555', marginTop: 12, fontFamily: 'Monospace', fontSize: 14 }}>
             {t('loading')}
           </p>

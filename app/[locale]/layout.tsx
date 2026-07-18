@@ -36,9 +36,8 @@ export async function generateMetadata({
       description,
       images: ['/image/banner1.png'],
     },
-    alternates: {
-      languages: { 'x-default': '/en', en: '/en', zh: '/zh' },
-    },
+    // Each page sets its own alternates.languages in generateMetadata
+    // to avoid emitting the same wrong hreflang on every route.
   };
 }
 
