@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import type { BlogPost } from '@/lib/types/blog';
+import type { TocHeading } from '@/lib/types/blog';
 import { getReadTime } from '@/lib/utils/blogUtils';
 import PageBanner from '@/components/layout/PageBanner';
 import SectionCard from '@/components/ui/SectionCard';
@@ -14,7 +16,71 @@ interface BlogDetailClientProps {
   locale: string;
   fromTag: string | null;
   relatedPosts: BlogPost[];
+  headings: TocHeading[];
 }
+
+// ── Table of Contents ─────────────────────────────────────────
+
+function TocList({ headings }: { headings: TocHeading[] }) {
+  const t = useTranslations();
+  const [activeId, setActiveId] = useState<string>('');
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) setActiveId(visible[0].target.id);
+      },
+      // Top edge: 88px nav offset; bottom edge: only the upper 35% of viewport counts
+      { rootMargin: '-88px 0px -65% 0px', threshold: 0 }
+    );
+    headings.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [headings]);
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const el = document.getElementById(id);
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top, behavior: 'smooth' });
+    setActiveId(id);
+  };
+
+  return (
+    <SectionCard className="overflow-hidden">
+      <div
+        className="px-5 py-3 text-xs font-semibold tracking-widest text-[var(--text-muted)] uppercase"
+        style={{ borderBottom: '1px solid var(--border-soft)' }}
+      >
+        {t('TABLE_OF_CONTENTS')}
+      </div>
+      <nav className="p-3 space-y-0.5">
+        {headings.map(({ id, text, level }) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            onClick={(e) => handleClick(e, id)}
+            className={[
+              'block rounded-lg text-sm leading-snug transition-colors duration-150 py-1.5',
+              level === 3 ? 'pl-6 pr-3 text-xs' : 'px-3',
+              activeId === id
+                ? 'text-[var(--accent)] bg-[var(--bg)]'
+                : 'text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--bg)]',
+            ].join(' ')}
+          >
+            {text}
+          </a>
+        ))}
+      </nav>
+    </SectionCard>
+  );
+}
+
+// ── Related posts ─────────────────────────────────────────────
 
 function RelatedPostList({ posts, locale }: { posts: BlogPost[]; locale: string }) {
   const t = useTranslations();
@@ -42,15 +108,74 @@ function RelatedPostList({ posts, locale }: { posts: BlogPost[]; locale: string 
   );
 }
 
-export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts }: BlogDetailClientProps) {
+// ── Main component ────────────────────────────────────────────
+
+export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, headings }: BlogDetailClientProps) {
   const t = useTranslations();
   const backHref = fromTag
     ? `/${locale}/blog?tag=${encodeURIComponent(fromTag)}`
     : `/${locale}/blog`;
   const readTime = getReadTime(blog.content, locale);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [readProgress, setReadProgress] = useState(0);
+
+  // Reading progress bar — tracks how far the user has scrolled the page
+  const updateProgress = useCallback(() => {
+    const el = document.documentElement;
+    const total = el.scrollHeight - el.clientHeight;
+    setReadProgress(total > 0 ? Math.min(100, (el.scrollTop / total) * 100) : 0);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    return () => window.removeEventListener('scroll', updateProgress);
+  }, [updateProgress]);
+
+  // Syntax highlighting + copy buttons — run together after content mounts.
+  useEffect(() => {
+    const div = contentRef.current;
+    if (!div) return;
+
+    // Syntax highlighting
+    const blocks = div.querySelectorAll<HTMLElement>('pre code');
+    if (blocks.length) {
+      import('highlight.js/lib/common').then(({ default: hljs }) => {
+        blocks.forEach((block) => hljs.highlightElement(block));
+      });
+    }
+
+    // Copy buttons — one per <pre>, skips pre blocks that already have one
+    div.querySelectorAll<HTMLElement>('pre').forEach((pre) => {
+      if (pre.querySelector('.copy-code-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'copy-code-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.addEventListener('click', () => {
+        const text = pre.querySelector('code')?.textContent ?? '';
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+      pre.appendChild(btn);
+    });
+  }, [blog.content]);
+
+  const hasSidebar = headings.length > 0 || relatedPosts.length > 0;
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      {/* Reading progress bar — fixed at very top, above nav */}
+      <div
+        className="fixed top-0 left-0 h-[3px] z-[9999] transition-none pointer-events-none"
+        style={{ width: `${readProgress}%`, background: 'var(--accent)', boxShadow: '0 0 8px var(--accent)' }}
+      />
+
       <PageBanner title={t('BLOG')} imageSrc="/image/banner3.png" subtitle={blog.title} titleAs="p" />
 
       <div className="max-w-7xl mx-auto px-4 py-8">
@@ -87,23 +212,26 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts }
               </div>
 
               <div
+                ref={contentRef}
                 className="p-8 phone:p-5 blog-content"
                 dangerouslySetInnerHTML={{ __html: blog.content }}
               />
             </SectionCard>
 
-            {/* Related posts — mobile only (below article) */}
-            {relatedPosts.length > 0 && (
-              <div className="mt-6 hidden phone:block pad-v:block">
-                <RelatedPostList posts={relatedPosts} locale={locale} />
+            {/* Mobile: TOC + related posts below article */}
+            {hasSidebar && (
+              <div className="mt-6 hidden phone:block pad-v:block space-y-4">
+                {headings.length > 0 && <TocList headings={headings} />}
+                {relatedPosts.length > 0 && <RelatedPostList posts={relatedPosts} locale={locale} />}
               </div>
             )}
           </div>
 
-          {/* Sidebar — desktop only */}
-          {relatedPosts.length > 0 && (
-            <div className="w-56 shrink-0 sticky top-[88px] phone:hidden pad-v:hidden">
-              <RelatedPostList posts={relatedPosts} locale={locale} />
+          {/* Sidebar — desktop only, scrollable if taller than viewport */}
+          {hasSidebar && (
+            <div className="w-60 shrink-0 sticky top-[88px] max-h-[calc(100vh-108px)] overflow-y-auto phone:hidden pad-v:hidden space-y-4 scrollbar-thin">
+              {headings.length > 0 && <TocList headings={headings} />}
+              {relatedPosts.length > 0 && <RelatedPostList posts={relatedPosts} locale={locale} />}
             </div>
           )}
 

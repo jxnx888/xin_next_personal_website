@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getServerBlogBySlug, getServerBlogData } from '@/lib/utils/serverData';
+import { extractHeadings } from '@/lib/utils/blogUtils';
 
 export const revalidate = 2592000; // 30 days
 import BlogDetailClient from './BlogDetailClient';
@@ -15,11 +16,27 @@ export async function generateMetadata({
   const blog = await getServerBlogBySlug(id, locale);
   if (!blog) return {};
   const t = await getTranslations({ locale });
+  const ogImage = `/${locale}/blog/${id}/opengraph-image`;
   return {
     title: `${blog.title} | ${t('MY_NAME')}`,
     description: blog.abstract,
-    alternates: { canonical: `/${locale}/blog/${id}` },
-    openGraph: { url: `/${locale}/blog/${id}`, title: blog.title, description: blog.abstract },
+    alternates: {
+      canonical: `/${locale}/blog/${id}`,
+      languages: { 'x-default': `/en/blog/${id}`, en: `/en/blog/${id}`, zh: `/zh/blog/${id}` },
+    },
+    openGraph: {
+      url: `/${locale}/blog/${id}`,
+      title: blog.title,
+      description: blog.abstract,
+      type: 'article',
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: blog.title,
+      description: blog.abstract,
+      images: [ogImage],
+    },
   };
 }
 
@@ -39,9 +56,34 @@ export default async function BlogDetailPage({
   ]);
   if (!blog) notFound();
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://xin-ning.com';
+  const blogPostingSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: blog.title,
+    description: blog.abstract,
+    url: `${siteUrl}/${locale}/blog/${id}`,
+    inLanguage: locale === 'zh' ? 'zh-CN' : 'en-US',
+    keywords: blog.type.join(', '),
+    author: {
+      '@type': 'Person',
+      name: 'Xin Ning',
+      url: `${siteUrl}/${locale}`,
+    },
+  };
+
   // Posts sharing at least one tag, fallback to most recent
   const related = allBlogs.filter(b => b.id !== blog.id && b.type.some(t => blog.type.includes(t)));
   const sidebarPosts = (related.length > 0 ? related : allBlogs.filter(b => b.id !== blog.id)).slice(0, 5);
+  const headings = extractHeadings(blog.content);
 
-  return <BlogDetailClient blog={blog} locale={locale} fromTag={from ?? null} relatedPosts={sidebarPosts} />;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
+      <BlogDetailClient blog={blog} locale={locale} fromTag={from ?? null} relatedPosts={sidebarPosts} headings={headings} />
+    </>
+  );
 }

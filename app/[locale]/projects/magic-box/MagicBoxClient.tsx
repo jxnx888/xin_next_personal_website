@@ -1156,6 +1156,7 @@ export default function MagicBoxClient() {
         onClick={toggleSidebar}
         aria-label="Toggle sidebar"
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/image/3dBuilder/arrow.png"
           alt=""
@@ -1179,6 +1180,7 @@ export default function MagicBoxClient() {
               onTouchStart={(e) => handleSidebarTouchStart(e, item)}
             >
               <div style={styles.moduleImgWrap}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`/image/3dBuilder/3dPrinting/sprint_${item.title}.png`}
                   alt={item.name}
@@ -1202,6 +1204,7 @@ export default function MagicBoxClient() {
               onTouchStart={(e) => handleSidebarTouchStart(e, { module: 'stl', code: item.code, title: item.title })}
             >
               <div style={styles.moduleImgWrap}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`/image/3dBuilder/3dPrinting/sprint_${item.title}.png`}
                   alt={item.name}
@@ -1388,7 +1391,7 @@ export default function MagicBoxClient() {
       {/* ── Loading overlay ── */}
       {showLoading && (
         <div style={styles.loading}>
-          <img src="/image/3dBuilder/loading.gif" alt="Loading" style={{ width: 64, height: 64 }} />
+          <div className="animate-spin" style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid rgba(0,212,255,0.15)', borderTopColor: '#00d4ff', marginBottom: 16 }} />
           <div style={styles.progressTrack}>
             <div style={{ ...styles.progressBar, width: `${loadingPct}%` }} />
           </div>
@@ -1406,6 +1409,7 @@ export default function MagicBoxClient() {
           filter: 'drop-shadow(0 4px 10px rgba(0,0,0,.45))',
           userSelect: 'none',
         }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={`/image/3dBuilder/3dPrinting/sprint_${dragItem.title}.png`}
             alt=""
