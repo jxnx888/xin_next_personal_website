@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
-import { getServerBlogBySlug } from '@/lib/utils/serverData';
+import { getServerBlogBySlug, getServerBlogData } from '@/lib/utils/serverData';
 
 export const revalidate = 2592000; // 30 days
 import BlogDetailClient from './BlogDetailClient';
@@ -33,8 +33,15 @@ export default async function BlogDetailPage({
   const { locale, id } = await params;
   const { from } = await searchParams;
 
-  const blog = await getServerBlogBySlug(id, locale);
+  const [blog, allBlogs] = await Promise.all([
+    getServerBlogBySlug(id, locale),
+    getServerBlogData(locale),
+  ]);
   if (!blog) notFound();
 
-  return <BlogDetailClient blog={blog} locale={locale} fromTag={from ?? null} />;
+  // Posts sharing at least one tag, fallback to most recent
+  const related = allBlogs.filter(b => b.id !== blog.id && b.type.some(t => blog.type.includes(t)));
+  const sidebarPosts = (related.length > 0 ? related : allBlogs.filter(b => b.id !== blog.id)).slice(0, 5);
+
+  return <BlogDetailClient blog={blog} locale={locale} fromTag={from ?? null} relatedPosts={sidebarPosts} />;
 }
