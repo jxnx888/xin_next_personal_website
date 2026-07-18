@@ -21,7 +21,7 @@ marked.use({
     code({ text, lang }: { text: string; lang?: string }) {
       const validLang = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
       const highlighted = hljs.highlight(text, { language: validLang }).value;
-      return `<pre><code class="hljs language-${validLang}">${highlighted}</code></pre>`;
+      return `<div class="code-block-wrap"><pre><code class="hljs language-${validLang}">${highlighted}</code></pre></div>`;
     },
     heading({ text, depth }: { text: string; depth: number }) {
       const id = slugify(text);

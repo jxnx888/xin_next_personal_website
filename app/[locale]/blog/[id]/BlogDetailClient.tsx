@@ -131,10 +131,14 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, 
     return () => window.removeEventListener('scroll', updateProgress);
   }, [updateProgress]);
 
-  // Syntax highlighting + copy buttons — run together after content mounts.
+  // Set content + syntax highlight + copy buttons all in one effect.
+  // innerHTML is managed here, NOT via dangerouslySetInnerHTML, so React never
+  // touches this div on re-renders (scroll, progress updates, etc.).
   useEffect(() => {
     const div = contentRef.current;
     if (!div) return;
+
+    div.innerHTML = blog.content;
 
     // Syntax highlighting
     const blocks = div.querySelectorAll<HTMLElement>('pre code');
@@ -144,15 +148,15 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, 
       });
     }
 
-    // Copy buttons — one per <pre>, skips pre blocks that already have one
-    div.querySelectorAll<HTMLElement>('pre').forEach((pre) => {
-      if (pre.querySelector('.copy-code-btn')) return;
+    // Copy buttons
+    div.querySelectorAll<HTMLElement>('.code-block-wrap').forEach((wrap) => {
+      const pre = wrap.querySelector('pre');
       const btn = document.createElement('button');
       btn.className = 'copy-code-btn';
       btn.textContent = 'Copy';
       btn.setAttribute('aria-label', 'Copy code');
       btn.addEventListener('click', () => {
-        const text = pre.querySelector('code')?.textContent ?? '';
+        const text = pre?.querySelector('code')?.textContent ?? '';
         navigator.clipboard.writeText(text).then(() => {
           btn.textContent = 'Copied!';
           btn.classList.add('copied');
@@ -162,7 +166,7 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, 
           }, 2000);
         });
       });
-      pre.appendChild(btn);
+      wrap.appendChild(btn);
     });
   }, [blog.content]);
 
@@ -214,7 +218,6 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, 
               <div
                 ref={contentRef}
                 className="p-8 phone:p-5 blog-content"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
               />
             </SectionCard>
 
