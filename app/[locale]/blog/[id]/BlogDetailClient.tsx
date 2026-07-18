@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowLeftOutlined } from '@ant-design/icons';
@@ -117,6 +117,19 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, 
     : `/${locale}/blog`;
   const readTime = getReadTime(blog.content, locale);
   const contentRef = useRef<HTMLDivElement>(null);
+  const [readProgress, setReadProgress] = useState(0);
+
+  // Reading progress bar — tracks how far the user has scrolled the page
+  const updateProgress = useCallback(() => {
+    const el = document.documentElement;
+    const total = el.scrollHeight - el.clientHeight;
+    setReadProgress(total > 0 ? Math.min(100, (el.scrollTop / total) * 100) : 0);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    return () => window.removeEventListener('scroll', updateProgress);
+  }, [updateProgress]);
 
   // Syntax highlighting + copy buttons — run together after content mounts.
   useEffect(() => {
@@ -157,6 +170,12 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts, 
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      {/* Reading progress bar — fixed at very top, above nav */}
+      <div
+        className="fixed top-0 left-0 h-[3px] z-[9999] transition-none pointer-events-none"
+        style={{ width: `${readProgress}%`, background: 'var(--accent)', boxShadow: '0 0 8px var(--accent)' }}
+      />
+
       <PageBanner title={t('BLOG')} imageSrc="/image/banner3.png" subtitle={blog.title} titleAs="p" />
 
       <div className="max-w-7xl mx-auto px-4 py-8">

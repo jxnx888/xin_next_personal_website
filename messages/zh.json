@@ -22,6 +22,8 @@
   "MIN_READ": "分钟阅读",
   "RELATED_POSTS": "相关文章",
   "TABLE_OF_CONTENTS": "目录",
+  "SEARCH_PLACEHOLDER": "搜索文章...",
+  "SEARCH_CLEAR": "清除",
   "SENDING": "发送中...",
   "SECTION": "版块",
   "VIEW_WORK": "查看作品",
