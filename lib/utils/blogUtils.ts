@@ -1,4 +1,4 @@
-import { BlogPost, TagCount } from '@/lib/types/blog';
+import { BlogPost, TagCount, TocHeading } from '@/lib/types/blog';
 
 // Cache the Promise itself to prevent duplicate in-flight requests (cache stampede)
 const blogCachePromise: Record<string, Promise<BlogPost[]>> = {};
@@ -58,6 +58,20 @@ export function filterBlogsByTag(blogs: BlogPost[], tag?: string): BlogPost[] {
 export function getBlogImagePath(tag: string): string {
   // Strip non-alphanumeric chars (including / and spaces) to prevent path injection
   return `/image/blog/${tag.toLowerCase().replace(/[^a-z0-9]/g, '')}.jpg`;
+}
+
+// Extract h2/h3 headings that have id attributes (injected by the Notion marked renderer)
+export function extractHeadings(html: string): TocHeading[] {
+  const headings: TocHeading[] = [];
+  const pattern = /<h([23])\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/h[23]>/gi;
+  let match;
+  while ((match = pattern.exec(html)) !== null) {
+    const level = Number(match[1]) as 2 | 3;
+    const id = match[2];
+    const text = match[3].replace(/<[^>]+>/g, '').trim();
+    if (id && text) headings.push({ id, text, level });
+  }
+  return headings;
 }
 
 export function getReadTime(content: string, locale?: string): number {

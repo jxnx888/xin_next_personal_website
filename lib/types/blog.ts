@@ -1,3 +1,9 @@
+export interface TocHeading {
+  id: string;
+  text: string;
+  level: 2 | 3;
+}
+
 export interface BlogPost {
   id: string; // slug for Notion posts, stringified number for JSON fallback
   title: string;

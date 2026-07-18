@@ -5,13 +5,27 @@ import hljs from 'highlight.js/lib/common';
 import type { BlogPost } from '@/lib/types/blog';
 import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
-// Configure marked to syntax-highlight fenced code blocks via highlight.js
+function slugify(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]/g, '')
+    .replace(/-+/g, '-');
+}
+
+// Configure marked: syntax-highlight code blocks and inject id attributes on headings
 marked.use({
   renderer: {
     code({ text, lang }: { text: string; lang?: string }) {
       const validLang = lang && hljs.getLanguage(lang) ? lang : 'plaintext';
       const highlighted = hljs.highlight(text, { language: validLang }).value;
       return `<pre><code class="hljs language-${validLang}">${highlighted}</code></pre>`;
+    },
+    heading({ text, depth }: { text: string; depth: number }) {
+      const id = slugify(text);
+      return `<h${depth} id="${id}">${text}</h${depth}>\n`;
     },
   },
 });

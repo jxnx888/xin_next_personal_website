@@ -274,6 +274,13 @@ input::placeholder, textarea::placeholder { color: var(--text-dim); opacity: 1; 
   border-color: var(--error-border);
 }
 
+/* ── Blog TOC sidebar scrollbar ────────────────────────── */
+
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: var(--accent-glow); }
+
 /* ── Blog card & sidebar ────────────────────────────────── */
 
 .blog-card {
