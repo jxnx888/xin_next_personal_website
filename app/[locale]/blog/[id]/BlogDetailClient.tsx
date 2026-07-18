@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowLeftOutlined } from '@ant-design/icons';
@@ -48,6 +49,19 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts }
     ? `/${locale}/blog?tag=${encodeURIComponent(fromTag)}`
     : `/${locale}/blog`;
   const readTime = getReadTime(blog.content, locale);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Client-side syntax highlighting — runs after HTML is injected into DOM,
+  // covers cases where the server-side marked renderer didn't add hljs classes.
+  useEffect(() => {
+    const div = contentRef.current;
+    if (!div) return;
+    const blocks = div.querySelectorAll<HTMLElement>('pre code');
+    if (!blocks.length) return;
+    import('highlight.js/lib/common').then(({ default: hljs }) => {
+      blocks.forEach((block) => hljs.highlightElement(block));
+    });
+  }, [blog.content]);
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
@@ -87,6 +101,7 @@ export default function BlogDetailClient({ blog, locale, fromTag, relatedPosts }
               </div>
 
               <div
+                ref={contentRef}
                 className="p-8 phone:p-5 blog-content"
                 dangerouslySetInnerHTML={{ __html: blog.content }}
               />
