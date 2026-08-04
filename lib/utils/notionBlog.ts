@@ -66,6 +66,23 @@ function getDate(props: Props, name: string): string {
   return (prop as any).date?.start ?? '';
 }
 
+function getStatus(props: Props, name: string): string {
+  const prop = props[name];
+  if (!prop || prop.type !== 'status') return '';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (prop as any).status?.name ?? '';
+}
+
+// Mirrors the getNotionBlogList filter: hides drafts and posts scheduled for the future
+// so a direct link to an unpublished/scheduled page id doesn't leak its content early.
+function isPubliclyVisible(page: PageObjectResponse): boolean {
+  const p = page.properties;
+  if (getStatus(p, 'Status') !== 'Published') return false;
+  const publishDate = getDate(p, 'Publish Date');
+  if (!publishDate) return false;
+  return new Date(publishDate) <= new Date();
+}
+
 // Language select values in Notion: 'Both' | 'English' | 'Chinese'
 const LANGUAGE_FOR_LOCALE: Record<string, string> = {
   en: 'English',
@@ -92,6 +109,8 @@ export async function getNotionBlogList(locale: string): Promise<BlogPost[]> {
     filter: {
       and: [
         { property: 'Status', status: { equals: 'Published' } },
+        // Hide scheduled posts: only show entries whose Publish Date has already arrived.
+        { property: 'Publish Date', date: { on_or_before: new Date().toISOString() } },
         {
           or: [
             { property: 'Language', select: { equals: 'Both' } },
@@ -126,6 +145,7 @@ async function getLocaleToggleId(pageId: string, locale: string): Promise<string
 export async function getNotionBlogBySlug(pageId: string, locale: string): Promise<BlogPost | null> {
   try {
     const page = (await notion.pages.retrieve({ page_id: pageId })) as PageObjectResponse;
+    if (!isPubliclyVisible(page)) return null;
 
     // Render only the children of the locale-specific toggle block
     const toggleId = await getLocaleToggleId(pageId, locale);
