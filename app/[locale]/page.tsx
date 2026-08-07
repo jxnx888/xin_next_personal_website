@@ -29,7 +29,7 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://xin-ning.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ning-xin.com';
 
   const personSchema = {
     '@context': 'https://schema.org',

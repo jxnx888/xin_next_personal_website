@@ -3,7 +3,7 @@ import { getServerBlogData } from '@/lib/utils/serverData';
 
 export const revalidate = 86400; // rebuild sitemap daily
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ning-xin.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ning-xin.com';
 const LOCALES = ['en', 'zh'] as const;
 
 const STATIC_ROUTES: Array<{ path: string; priority: number }> = [
@@ -24,18 +24,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  // Blog posts — fetch EN list for IDs (both locales share the same Notion page IDs)
+  // Blog posts — each locale has its own visible set (a post can be English-only,
+  // Chinese-only, or Both), so fetch both lists rather than assuming they match.
   let blogEntries: MetadataRoute.Sitemap = [];
   try {
-    const posts = await getServerBlogData('en');
-    blogEntries = posts.flatMap((post) =>
-      LOCALES.map((locale) => ({
-        url: `${BASE_URL}/${locale}/blog/${post.id}`,
+    const [enPosts, zhPosts] = await Promise.all([
+      getServerBlogData('en'),
+      getServerBlogData('zh'),
+    ]);
+    blogEntries = [
+      ...enPosts.map((post) => ({
+        url: `${BASE_URL}/en/blog/${post.id}`,
         lastModified: post.time ? new Date(post.time) : new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.7,
-      }))
-    );
+      })),
+      ...zhPosts.map((post) => ({
+        url: `${BASE_URL}/zh/blog/${post.id}`,
+        lastModified: post.time ? new Date(post.time) : new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      })),
+    ];
   } catch {
     // Sitemap still works for static routes if blog fetch fails
   }

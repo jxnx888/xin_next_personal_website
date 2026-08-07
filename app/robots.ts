@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ning-xin.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ning-xin.com';
 
 export default function robots(): MetadataRoute.Robots {
   return {
