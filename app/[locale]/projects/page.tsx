@@ -18,7 +18,10 @@ export async function generateMetadata({
       canonical: `/${locale}/projects`,
       languages: { 'x-default': '/en/projects', en: '/en/projects', zh: '/zh/projects' },
     },
-    openGraph: { url: `/${locale}/projects` },
+    openGraph: {
+      url: `/${locale}/projects`,
+      images: [{ url: '/image/banner2.png', width: 1200, height: 630 }],
+    },
   };
 }
 

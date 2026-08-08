@@ -4,6 +4,13 @@ Personal portfolio site. Next.js 15, TypeScript, Three.js, next-intl (en/zh), da
 
 ---
 
+## Collaboration Preferences
+
+- **Always reply to the user in Chinese (中文).** Never slip in English or Japanese filler words/phrases in the reply text. Code identifiers, file paths, and proper nouns (`Notion`, `ESLint`, etc.) can stay as-is, but surrounding explanations must be Chinese.
+- **Never run `git commit` unless the user explicitly asks for it** (e.g. "commit", "帮我commit", "提交一下"). The user wants to review all changes themselves before they are committed — stop at the file edits and wait.
+
+---
+
 ## Git Workflow
 
 - Active branch: `develop`. Features go here, PR into `master`.

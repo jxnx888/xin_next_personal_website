@@ -8,6 +8,8 @@ import { locales, type Locale } from '@/i18n/config';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 
 export async function generateMetadata({
@@ -23,6 +25,13 @@ export async function generateMetadata({
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
     title,
     description,
+    icons: {
+      icon: [
+        { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      ],
+      apple: '/apple-touch-icon.png',
+    },
     openGraph: {
       title,
       description,
@@ -62,8 +71,10 @@ export default async function LocaleLayout({
   // Providing all messages to the client
   const messages = await getMessages();
 
+  const htmlLang = locale === 'zh' ? 'zh-CN' : 'en';
+
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={htmlLang} suppressHydrationWarning>
       <body suppressHydrationWarning>
 <NextIntlClientProvider messages={messages}>
           <ThemeProvider>
@@ -78,6 +89,8 @@ export default async function LocaleLayout({
             </AntdRegistry>
           </ThemeProvider>
         </NextIntlClientProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

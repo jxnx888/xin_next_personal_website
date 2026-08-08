@@ -89,6 +89,15 @@ const LANGUAGE_FOR_LOCALE: Record<string, string> = {
   zh: 'Chinese',
 };
 
+// Meta descriptions max out around 160 chars before search engines truncate them.
+function excerptFromHtml(html: string, maxLen = 160): string {
+  const text = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (text.length <= maxLen) return text;
+  const truncated = text.slice(0, maxLen);
+  const cut = truncated.lastIndexOf(' ');
+  return `${truncated.slice(0, cut > 0 ? cut : maxLen)}…`;
+}
+
 function pageToPost(page: PageObjectResponse, locale: string, content = ''): BlogPost {
   const p = page.properties;
   const titleZH = getRichText(p, 'TitleZH') || getTitle(p);
@@ -98,7 +107,7 @@ function pageToPost(page: PageObjectResponse, locale: string, content = ''): Blo
     title: locale === 'zh' ? titleZH : titleEN,
     time: getDate(p, 'Publish Date'),
     type: getMultiSelect(p, 'Tags'),
-    abstract: getRichText(p, 'Abstract'),
+    abstract: excerptFromHtml(content),
     content,
   };
 }
@@ -122,9 +131,10 @@ export async function getNotionBlogList(locale: string): Promise<BlogPost[]> {
     sorts: [{ property: 'Publish Date', direction: 'descending' }],
   });
 
-  return res.results
-    .filter((p): p is PageObjectResponse => p.object === 'page' && 'properties' in p)
-    .map((p) => pageToPost(p, locale));
+  const pages = res.results.filter((p): p is PageObjectResponse => p.object === 'page' && 'properties' in p);
+  return Promise.all(
+    pages.map(async (p) => pageToPost(p, locale, await renderLocaleContent(p.id, locale)))
+  );
 }
 
 // Find the toggle block ID for the current locale.
@@ -142,19 +152,21 @@ async function getLocaleToggleId(pageId: string, locale: string): Promise<string
   return null;
 }
 
+// Renders only the children of the locale-specific toggle block into HTML.
+async function renderLocaleContent(pageId: string, locale: string): Promise<string> {
+  const toggleId = await getLocaleToggleId(pageId, locale);
+  const mdBlocks = await n2m.pageToMarkdown(toggleId ?? pageId);
+  const mdString = n2m.toMarkdownString(mdBlocks);
+  // Add referrerpolicy="no-referrer" to bypass hotlink protection on external image hosts (e.g. cnblogs)
+  return (marked.parse(mdString.parent) as string).replace(/<img /g, '<img referrerpolicy="no-referrer" ');
+}
+
 export async function getNotionBlogBySlug(pageId: string, locale: string): Promise<BlogPost | null> {
   try {
     const page = (await notion.pages.retrieve({ page_id: pageId })) as PageObjectResponse;
     if (!isPubliclyVisible(page)) return null;
 
-    // Render only the children of the locale-specific toggle block
-    const toggleId = await getLocaleToggleId(pageId, locale);
-    const mdBlocks = await n2m.pageToMarkdown(toggleId ?? pageId);
-    const mdString = n2m.toMarkdownString(mdBlocks);
-    // Add referrerpolicy="no-referrer" to bypass hotlink protection on external image hosts (e.g. cnblogs)
-    const html = (marked.parse(mdString.parent) as string)
-      .replace(/<img /g, '<img referrerpolicy="no-referrer" ');
-
+    const html = await renderLocaleContent(pageId, locale);
     return pageToPost(page, locale, html);
   } catch {
     return null;

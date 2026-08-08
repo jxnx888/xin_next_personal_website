@@ -20,7 +20,10 @@ export async function generateMetadata({
       canonical: `/${locale}/blog`,
       languages: { 'x-default': '/en/blog', en: '/en/blog', zh: '/zh/blog' },
     },
-    openGraph: { url: `/${locale}/blog` },
+    openGraph: {
+      url: `/${locale}/blog`,
+      images: [{ url: '/image/banner3.png', width: 1200, height: 630 }],
+    },
   };
 }
 

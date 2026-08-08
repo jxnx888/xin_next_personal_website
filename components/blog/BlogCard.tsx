@@ -18,7 +18,9 @@ export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps
   const t = useTranslations();
   const locale = useLocale();
 
-  const imagePath = post.type.length > 0 ? getBlogImagePath(post.type[0]) : '/image/blog/default.jpg';
+  const primaryTag = post.type[0];
+  const imagePath = primaryTag ? getBlogImagePath(primaryTag) : '/image/blog/default.jpg';
+  const coverAlt = primaryTag ? t('BLOG_COVER_ALT', { tag: primaryTag }) : '';
   const readTime = useMemo(() => getReadTime(post.content, locale), [post.content, locale]);
   const href = `/${locale}/blog/${post.id}${currentTag ? `?from=${encodeURIComponent(currentTag)}` : ''}`;
 
@@ -31,7 +33,7 @@ export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps
           <div className="hidden phone:block pad-v:block relative overflow-hidden h-32">
             <Image
               src={imagePath}
-              alt=""
+              alt={coverAlt}
               fill
               sizes="100vw"
               priority={isPriority}
@@ -44,7 +46,7 @@ export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps
           <div className="shrink-0 relative overflow-hidden phone:hidden pad-v:hidden" style={{ width: '200px', minHeight: '155px' }}>
             <Image
               src={imagePath}
-              alt=""
+              alt={coverAlt}
               fill
               sizes="200px"
               priority={isPriority}

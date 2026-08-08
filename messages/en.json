@@ -25,6 +25,7 @@
   "SEARCH_PLACEHOLDER": "Search articles...",
   "SEARCH_CLEAR": "Clear",
   "BLOG_META_DESCRIPTION": "Browse all articles on web development, React, TypeScript, Next.js and more by Xin Ning.",
+  "BLOG_COVER_ALT": "{tag} article illustration",
   "CONTACT_META_DESCRIPTION": "Get in touch with Xin Ning — Full-Stack Developer. Available for project inquiries and collaboration.",
   "RESUME_META_DESCRIPTION": "View and download Xin Ning's resume — Full-Stack Developer with 8+ years of web development experience.",
   "SENDING": "Sending...",

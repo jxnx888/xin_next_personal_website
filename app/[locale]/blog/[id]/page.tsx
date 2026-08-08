@@ -29,6 +29,8 @@ export async function generateMetadata({
       title: blog.title,
       description: blog.abstract,
       type: 'article',
+      publishedTime: blog.time || undefined,
+      authors: ['Xin Ning'],
       images: [{ url: ogImage, width: 1200, height: 630 }],
     },
     twitter: {
@@ -50,25 +52,48 @@ export default async function BlogDetailPage({
   const { locale, id } = await params;
   const { from } = await searchParams;
 
-  const [blog, allBlogs] = await Promise.all([
+  const [blog, allBlogs, t] = await Promise.all([
     getServerBlogBySlug(id, locale),
     getServerBlogData(locale),
+    getTranslations({ locale }),
   ]);
   if (!blog) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://xin-ning.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ning-xin.com';
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: t('HOME'), item: `${siteUrl}/${locale}` },
+      { '@type': 'ListItem', position: 2, name: t('BLOG'), item: `${siteUrl}/${locale}/blog` },
+      { '@type': 'ListItem', position: 3, name: blog.title, item: `${siteUrl}/${locale}/blog/${id}` },
+    ],
+  };
   const blogPostingSchema = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: blog.title,
     description: blog.abstract,
     url: `${siteUrl}/${locale}/blog/${id}`,
+    mainEntityOfPage: `${siteUrl}/${locale}/blog/${id}`,
     inLanguage: locale === 'zh' ? 'zh-CN' : 'en-US',
     keywords: blog.type.join(', '),
+    datePublished: blog.time || undefined,
+    dateModified: blog.time || undefined,
+    image: [`${siteUrl}/${locale}/blog/${id}/opengraph-image`],
     author: {
       '@type': 'Person',
       name: 'Xin Ning',
       url: `${siteUrl}/${locale}`,
+    },
+    publisher: {
+      '@type': 'Person',
+      name: 'Xin Ning',
+      url: `${siteUrl}/${locale}`,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/icon-512.png`,
+      },
     },
   };
 
@@ -82,6 +107,10 @@ export default async function BlogDetailPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <BlogDetailClient blog={blog} locale={locale} fromTag={from ?? null} relatedPosts={sidebarPosts} headings={headings} />
     </>
