@@ -8,6 +8,8 @@ import { locales, type Locale } from '@/i18n/config';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 
 export async function generateMetadata({
@@ -87,6 +89,8 @@ export default async function LocaleLayout({
             </AntdRegistry>
           </ThemeProvider>
         </NextIntlClientProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
