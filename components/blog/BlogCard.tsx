@@ -2,11 +2,11 @@
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useLocale, useTranslations } from 'next-intl';
 import { BlogPost } from '@/lib/types/blog';
 import { getBlogImagePath, getReadTime } from '@/lib/utils/blogUtils';
 import TagBadge from '@/components/blog/TagBadge';
+import BlogCoverImage from '@/components/blog/BlogCoverImage';
 
 interface BlogCardProps {
   post: BlogPost;
@@ -21,6 +21,7 @@ export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps
   const primaryTag = post.type[0];
   const imagePath = primaryTag ? getBlogImagePath(primaryTag) : '/image/blog/default.jpg';
   const coverAlt = primaryTag ? t('BLOG_COVER_ALT', { tag: primaryTag }) : '';
+  const coverText = primaryTag ?? t('BLOG');
   const readTime = useMemo(() => getReadTime(post.content, locale), [post.content, locale]);
   const href = `/${locale}/blog/${post.id}${currentTag ? `?from=${encodeURIComponent(currentTag)}` : ''}`;
 
@@ -31,10 +32,10 @@ export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps
 
           {/* Mobile top cover — shown on phone+pad-v */}
           <div className="hidden phone:block pad-v:block relative overflow-hidden h-32">
-            <Image
+            <BlogCoverImage
               src={imagePath}
               alt={coverAlt}
-              fill
+              text={coverText}
               sizes="100vw"
               priority={isPriority}
               className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
@@ -44,10 +45,10 @@ export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps
 
           {/* Desktop side image */}
           <div className="shrink-0 relative overflow-hidden phone:hidden pad-v:hidden" style={{ width: '200px', minHeight: '155px' }}>
-            <Image
+            <BlogCoverImage
               src={imagePath}
               alt={coverAlt}
-              fill
+              text={coverText}
               sizes="200px"
               priority={isPriority}
               className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500"
