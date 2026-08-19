@@ -222,9 +222,35 @@ export default function HomeClient() {
         {/* ── Bio + Stats ──────────────────────────────── */}
         <div className="grid pad-v:grid-cols-2 pad:grid-cols-2 pc:grid-cols-2 gap-6 mb-12 phone:mb-8">
           <SectionCard className="p-8 phone:p-6 flex flex-col">
-            <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: 'var(--accent)' }}>
-              {t('ABOUT_ME')}
-            </p>
+            <div className="flex items-center gap-5 mb-6">
+              <div
+                className="relative shrink-0 rounded-full overflow-hidden"
+                style={{ width: '104px', height: '104px', border: '3px solid var(--accent)', boxShadow: '0 0 10px var(--accent-glow)' }}
+              >
+                <Image
+                  src="/image/profile.png"
+                  alt={t('MY_NAME')}
+                  fill
+                  sizes="104px"
+                  className="object-cover object-top"
+                  style={{
+                    filter:
+                      'drop-shadow(1px 1px 0 var(--accent)) drop-shadow(-1px 1px 0 var(--accent)) drop-shadow(1px -1px 0 var(--accent)) drop-shadow(-1px -1px 0 var(--accent))',
+                  }}
+                />
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--accent)' }}>
+                  {t('ABOUT_ME')}
+                </p>
+                <p className="text-[var(--text)] font-bold text-lg leading-tight">
+                  {t('MY_NAME')}
+                </p>
+                <p className="text-[var(--text-dim)] text-xs uppercase tracking-wide">
+                  {t('MY_TITLE')}
+                </p>
+              </div>
+            </div>
             <p className="text-[var(--text)] text-base phone:text-sm leading-relaxed mb-7 flex-1">
               {t('HOME_ABOUT')}
             </p>
