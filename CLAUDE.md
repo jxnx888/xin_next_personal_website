@@ -20,6 +20,20 @@ Personal portfolio site. Next.js 15, TypeScript, Three.js, next-intl (en/zh), da
 
 ---
 
+## Environment
+
+Copy `.env.example` → `.env.local`. Full table in `README.md`. The site boots with
+zero env vars; the two behaviours that change are:
+
+- No `ELASTIC_EMAIL_API_KEY` → `POST /api/contact` returns 500.
+- No `NOTION_TOKEN` + `NOTION_BLOG_DB_ID` → blog reads `public/mock/blogEN.json` /
+  `blogCN.json` instead of Notion.
+
+When testing blog changes, be explicit about which branch you are on — a change that
+works against the local JSON may not work against Notion, and vice versa.
+
+---
+
 ## Architecture
 
 ### SSR Pattern (strictly follow this)
@@ -33,6 +47,33 @@ app/[locale]/foo/FooClient.tsx     ← Client: state, events, Three.js
 
 Server data is read via `lib/utils/serverData.ts` using `fs.readFileSync` from `public/mock/`.  
 Never fetch data client-side for content that can be server-rendered.
+
+### Blog data source — two branches
+
+`lib/utils/serverData.ts` switches source at request time based on env vars:
+
+```
+NOTION_TOKEN && NOTION_BLOG_DB_ID set?
+  ├─ yes → lib/utils/notionBlog.ts  (Notion API → notion-to-md → marked → highlight.js)
+  └─ no  → public/mock/blogEN.json / blogCN.json
+```
+
+Both branches return the same `BlogPost[]` (`lib/types/blog.ts`) — pages never know which
+is active. When changing the blog shape, **update both paths**, not just one.
+
+`lib/utils/notionBlog.ts` configures `marked` with a custom renderer that injects
+`id` attributes on headings (for the TOC) and wraps code blocks in
+`.code-block-wrap` with highlight.js classes. `blogUtils.ts` is the *client-side*
+counterpart — it caches the fetch Promise itself to avoid a cache stampede.
+
+Projects have no CMS — always `public/mock/projects.json` + `projectsCN.json`.
+
+### API routes
+
+| Route | Purpose |
+|---|---|
+| `app/api/contact/route.ts` | `POST` — contact form → Elastic Email HTTP API. Needs `ELASTIC_EMAIL_API_KEY`. |
+| `app/api/revalidate/route.ts` | `GET`/`POST` — on-demand ISR purge, guarded by `?secret=<REVALIDATE_SECRET>`. See the file's header comment for usage. |
 
 ### i18n
 
@@ -115,41 +156,83 @@ Use `GlowButton` component for external links.
 ### Three.js HeroWave theme toggle
 HeroWave uses two separate effects: `[]` for setup (creates WebGL renderer once), `[theme]` for color updates (uses refs). Never merge into one effect — it tears down the WebGL context on theme toggle.
 
+Note: the site is dark-only today and `components/ThemeProvider.tsx` is a stub that
+provides a hard-coded `{ theme: 'dark' }` with no toggle UI, so this bug cannot fire
+right now. Keep the two-effect split anyway — merging it would silently re-introduce
+the bug the moment a theme switch is added.
+
 ### `.next/trace` EPERM on Windows
 Kill all Node processes → delete `.next/` → restart dev server.
 
 ### Mock data has no trailing `code` field anymore
 `projects.json` / `projectsCN.json` no longer have a `code` field per project. Don't add it back. The `Project` type in `lib/types/projects.ts` does not include it.
 
+There used to be a second, stale `lib/types/project.ts` (singular) whose `Project` still
+had `code: number`, plus an unused `lib/utils/projectUtils.ts` that imported it. Both were
+deleted. **The only project types file is `lib/types/projects.ts` (plural)** — if you see
+an import from `types/project`, it is wrong.
+
 ---
 
 ## File Map (quick reference)
 
 ```
-app/[locale]/
-  page.tsx                     Home
-  projects/page.tsx            Projects (Server)
-  projects/ProjectsPageClient  Projects (Client)
-  projects/magic-box/          Magic Box Three.js app
-  projects/decal_splatter/     Decal Splatter Three.js app
-  blog/page.tsx                Blog list (Server)
-  blog/[id]/page.tsx           Blog detail (Server)
-  contact/page.tsx             Contact form
-  resume/page.tsx              PDF viewer
+app/
+  layout.tsx                   Root layout (html shell)
+  global-error.tsx             Root error boundary
+  not-found.tsx                404 page
+  sitemap.ts                   All routes + every blog post, per locale
+  robots.ts                    Points at the sitemap
+  manifest.ts                  PWA manifest (icon-192 / icon-512)
+  globals.css                  CSS custom properties + .btn-glow-* classes
 
-components/layout/Navigation.tsx   Nav (uses lib/constants/menuData.ts)
-components/projects/ProjectCard.tsx
-components/projects/ScrollMenu.tsx
-components/home/HeroWave.tsx        Three.js wave (desktop only)
-components/ui/                      GlowButton, SectionCard, GridBackground, SectionHeader
+  api/contact/route.ts         POST — contact form → Elastic Email
+  api/revalidate/route.ts      GET/POST — on-demand ISR, ?secret= guarded
 
-lib/utils/serverData.ts       fs.readFileSync data helpers
-lib/utils/blogUtils.ts        Blog cache + AbortSignal
-lib/constants/menuData.ts     Nav items
-lib/types/projects.ts         Project, Career, ProjectsData, ProjectsResponse
-messages/en.json + zh.json    UI strings
-public/mock/*.json            Content data (simulated CMS)
+  [locale]/
+    layout.tsx                 Locale layout — metadata, providers, <html lang>
+    error.tsx                  Locale-level error boundary
+    page.tsx / HomeClient      Home
+    projects/page.tsx          Projects (Server)
+    projects/ProjectsPageClient  Projects (Client)
+    projects/magic-box/        Magic Box Three.js app
+    projects/decal_splatter/   Decal Splatter Three.js app
+    blog/page.tsx              Blog list (Server)
+    blog/[id]/page.tsx         Blog detail (Server) — JSON-LD + BreadcrumbList
+    blog/[id]/opengraph-image.tsx   Dynamic per-post OG image
+    contact/page.tsx           Contact form
+    resume/page.tsx            PDF viewer
+
+components/
+  ThemeProvider.tsx            Stub — hard-coded dark, no toggle UI
+  AntdProvider.tsx             Ant Design locale + registry
+  layout/Navigation.tsx        Nav (uses lib/constants/menuData.ts)
+  layout/Footer.tsx            Social links (icons use aria-label, alt="")
+  layout/PageBanner.tsx
+  home/HeroWave.tsx            Three.js wave (desktop only)
+  home/AnimatedName.tsx
+  blog/                        BlogCard, BlogCoverImage, BlogSidebar, TagBadge
+  projects/                    ProjectCard, ScrollMenu
+  resume/MobilePdfViewer.tsx
+  ui/                          GlowButton, SectionCard, GridBackground, SectionHeader
+
+lib/
+  utils/serverData.ts          fs.readFileSync helpers + Notion/JSON branch
+  utils/notionBlog.ts          Notion API → notion-to-md → marked → highlight.js
+  utils/blogUtils.ts           Client-side blog cache (Promise cache) + AbortSignal
+  constants/menuData.ts        Nav items
+  hooks/useTypewriter.ts
+  types/projects.ts            Project, Career, ProjectsData, ProjectsResponse
+  types/blog.ts                BlogPost, TagCount, TocHeading
+  threejs/TransformControls.js Vendored Three.js control
+
+i18n/config.ts + request.ts   next-intl locales + request config
+middleware.ts                 Locale routing (/en, /zh)
+messages/en.json + zh.json    UI strings — keys must stay 1:1
+public/mock/*.json            Content data — projects(.CN), blogEN/blogCN
 public/models/stl/ascii/      STL models for Three.js pages
 public/image/decals/          54 built-in decal stickers
-store/useGlobalStore.ts       Zustand global store
 ```
+
+There is no Zustand store in use — `store/` was removed. Add one back only if a real
+cross-page client state need appears.
