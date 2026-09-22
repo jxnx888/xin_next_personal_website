@@ -1,6 +1,7 @@
-import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import { getServerBlogData } from '@/lib/utils/serverData';
+import { getServerBlogSummaries } from '@/lib/utils/serverData';
 
 export const revalidate = 2592000; // 30 days — manually trigger /api/revalidate when content changes
 import { getTagCounts } from '@/lib/utils/blogUtils';
@@ -34,15 +35,21 @@ export default async function BlogPage({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
-  const allBlogs = await getServerBlogData(locale);
+  const allBlogs = await getServerBlogSummaries(locale);
   const tagCounts = getTagCounts(allBlogs);
 
   return (
-    <BlogPageClient
-      blogs={allBlogs}
-      tagCounts={tagCounts}
-      totalCount={allBlogs.length}
-    />
+    // BlogPageClient reads useSearchParams() for the tag/search filters. Next 16
+    // requires that to sit behind a Suspense boundary, otherwise prerendering
+    // this route fails instead of silently bailing out to client rendering.
+    <Suspense fallback={null}>
+      <BlogPageClient
+        blogs={allBlogs}
+        tagCounts={tagCounts}
+        totalCount={allBlogs.length}
+      />
+    </Suspense>
   );
 }

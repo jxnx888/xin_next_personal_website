@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { getServerBlogData } from '@/lib/utils/serverData';
+import { getServerBlogIndex } from '@/lib/utils/serverData';
 
 export const revalidate = 86400; // rebuild sitemap daily
 
@@ -29,8 +29,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let blogEntries: MetadataRoute.Sitemap = [];
   try {
     const [enPosts, zhPosts] = await Promise.all([
-      getServerBlogData('en'),
-      getServerBlogData('zh'),
+      getServerBlogIndex('en'),
+      getServerBlogIndex('zh'),
     ]);
     blogEntries = [
       ...enPosts.map((post) => ({

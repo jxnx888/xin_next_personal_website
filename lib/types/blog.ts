@@ -4,11 +4,27 @@ export interface TocHeading {
   level: 2 | 3;
 }
 
-export interface BlogPost {
+// Three shapes, cheapest first. `abstract` and `readTime` are both derived from
+// the article body, so anything that needs them costs a content fetch per post;
+// BlogIndexItem is the only one that comes from a single Notion query.
+
+/** Metadata only — one `databases.query`, no per-post content fetch. */
+export interface BlogIndexItem {
   id: string; // slug for Notion posts, stringified number for JSON fallback
   title: string;
   time: string;
   type: string[]; // Array of tags
+}
+
+/** What the list and card views need. Body is deliberately absent: it was 600 KB
+ *  of the blog list page's HTML and nothing rendered it. */
+export interface BlogSummary extends BlogIndexItem {
+  abstract: string;
+  readTime: number;
+}
+
+/** Full article, for the detail page. */
+export interface BlogPost extends BlogIndexItem {
   abstract: string;
   content: string; // HTML content
 }

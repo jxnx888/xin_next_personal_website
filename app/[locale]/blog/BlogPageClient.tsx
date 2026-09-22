@@ -9,10 +9,10 @@ import BlogCard from '@/components/blog/BlogCard';
 import BlogSidebar from '@/components/blog/BlogSidebar';
 import PageBanner from '@/components/layout/PageBanner';
 import { filterBlogsByTag } from '@/lib/utils/blogUtils';
-import type { BlogPost, TagCount } from '@/lib/types/blog';
+import type { BlogSummary, TagCount } from '@/lib/types/blog';
 
 interface BlogPageClientProps {
-  blogs: BlogPost[];
+  blogs: BlogSummary[];
   tagCounts: TagCount;
   totalCount: number;
 }

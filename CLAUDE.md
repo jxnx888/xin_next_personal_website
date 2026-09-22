@@ -1,6 +1,6 @@
 # CLAUDE.md — Xin Ning Personal Website
 
-Personal portfolio site. Next.js 15, TypeScript, Three.js, next-intl (en/zh), dark-only design.
+Personal portfolio site. Next.js 16, TypeScript, Three.js, next-intl (en/zh), dark-only design.
 
 ---
 
@@ -17,6 +17,7 @@ Personal portfolio site. Next.js 15, TypeScript, Three.js, next-intl (en/zh), da
 - Commit style: `feat(scope):`, `fix(scope):`, `chore:` — concise, imperative.
 - Always push `develop` before creating a PR.
 - **Before every commit: run `/pre-commit` (ESLint check).** Fix all Errors before committing. Warnings in Three.js client files (`*Client.tsx`, `*Loader.tsx`) for `<img>` are acceptable — suppress with `eslint-disable-next-line` if needed.
+- Linting is `npm run lint` (ESLint CLI, flat config). `next lint` was removed in Next 16, and `next build` no longer lints — a lint error will **not** fail the build, so the check has to be run explicitly.
 
 ---
 
@@ -58,13 +59,45 @@ NOTION_TOKEN && NOTION_BLOG_DB_ID set?
   └─ no  → public/mock/blogEN.json / blogCN.json
 ```
 
-Both branches return the same `BlogPost[]` (`lib/types/blog.ts`) — pages never know which
+Both branches return the same shapes (`lib/types/blog.ts`) — pages never know which
 is active. When changing the blog shape, **update both paths**, not just one.
 
-`lib/utils/notionBlog.ts` configures `marked` with a custom renderer that injects
+#### Pick the cheapest shape
+
+`abstract` and `readTime` are derived from the article body, so wanting either one costs
+a content fetch per post. Three shapes, three `serverData.ts` entry points:
+
+| Shape | Getter | Cost | Callers |
+|---|---|---|---|
+| `BlogIndexItem` | `getServerBlogIndex` | one `databases.query` | `sitemap.ts`, related posts |
+| `BlogSummary` | `getServerBlogSummaries` | one content fetch per post | blog list, `BlogCard` |
+| `BlogPost` | `getServerBlogBySlug` | one content fetch | blog detail |
+
+**Always reach for the cheapest one that covers what you actually render.** Using a
+heavier shape than needed is not a micro-optimisation here: the sitemap rebuilds daily
+and used to pull all 60 articles' bodies to read ids and dates, and the blog list used to
+ship every body to the browser — 668 KB of HTML for a page that renders excerpts.
+
+#### Caching (`lib/utils/notionBlog.ts`)
+
+Published posts are append-only: old articles don't change, only new ones appear. So
+bodies are cached **indefinitely** per post (tagged `blog-post-<id>`) and the index sits
+behind `blog-index`.
+
+- Use Next's **Data Cache**, never a module-level `Map`. The build renders each page in a
+  separate worker process and Vercel serves from separate instances — in-memory state is
+  not shared between the blog list and a post opened from a search result.
+- Bodies never expire on their own, so **`/api/revalidate` must purge the tags**, not just
+  the paths. Purging a path alone re-renders the page from the same cached body.
+- Requests are paced to ~3/s with 429 retry, matching Notion's limit. `notion-to-md`
+  issues one request per nested block, so an unpaced list build fires hundreds at once.
+  That pacing is why `staticPageGenerationTimeout` is raised in `next.config.ts`.
+
+`lib/utils/notionBlog.ts` also configures `marked` with a custom renderer that injects
 `id` attributes on headings (for the TOC) and wraps code blocks in
-`.code-block-wrap` with highlight.js classes. `blogUtils.ts` is the *client-side*
-counterpart — it caches the fetch Promise itself to avoid a cache stampede.
+`.code-block-wrap` with highlight.js classes. `blogUtils.ts` holds the shared pure
+helpers — `getTagCounts` and `filterBlogsByTag` are generic over the post shape because
+they only read `type`.
 
 Projects have no CMS — always `public/mock/projects.json` + `projectsCN.json`.
 
@@ -227,7 +260,8 @@ lib/
   threejs/TransformControls.js Vendored Three.js control
 
 i18n/config.ts + request.ts   next-intl locales + request config
-middleware.ts                 Locale routing (/en, /zh)
+proxy.ts                      Locale routing (/en, /zh) — renamed from middleware.ts in Next 16
+eslint.config.mjs             ESLint flat config (`next lint` was removed in Next 16)
 messages/en.json + zh.json    UI strings — keys must stay 1:1
 public/mock/*.json            Content data — projects(.CN), blogEN/blogCN
 public/models/stl/ascii/      STL models for Three.js pages

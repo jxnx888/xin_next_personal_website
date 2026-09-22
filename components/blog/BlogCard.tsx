@@ -1,15 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
 import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
-import { BlogPost } from '@/lib/types/blog';
-import { getBlogImagePath, getReadTime } from '@/lib/utils/blogUtils';
+import { BlogSummary } from '@/lib/types/blog';
+import { getBlogImagePath } from '@/lib/utils/blogUtils';
 import TagBadge from '@/components/blog/TagBadge';
 import BlogCoverImage from '@/components/blog/BlogCoverImage';
 
 interface BlogCardProps {
-  post: BlogPost;
+  post: BlogSummary;
   currentTag?: string | null;
   isPriority?: boolean;
 }
@@ -18,11 +17,11 @@ export default function BlogCard({ post, currentTag, isPriority }: BlogCardProps
   const t = useTranslations();
   const locale = useLocale();
 
+  const { readTime } = post;
   const primaryTag = post.type[0];
   const imagePath = primaryTag ? getBlogImagePath(primaryTag) : '/image/blog/default.jpg';
   const coverAlt = primaryTag ? t('BLOG_COVER_ALT', { tag: primaryTag }) : '';
   const coverText = primaryTag ?? t('BLOG');
-  const readTime = useMemo(() => getReadTime(post.content, locale), [post.content, locale]);
   const href = `/${locale}/blog/${post.id}${currentTag ? `?from=${encodeURIComponent(currentTag)}` : ''}`;
 
   return (

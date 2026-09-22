@@ -1,4 +1,4 @@
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getServerProjectsData } from '@/lib/utils/serverData';
 import ProjectsPageClient from './ProjectsPageClient';
@@ -32,6 +32,7 @@ export default async function ProjectsPage({
   params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const projectsData = getServerProjectsData(locale);
 
   const menuItems: Record<string, string> = {};
