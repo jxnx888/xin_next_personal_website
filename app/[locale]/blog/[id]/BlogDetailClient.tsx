@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { ArrowLeftOutlined } from '@ant-design/icons';
-import type { BlogPost } from '@/lib/types/blog';
+import type { BlogIndexItem, BlogPost } from '@/lib/types/blog';
 import type { TocHeading } from '@/lib/types/blog';
 import { getReadTime } from '@/lib/utils/blogUtils';
 import PageBanner from '@/components/layout/PageBanner';
@@ -15,7 +15,7 @@ interface BlogDetailClientProps {
   blog: BlogPost;
   locale: string;
   fromTag: string | null;
-  relatedPosts: BlogPost[];
+  relatedPosts: BlogIndexItem[];
   headings: TocHeading[];
 }
 
@@ -82,7 +82,7 @@ function TocList({ headings }: { headings: TocHeading[] }) {
 
 // ── Related posts ─────────────────────────────────────────────
 
-function RelatedPostList({ posts, locale }: { posts: BlogPost[]; locale: string }) {
+function RelatedPostList({ posts, locale }: { posts: BlogIndexItem[]; locale: string }) {
   const t = useTranslations();
   return (
     <SectionCard className="overflow-hidden">

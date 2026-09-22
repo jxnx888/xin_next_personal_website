@@ -1,46 +1,8 @@
-import { BlogPost, TagCount, TocHeading } from '@/lib/types/blog';
+import type { TagCount, TocHeading } from '@/lib/types/blog';
 
-// Cache the Promise itself to prevent duplicate in-flight requests (cache stampede)
-const blogCachePromise: Record<string, Promise<BlogPost[]>> = {};
-
-export function getBlogData(locale: string, signal?: AbortSignal): Promise<BlogPost[]> {
-  if (!blogCachePromise[locale]) {
-    const url = locale === 'zh' ? '/mock/blogCN.json' : '/mock/blogEN.json';
-    // Signal is intentionally not passed to fetch: the promise is shared across all callers.
-    // Cancellation is handled via Promise.race below so callers can abort without poisoning the cache.
-    blogCachePromise[locale] = fetch(url)
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then(data => {
-        if (data.code !== 200) return [];
-        return (data.data as BlogPost[]).map((post) => ({
-          ...post,
-          // Strip cnblogs copy-code toolbar buttons (onclick="copyCnblogsCode" is undefined here)
-          content: post.content.replace(/<div class="cnblogs_code_toolbar">[\s\S]*?<\/div>/g, ''),
-        }));
-      })
-      .catch(err => {
-        delete blogCachePromise[locale]; // allow retry on error
-        console.error('Error loading blog data:', err);
-        return [];
-      });
-  }
-  // If the caller provides a signal, race it against the shared promise
-  if (signal) {
-    return Promise.race([
-      blogCachePromise[locale],
-      new Promise<never>((_, reject) => {
-        if (signal.aborted) reject(new DOMException('Aborted', 'AbortError'));
-        signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true });
-      }),
-    ]);
-  }
-  return blogCachePromise[locale];
-}
-
-export function getTagCounts(blogs: BlogPost[]): TagCount {
+// Generic over the post shape: these only read `type`, so they work on the
+// metadata index and the summary list alike, not just full posts.
+export function getTagCounts(blogs: ReadonlyArray<{ type: string[] }>): TagCount {
   const tagCounts: TagCount = {};
   blogs.forEach((blog) => {
     blog.type.forEach((tag) => {
@@ -50,7 +12,7 @@ export function getTagCounts(blogs: BlogPost[]): TagCount {
   return tagCounts;
 }
 
-export function filterBlogsByTag(blogs: BlogPost[], tag?: string): BlogPost[] {
+export function filterBlogsByTag<T extends { type: string[] }>(blogs: T[], tag?: string): T[] {
   if (!tag) return blogs;
   return blogs.filter((blog) => blog.type.includes(tag));
 }

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import { getServerBlogBySlug, getServerBlogData } from '@/lib/utils/serverData';
+import { getServerBlogBySlug, getServerBlogIndex } from '@/lib/utils/serverData';
 import { extractHeadings } from '@/lib/utils/blogUtils';
 
 export const revalidate = 2592000; // 30 days
@@ -56,7 +56,8 @@ export default async function BlogDetailPage({
 
   const [blog, allBlogs, t] = await Promise.all([
     getServerBlogBySlug(id, locale),
-    getServerBlogData(locale),
+    // Related posts need ids, titles, dates and tags — not 40 article bodies.
+    getServerBlogIndex(locale),
     getTranslations({ locale }),
   ]);
   if (!blog) notFound();

@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  // /[locale]/blog is statically generated and renders every post's content, and
+  // lib/utils/notionBlog.ts paces requests to stay under Notion's ~3 req/s limit.
+  // That pushes the page past the 60s default. Raised rather than lowered the
+  // request count, because the list's excerpts are derived from post content.
+  staticPageGenerationTimeout: 300,
   async headers() {
     const isDev = process.env.NODE_ENV === 'development';
     const csp = [
