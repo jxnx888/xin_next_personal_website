@@ -1,6 +1,6 @@
 # CLAUDE.md — Xin Ning Personal Website
 
-Personal portfolio site. Next.js 15, TypeScript, Three.js, next-intl (en/zh), dark-only design.
+Personal portfolio site. Next.js 16, TypeScript, Three.js, next-intl (en/zh), dark-only design.
 
 ---
 
@@ -17,6 +17,7 @@ Personal portfolio site. Next.js 15, TypeScript, Three.js, next-intl (en/zh), da
 - Commit style: `feat(scope):`, `fix(scope):`, `chore:` — concise, imperative.
 - Always push `develop` before creating a PR.
 - **Before every commit: run `/pre-commit` (ESLint check).** Fix all Errors before committing. Warnings in Three.js client files (`*Client.tsx`, `*Loader.tsx`) for `<img>` are acceptable — suppress with `eslint-disable-next-line` if needed.
+- Linting is `npm run lint` (ESLint CLI, flat config). `next lint` was removed in Next 16, and `next build` no longer lints — a lint error will **not** fail the build, so the check has to be run explicitly.
 
 ---
 
@@ -227,7 +228,8 @@ lib/
   threejs/TransformControls.js Vendored Three.js control
 
 i18n/config.ts + request.ts   next-intl locales + request config
-middleware.ts                 Locale routing (/en, /zh)
+proxy.ts                      Locale routing (/en, /zh) — renamed from middleware.ts in Next 16
+eslint.config.mjs             ESLint flat config (`next lint` was removed in Next 16)
 messages/en.json + zh.json    UI strings — keys must stay 1:1
 public/mock/*.json            Content data — projects(.CN), blogEN/blogCN
 public/models/stl/ascii/      STL models for Three.js pages

@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
 import { getServerBlogBySlug, getServerBlogData } from '@/lib/utils/serverData';
 import { extractHeadings } from '@/lib/utils/blogUtils';
@@ -51,6 +51,7 @@ export default async function BlogDetailPage({
   searchParams: Promise<{ from?: string }>;
 }) {
   const { locale, id } = await params;
+  setRequestLocale(locale);
   const { from } = await searchParams;
 
   const [blog, allBlogs, t] = await Promise.all([

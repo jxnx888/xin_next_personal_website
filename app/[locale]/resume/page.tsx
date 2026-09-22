@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import ResumeClient from './ResumeClient';
 import type { Locale } from '@/i18n/config';
 
@@ -21,6 +21,12 @@ export async function generateMetadata({
   };
 }
 
-export default function ResumePage() {
+export default async function ResumePage({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  setRequestLocale(locale);
   return <ResumeClient />;
 }

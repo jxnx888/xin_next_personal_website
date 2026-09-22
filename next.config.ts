@@ -10,9 +10,8 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 2592000,
   },
-  eslint: {
-    ignoreDuringBuilds: false,
-  },
+  // No `eslint` block: Next 16 removed the option and `next build` no longer
+  // runs linting. Linting is `npm run lint` (ESLint CLI) — see /pre-commit.
   typescript: {
     ignoreBuildErrors: false,
   },

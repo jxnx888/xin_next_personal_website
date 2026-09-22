@@ -1,6 +1,6 @@
 # Xin Ning — Personal Website
 
-Personal portfolio site built with Next.js 15, TypeScript, and Three.js. Bilingual (EN / ZH), dark-only design.
+Personal portfolio site built with Next.js 16, TypeScript, and Three.js. Bilingual (EN / ZH), dark-only design.
 
 Live at **[www.ning-xin.com](https://www.ning-xin.com)**.
 
@@ -8,7 +8,7 @@ Live at **[www.ning-xin.com](https://www.ning-xin.com)**.
 
 | | |
 |---|---|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16 (App Router, Turbopack) |
 | Language | TypeScript 5 |
 | Styling | Tailwind CSS + CSS custom properties |
 | i18n | next-intl (en / zh) |
@@ -31,7 +31,8 @@ Live at **[www.ning-xin.com](https://www.ning-xin.com)**.
 | `/resume` | PDF resume viewer |
 | `/contact` | Contact form |
 
-Every route is served under a locale prefix — `/en/...` and `/zh/...` — via `middleware.ts`.
+Every route is served under a locale prefix — `/en/...` and `/zh/...` — via `proxy.ts`
+(the Next 16 replacement for `middleware.ts`).
 
 ## Getting Started
 
@@ -126,7 +127,7 @@ See `SEO_AUDIT.md` for the audit trail and the remaining manual tasks.
 npm run dev      # Development server
 npm run build    # Production build (standalone output)
 npm run start    # Production server
-npm run lint     # ESLint — must be clean before committing
+npm run lint     # ESLint CLI (`eslint .`) — must be clean before committing
 ```
 
 ## Deployment
@@ -136,8 +137,9 @@ Deployed on Vercel. `next.config.ts` sets:
 - `output: 'standalone'` — self-contained server bundle, also usable in Docker
 - Security headers on every route — CSP, HSTS, `X-Frame-Options: DENY`,
   `X-Content-Type-Options`, `Referrer-Policy`
-- `eslint.ignoreDuringBuilds: false` and `typescript.ignoreBuildErrors: false` —
-  a lint error or type error **fails the build**
+- `typescript.ignoreBuildErrors: false` — a type error **fails the build**
+- Next 16 removed the `eslint` config option and `next build` no longer lints, so
+  linting is a separate step (`npm run lint`) that CI and `/pre-commit` must run
 
 The CSP `img-src` allowlist includes the cnblogs and Notion S3 image hosts. If you add
 a new remote image source, update both the CSP in `next.config.ts` and
@@ -152,6 +154,8 @@ app/
   sitemap.ts           robots.ts, manifest.ts, global-error.tsx, not-found.tsx
 components/            Layout, UI, blog, projects, home, resume components
 i18n/                  next-intl config + request handler
+proxy.ts               Locale routing (Next 16 name for middleware.ts)
+eslint.config.mjs      ESLint flat config
 lib/
   types/               BlogPost, Project, Career
   utils/               serverData (fs), notionBlog (Notion), blogUtils (client cache)

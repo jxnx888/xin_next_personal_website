@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getTranslations } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import AntdProvider from '@/components/AntdProvider';
 import { notFound } from 'next/navigation';
+import { hasLocale } from 'next-intl';
 import { locales, type Locale } from '@/i18n/config';
 import Navigation from '@/components/layout/Navigation';
 import Footer from '@/components/layout/Footer';
@@ -66,9 +67,13 @@ export default async function LocaleLayout({
   const { locale } = await params;
 
   // Validate locale
-  if (!locales.includes(locale as Locale)) {
+  if (!hasLocale(locales, locale)) {
     notFound();
   }
+
+  // Enables static rendering. Without it next-intl resolves the locale from
+  // request data and every route builds as dynamic instead of prerendering.
+  setRequestLocale(locale);
 
   const htmlLang = locale === 'zh' ? 'zh-CN' : 'en';
 
