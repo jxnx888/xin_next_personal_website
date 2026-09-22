@@ -6,11 +6,12 @@ import { extractHeadings } from '@/lib/utils/blogUtils';
 
 export const revalidate = 2592000; // 30 days
 import BlogDetailClient from './BlogDetailClient';
+import type { Locale } from '@/i18n/config';
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string; id: string }>;
+  params: Promise<{ locale: Locale; id: string }>;
 }): Promise<Metadata> {
   const { locale, id } = await params;
   const blog = await getServerBlogBySlug(id, locale);
@@ -46,7 +47,7 @@ export default async function BlogDetailPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ locale: string; id: string }>;
+  params: Promise<{ locale: Locale; id: string }>;
   searchParams: Promise<{ from?: string }>;
 }) {
   const { locale, id } = await params;

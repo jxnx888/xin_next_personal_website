@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages, getTranslations } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import AntdProvider from '@/components/AntdProvider';
 import { notFound } from 'next/navigation';
@@ -15,7 +15,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale });
@@ -59,6 +59,8 @@ export default async function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
+  // Next's generated LayoutConfig constraint requires the raw `string` here,
+  // so this one stays untyped and is narrowed below.
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
@@ -68,15 +70,12 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Providing all messages to the client
-  const messages = await getMessages();
-
   const htmlLang = locale === 'zh' ? 'zh-CN' : 'en';
 
   return (
     <html lang={htmlLang} suppressHydrationWarning>
       <body suppressHydrationWarning>
-<NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider>
           <ThemeProvider>
             <AntdRegistry>
               <AntdProvider locale={locale}>

@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import MagicBoxLoader from './MagicBoxLoader';
+import type { Locale } from '@/i18n/config';
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale });

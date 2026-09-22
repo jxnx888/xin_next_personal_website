@@ -5,11 +5,12 @@ import { getServerBlogData } from '@/lib/utils/serverData';
 export const revalidate = 2592000; // 30 days — manually trigger /api/revalidate when content changes
 import { getTagCounts } from '@/lib/utils/blogUtils';
 import BlogPageClient from './BlogPageClient';
+import type { Locale } from '@/i18n/config';
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale });
@@ -30,7 +31,7 @@ export async function generateMetadata({
 export default async function BlogPage({
   params,
 }: {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
 }) {
   const { locale } = await params;
 
