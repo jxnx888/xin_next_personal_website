@@ -59,13 +59,45 @@ NOTION_TOKEN && NOTION_BLOG_DB_ID set?
   └─ no  → public/mock/blogEN.json / blogCN.json
 ```
 
-Both branches return the same `BlogPost[]` (`lib/types/blog.ts`) — pages never know which
+Both branches return the same shapes (`lib/types/blog.ts`) — pages never know which
 is active. When changing the blog shape, **update both paths**, not just one.
 
-`lib/utils/notionBlog.ts` configures `marked` with a custom renderer that injects
+#### Pick the cheapest shape
+
+`abstract` and `readTime` are derived from the article body, so wanting either one costs
+a content fetch per post. Three shapes, three `serverData.ts` entry points:
+
+| Shape | Getter | Cost | Callers |
+|---|---|---|---|
+| `BlogIndexItem` | `getServerBlogIndex` | one `databases.query` | `sitemap.ts`, related posts |
+| `BlogSummary` | `getServerBlogSummaries` | one content fetch per post | blog list, `BlogCard` |
+| `BlogPost` | `getServerBlogBySlug` | one content fetch | blog detail |
+
+**Always reach for the cheapest one that covers what you actually render.** Using a
+heavier shape than needed is not a micro-optimisation here: the sitemap rebuilds daily
+and used to pull all 60 articles' bodies to read ids and dates, and the blog list used to
+ship every body to the browser — 668 KB of HTML for a page that renders excerpts.
+
+#### Caching (`lib/utils/notionBlog.ts`)
+
+Published posts are append-only: old articles don't change, only new ones appear. So
+bodies are cached **indefinitely** per post (tagged `blog-post-<id>`) and the index sits
+behind `blog-index`.
+
+- Use Next's **Data Cache**, never a module-level `Map`. The build renders each page in a
+  separate worker process and Vercel serves from separate instances — in-memory state is
+  not shared between the blog list and a post opened from a search result.
+- Bodies never expire on their own, so **`/api/revalidate` must purge the tags**, not just
+  the paths. Purging a path alone re-renders the page from the same cached body.
+- Requests are paced to ~3/s with 429 retry, matching Notion's limit. `notion-to-md`
+  issues one request per nested block, so an unpaced list build fires hundreds at once.
+  That pacing is why `staticPageGenerationTimeout` is raised in `next.config.ts`.
+
+`lib/utils/notionBlog.ts` also configures `marked` with a custom renderer that injects
 `id` attributes on headings (for the TOC) and wraps code blocks in
-`.code-block-wrap` with highlight.js classes. `blogUtils.ts` is the *client-side*
-counterpart — it caches the fetch Promise itself to avoid a cache stampede.
+`.code-block-wrap` with highlight.js classes. `blogUtils.ts` holds the shared pure
+helpers — `getTagCounts` and `filterBlogsByTag` are generic over the post shape because
+they only read `type`.
 
 Projects have no CMS — always `public/mock/projects.json` + `projectsCN.json`.
 
