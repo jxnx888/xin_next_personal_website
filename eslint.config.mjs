@@ -24,7 +24,7 @@ export default defineConfig([
     //    (HomeClient, Navigation) and the viewport-width read in ScrollMenu.
     //  - immutability / purity / refs: MagicBoxClient, whose Three.js state
     //    deliberately lives in closure variables rather than React state
-    //    (see CLAUDE.md, "Three.js Interactive Pages").
+    //    (see docs/ARCHITECTURE.md, "Three.js interactive pages").
     //
     // Kept as warnings so they stay visible without failing the build. Fixing
     // them means reworking the hydration guards and auditing a 1600-line
