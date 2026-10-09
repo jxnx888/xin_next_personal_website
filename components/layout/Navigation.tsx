@@ -49,7 +49,9 @@ export default function Navigation() {
   const isActive = (path: string) => {
     const cleanPath = pathname.replace(localePrefix, '');
     if (path === '/') return cleanPath === '' || cleanPath === '/';
-    return cleanPath.startsWith(path);
+    const matches = (p: string) => p !== '/' && cleanPath.startsWith(p);
+    // Nested items (/projects/roblox) must not also light up their parent (/projects)
+    return matches(path) && !menuData.some((item) => item.routerLink.length > path.length && matches(item.routerLink));
   };
 
   return (

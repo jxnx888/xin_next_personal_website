@@ -1,6 +1,6 @@
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Metadata } from 'next';
-import { getServerProjectsData } from '@/lib/utils/serverData';
+import { getServerProjectsData, getServerRobloxGames } from '@/lib/utils/serverData';
 import ProjectsPageClient from './ProjectsPageClient';
 import type { Locale } from '@/i18n/config';
 
@@ -34,11 +34,12 @@ export default async function ProjectsPage({
   const { locale } = await params;
   setRequestLocale(locale);
   const projectsData = getServerProjectsData(locale);
+  const robloxGames = getServerRobloxGames(locale);
 
   const menuItems: Record<string, string> = {};
   Object.entries(projectsData).forEach(([key, career]) => {
     menuItems[key] = career.companySC;
   });
 
-  return <ProjectsPageClient projectsData={projectsData} menuItems={menuItems} />;
+  return <ProjectsPageClient projectsData={projectsData} menuItems={menuItems} robloxGames={robloxGames} />;
 }

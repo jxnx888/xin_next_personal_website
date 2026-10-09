@@ -1,6 +1,7 @@
 {
   "HOME": "Home",
   "PROJECTS": "Projects",
+  "GAMES": "Games",
   "ABOUT_ME": "About Me",
   "CONTACT": "Contact",
   "BLOG": "Blog",
@@ -98,5 +99,20 @@
     "getInTouch": ["I'm always happy to connect — whether it's a project idea, a question, or just a chat.", "Feel free to call, send me an email, or simply fill out the contact form below."],
     "message": ["YOUR NAME", "EMAIL ADDRESS", "TELEPHONE NUMBER", "SUBJECT", "YOUR MESSAGE", "SUBMIT"],
     "validation": ["* Please input your name", "* Please input your email address", "* Please enter a valid email address.", "* Please input your telephone number", "* Please input your subject", "* Please input your message", "* Network error, please try again later", "Succeeded, I will get back to you within 24 hours. Thanks!", "* Name can only contain letters and spaces.", "* Please enter a valid phone number."]
+  },
+  "robloxGames": {
+    "title": "Roblox Games",
+    "subtitle": "Learning Roblox game development by building and shipping my own games.",
+    "metaDescription": "Spinning Survivors and Spinning Slayers — two Roblox games I designed, built and published while learning Roblox development with Luau and Rojo.",
+    "learningBadge": "Currently learning",
+    "learningPath": "What I've learned so far",
+    "myGames": "My Games",
+    "released": "Released",
+    "features": "Highlights",
+    "play": "Play on Roblox",
+    "enlarge": "Enlarge screenshot",
+    "close": "Close",
+    "ctaTitle": "I'm learning Roblox game development",
+    "ctaButton": "See my games →"
   }
 }

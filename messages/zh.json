@@ -1,6 +1,7 @@
 {
   "HOME": "首页",
   "PROJECTS": "项目",
+  "GAMES": "游戏",
   "ABOUT_ME": "关于我",
   "CONTACT": "联系我",
   "BLOG": "博客",
@@ -98,5 +99,20 @@
     "getInTouch": ["随时欢迎联系我——无论是项目合作、技术问题，还是普通交流。", "可以致电、发邮件，或者直接填写下方的联系表单。"],
     "message": ["您的姓名", "电子邮件地址", "电话号码", "主题", "您的消息", "提交"],
     "validation": ["* 请输入您的姓名", "* 请输入您的电子邮件地址", "* 请输入有效的电子邮件地址", "* 请输入您的电话号码", "* 请输入主题", "* 请输入您的消息", "* 网络错误，请稍后再试", "提交成功，我会在24小时内回复您，谢谢！", "* 姓名只能包含字母和空格。", "* 请输入有效的电话号码。"]
+  },
+  "robloxGames": {
+    "title": "Roblox 游戏",
+    "subtitle": "通过独立开发并上线自己的游戏，学习 Roblox 游戏开发。",
+    "metaDescription": "Spinning Survivors 与 Spinning Slayers —— 我在学习 Roblox 开发（Luau + Rojo）过程中独立设计、开发并发布的两款 Roblox 游戏。",
+    "learningBadge": "正在学习",
+    "learningPath": "目前学到的",
+    "myGames": "我的游戏",
+    "released": "上线",
+    "features": "玩法亮点",
+    "play": "在 Roblox 上玩",
+    "enlarge": "放大截图",
+    "close": "关闭",
+    "ctaTitle": "我正在学习 Roblox 游戏开发",
+    "ctaButton": "查看我的游戏 →"
   }
 }

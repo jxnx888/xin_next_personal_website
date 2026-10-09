@@ -1,0 +1,105 @@
+{
+  "code": 200,
+  "data": {
+    "intro": [
+      "我目前正在学习 Roblox 游戏开发 —— Luau 脚本、客户端/服务端架构、DataStore 存档，以及如何发布并运营一款线上游戏。",
+      "比起跟着教程走，我更喜欢在实践中学：每一款游戏都由我独立设计、开发并发布，目前都已在 Roblox 上线，可以免费游玩。"
+    ],
+    "learnings": [
+      "把 Unity 原型移植到 Roblox，并针对共享服务器、服务端权威的多人环境重新设计",
+      "用 Rojo 组织 Luau 代码，让游戏代码进 Git、在 VS Code 里开发，而不是只靠 Studio",
+      "用 DataStore 持久化玩家存档和排行榜，同时控制在 Roblox 的请求配额之内",
+      "设计长线成长的数值经济，并在上线前用脚本验算每一个数值",
+      "多语言本地化、内购（Developer Products）、徽章，以及 Creator Dashboard 上的完整发布流程"
+    ],
+    "games": [
+      {
+        "id": "spinning-slayers",
+        "title": "Spinning Slayers",
+        "tagline": "转得更快，杀得更深。",
+        "genre": "模拟器 · 永久成长",
+        "released": "2026/10",
+        "icon": "/image/games/slayers-icon.webp",
+        "cover": "/image/games/slayers-cover.webp",
+        "desc": [
+          "系列的第二款作品，也是完全不同的玩法：不再是每局清零，赚到的每一枚金币都会永久强化你的旋转武器。一间间清空战斗房间，击败 Boss，解锁下一个世界；征服全部 6 个世界后，还可以 Rebirth 重生，从头再来、变得更强。",
+          "约 60% 的代码沿用自 Spinning Survivors，其余精力都投入到一整套成长经济系统中 —— 所有数值常数集中记录在一处，每次改动都由脚本自动验算。"
+        ],
+        "features": [
+          "刀刃环绕自动攻击，你只管走位闪避",
+          "6 个主题世界，Boss 拖久了会狂暴",
+          "永久升级、4 种技能、稀有刀刃皮肤",
+          "Rebirth 重生永久变强，另有无尽模式",
+          "共享大厅：金矿挂机与排行榜",
+          "支持 13 种语言"
+        ],
+        "tech": [
+          "Luau",
+          "Rojo",
+          "StyLua",
+          "DataStore",
+          "Localization",
+          "Python tooling"
+        ],
+        "playUrl": "https://www.roblox.com/games/72208604285528/Spinning-Slayers",
+        "screenshots": [
+          {
+            "src": "/image/games/slayers-1.webp",
+            "alt": "Spinning Slayers 宣传图 —— 骑士大战熔岩巨像"
+          },
+          {
+            "src": "/image/games/slayers-2.webp",
+            "alt": "Spinning Slayers 宣传图 —— 战士的升级进化"
+          },
+          {
+            "src": "/image/games/slayers-3.webp",
+            "alt": "Spinning Slayers 宣传图 —— 旋风横扫恶魔大军"
+          }
+        ]
+      },
+      {
+        "id": "spinning-survivors",
+        "title": "Spinning Survivors",
+        "tagline": "挺过怪潮，化身风暴。",
+        "genre": "Roguelike 生存",
+        "released": "2026/09",
+        "icon": "/image/games/survivors-icon.webp",
+        "cover": "/image/games/survivors-cover.webp",
+        "desc": [
+          "我的第一款 Roblox 游戏，类 Vampire Survivors 的 roguelike 生存游戏。怪物从四面八方涌来，技能自动释放；击杀掉落经验，每次升级都能从卡牌中挑选新技能或强化。",
+          "它源自我之前做的一个 Unity 原型。移植时需要重新设计 Roblox 机制不同的部分：共享服务器上没有全局时间缩放，所以暂停和倍速都改成了在服务端按玩家单独计算。"
+        ],
+        "features": [
+          "5 种自动释放技能 —— 手里剑、火球、冰锥、闪电、环绕飞刀",
+          "升级时三选一卡牌，强化效果可叠加",
+          "无尽波次，难度分档递增，并有精英怪和 Boss",
+          "可单人游玩，也可以和好友组队同局",
+          "全球 Top-20 排行榜，可解锁武器皮肤"
+        ],
+        "tech": [
+          "Luau",
+          "Rojo",
+          "DataStore",
+          "OrderedDataStore",
+          "RemoteEvents",
+          "Roblox Studio"
+        ],
+        "playUrl": "https://www.roblox.com/share?code=3793df972b00ac4a8575df26e121e1bf&type=ExperienceDetails&stamp=1789480189326",
+        "screenshots": [
+          {
+            "src": "/image/games/survivors-1.webp",
+            "alt": "Spinning Survivors 游戏画面 —— 技能轰向怪潮"
+          },
+          {
+            "src": "/image/games/survivors-2.webp",
+            "alt": "Spinning Survivors 游戏画面 —— 手里剑与经验球"
+          },
+          {
+            "src": "/image/games/survivors-3.webp",
+            "alt": "Spinning Survivors 升级界面，三选一强化卡牌"
+          }
+        ]
+      }
+    ]
+  }
+}
