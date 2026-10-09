@@ -1,0 +1,105 @@
+{
+  "code": 200,
+  "data": {
+    "intro": [
+      "I'm currently learning Roblox game development — Luau scripting, client/server architecture, DataStores and publishing a live experience.",
+      "Rather than following tutorials, I learn by shipping: each game is designed, built and published by me, and both are live and free to play on Roblox."
+    ],
+    "learnings": [
+      "Porting a Unity prototype to Roblox and rethinking it for a shared, server-authoritative multiplayer world",
+      "Structuring a Luau codebase with Rojo, so the game lives in Git and is edited in VS Code instead of Studio",
+      "Persisting player data and leaderboards with DataStores while staying inside Roblox's request budgets",
+      "Designing a long-term progression economy, then verifying every number with scripts before it ships",
+      "Localization, monetization (Developer Products), badges and the full publishing flow on the Creator Dashboard"
+    ],
+    "games": [
+      {
+        "id": "spinning-slayers",
+        "title": "Spinning Slayers",
+        "tagline": "Spin faster. Slay deeper.",
+        "genre": "Simulator · Progression",
+        "released": "2026/10",
+        "icon": "/image/games/slayers-icon.webp",
+        "cover": "/image/games/slayers-cover.webp",
+        "desc": [
+          "The second game in the series, and a different kind of game: instead of a run that resets, every coin you earn upgrades your spinning weapon permanently. Clear room after room, beat the boss, and unlock the next world — and once all six are conquered, Rebirth to start over stronger than before.",
+          "About 60% of the code was carried over from Spinning Survivors — the rest went into a full progression economy, whose constants are documented in one place and checked by scripts on every change."
+        ],
+        "features": [
+          "Orbiting blades auto-attack — you just dodge and move",
+          "6 worlds, each with a boss that enrages if you're slow",
+          "Permanent upgrades, 4 skills and rare blade skins",
+          "Rebirth for permanent power, plus an Endless mode",
+          "Gold mines and leaderboards in a shared hub",
+          "13 languages"
+        ],
+        "tech": [
+          "Luau",
+          "Rojo",
+          "StyLua",
+          "DataStore",
+          "Localization",
+          "Python tooling"
+        ],
+        "playUrl": "https://www.roblox.com/games/72208604285528/Spinning-Slayers",
+        "screenshots": [
+          {
+            "src": "/image/games/slayers-1.webp",
+            "alt": "Spinning Slayers key art — knight fighting a lava colossus"
+          },
+          {
+            "src": "/image/games/slayers-2.webp",
+            "alt": "Spinning Slayers key art — the warrior's upgrade evolution"
+          },
+          {
+            "src": "/image/games/slayers-3.webp",
+            "alt": "Spinning Slayers key art — whirlwind against a demon horde"
+          }
+        ]
+      },
+      {
+        "id": "spinning-survivors",
+        "title": "Spinning Survivors",
+        "tagline": "Survive the horde. Become the storm.",
+        "genre": "Roguelike Survival",
+        "released": "2026/09",
+        "icon": "/image/games/survivors-icon.webp",
+        "cover": "/image/games/survivors-cover.webp",
+        "desc": [
+          "My first Roblox game — a Vampire-Survivors-like roguelike. Enemies pour in from every direction while your skills fire automatically; every kill drops EXP, and every level-up lets you pick a new skill or upgrade.",
+          "It started as a Unity prototype I had built earlier. Porting it meant redesigning the parts Roblox does differently: there is no global time scale on a shared server, so pause and game speed run per player on the server."
+        ],
+        "features": [
+          "5 auto-firing skills — Shuriken, Fireball, Ice Cone, Lightning and orbiting Blades",
+          "3-choice level-up cards with stacking upgrades",
+          "Endless waves with scaling tiers, mini-bosses and bosses",
+          "Play solo or team up with friends in a shared run",
+          "Global Top-20 leaderboard and unlockable weapon skins"
+        ],
+        "tech": [
+          "Luau",
+          "Rojo",
+          "DataStore",
+          "OrderedDataStore",
+          "RemoteEvents",
+          "Roblox Studio"
+        ],
+        "playUrl": "https://www.roblox.com/share?code=3793df972b00ac4a8575df26e121e1bf&type=ExperienceDetails&stamp=1789480189326",
+        "screenshots": [
+          {
+            "src": "/image/games/survivors-1.webp",
+            "alt": "Spinning Survivors gameplay — skills firing into an enemy wave"
+          },
+          {
+            "src": "/image/games/survivors-2.webp",
+            "alt": "Spinning Survivors gameplay — shurikens and EXP orbs"
+          },
+          {
+            "src": "/image/games/survivors-3.webp",
+            "alt": "Spinning Survivors level-up screen with three upgrade cards"
+          }
+        ]
+      }
+    ]
+  }
+}

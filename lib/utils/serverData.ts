@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { BlogIndexItem, BlogPost, BlogSummary } from '@/lib/types/blog';
 import type { ProjectsData } from '@/lib/types/projects';
+import type { RobloxGamesData } from '@/lib/types/games';
 import { getReadTime } from '@/lib/utils/blogUtils';
 
 function hasNotionConfig(): boolean {
@@ -73,5 +74,16 @@ export function getServerProjectsData(locale: string): ProjectsData {
     return raw.code === 200 ? raw.data : {};
   } catch {
     return {};
+  }
+}
+
+export function getServerRobloxGames(locale: string): RobloxGamesData | null {
+  try {
+    const filename = locale === 'zh' ? 'robloxGamesCN.json' : 'robloxGames.json';
+    const filePath = path.join(process.cwd(), 'public', 'mock', filename);
+    const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return raw.code === 200 ? raw.data : null;
+  } catch {
+    return null;
   }
 }

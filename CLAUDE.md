@@ -2,6 +2,10 @@
 
 Personal portfolio site. Next.js 16, TypeScript, Three.js, next-intl (en/zh), dark-only design.
 
+This file is loaded into every session in full, so it holds only the rules every session
+needs plus a map of `docs/`. Details live in `docs/` — read the relevant file before
+working in that area.
+
 ---
 
 ## Collaboration Preferences
@@ -11,12 +15,44 @@ Personal portfolio site. Next.js 16, TypeScript, Three.js, next-intl (en/zh), da
 
 ---
 
+## Doc Map
+
+| File | Read it when |
+|---|---|
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Touching data loading, the blog (Notion/JSON, caching), i18n, navigation, Three.js pages — or looking for where a file lives (file map) |
+| [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) | Adding a project, an interactive page, a Roblox game, a nav item or translations; design tokens |
+| [`docs/PITFALLS.md`](docs/PITFALLS.md) | Before changing Three.js decals/HeroWave, `ScrollMenu`, mock data shapes, or running repeated builds |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Asked "what next?", or about to "clean up" a warning/deprecation — it may be deliberately deferred |
+| [`docs/CHANGELOG.md`](docs/CHANGELOG.md) | Need the *why* behind past changes |
+| [`docs/SEO_AUDIT.md`](docs/SEO_AUDIT.md) | SEO work |
+| `README.md` | Env vars, routes, deployment, publishing blog changes |
+
+**Wrapping up a change:** update the doc that owns what you changed (route → ARCHITECTURE
+file map, new rule → CONVENTIONS, bug → PITFALLS) and add a `docs/CHANGELOG.md` entry, in
+the same commit.
+
+---
+
+## Rules that apply everywhere
+
+- **SSR pattern:** every page = Server Component (data, metadata) + Client Component
+  (interactivity). Never fetch server-renderable content on the client.
+- **Both locales, always:** `messages/en.json` + `zh.json` keys stay 1:1; content JSON comes
+  in pairs (`foo.json` + `fooCN.json`). UI strings go in `messages/`, content in `public/mock/`.
+- **Blog has two data sources** (Notion or local JSON). A blog shape change updates
+  **both** paths. Use the cheapest shape that covers what you render. Cache with Next's
+  Data Cache, never a module-level `Map`.
+- **Colors only via CSS custom properties** — never hardcode hex.
+- **Three.js state lives in closure variables** inside the effect, not React state.
+
+---
+
 ## Git Workflow
 
 - Active branch: `develop`. Features go here, PR into `master`.
-- Commit style: `feat(scope):`, `fix(scope):`, `chore:` — concise, imperative.
+- Commit style: `feat(scope):`, `fix(scope):`, `chore:`, `docs:` — concise, imperative.
 - Always push `develop` before creating a PR.
-- **Before every commit: run `/pre-commit` (ESLint check).** Fix all Errors before committing. Warnings in Three.js client files (`*Client.tsx`, `*Loader.tsx`) for `<img>` are acceptable — suppress with `eslint-disable-next-line` if needed.
+- **Before every commit: run `/pre-commit` (ESLint + tsc).** Fix all Errors before committing. Warnings in Three.js client files (`*Client.tsx`, `*Loader.tsx`) for `<img>` are acceptable — suppress with `eslint-disable-next-line` if needed.
 - Linting is `npm run lint` (ESLint CLI, flat config). `next lint` was removed in Next 16, and `next build` no longer lints — a lint error will **not** fail the build, so the check has to be run explicitly.
 
 ---
@@ -30,243 +66,14 @@ zero env vars; the two behaviours that change are:
 - No `NOTION_TOKEN` + `NOTION_BLOG_DB_ID` → blog reads `public/mock/blogEN.json` /
   `blogCN.json` instead of Notion.
 
-When testing blog changes, be explicit about which branch you are on — a change that
-works against the local JSON may not work against Notion, and vice versa.
+When testing blog changes, be explicit about which branch you are on.
 
----
+<!-- BEGIN:nextjs-agent-rules -->
 
-## Architecture
+# This is NOT the Next.js you know
 
-### SSR Pattern (strictly follow this)
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
-Every page = **Server Component** (data) + **Client Component** (interactivity).
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
-```
-app/[locale]/foo/page.tsx          ← Server: fetch data, generate metadata, pass as props
-app/[locale]/foo/FooClient.tsx     ← Client: state, events, Three.js
-```
-
-Server data is read via `lib/utils/serverData.ts` using `fs.readFileSync` from `public/mock/`.  
-Never fetch data client-side for content that can be server-rendered.
-
-### Blog data source — two branches
-
-`lib/utils/serverData.ts` switches source at request time based on env vars:
-
-```
-NOTION_TOKEN && NOTION_BLOG_DB_ID set?
-  ├─ yes → lib/utils/notionBlog.ts  (Notion API → notion-to-md → marked → highlight.js)
-  └─ no  → public/mock/blogEN.json / blogCN.json
-```
-
-Both branches return the same shapes (`lib/types/blog.ts`) — pages never know which
-is active. When changing the blog shape, **update both paths**, not just one.
-
-#### Pick the cheapest shape
-
-`abstract` and `readTime` are derived from the article body, so wanting either one costs
-a content fetch per post. Three shapes, three `serverData.ts` entry points:
-
-| Shape | Getter | Cost | Callers |
-|---|---|---|---|
-| `BlogIndexItem` | `getServerBlogIndex` | one `databases.query` | `sitemap.ts`, related posts |
-| `BlogSummary` | `getServerBlogSummaries` | one content fetch per post | blog list, `BlogCard` |
-| `BlogPost` | `getServerBlogBySlug` | one content fetch | blog detail |
-
-**Always reach for the cheapest one that covers what you actually render.** Using a
-heavier shape than needed is not a micro-optimisation here: the sitemap rebuilds daily
-and used to pull all 60 articles' bodies to read ids and dates, and the blog list used to
-ship every body to the browser — 668 KB of HTML for a page that renders excerpts.
-
-#### Caching (`lib/utils/notionBlog.ts`)
-
-Published posts are append-only: old articles don't change, only new ones appear. So
-bodies are cached **indefinitely** per post (tagged `blog-post-<id>`) and the index sits
-behind `blog-index`.
-
-- Use Next's **Data Cache**, never a module-level `Map`. The build renders each page in a
-  separate worker process and Vercel serves from separate instances — in-memory state is
-  not shared between the blog list and a post opened from a search result.
-- Bodies never expire on their own, so **`/api/revalidate` must purge the tags**, not just
-  the paths. Purging a path alone re-renders the page from the same cached body.
-- Requests are paced to ~3/s with 429 retry, matching Notion's limit. `notion-to-md`
-  issues one request per nested block, so an unpaced list build fires hundreds at once.
-  That pacing is why `staticPageGenerationTimeout` is raised in `next.config.ts`.
-
-`lib/utils/notionBlog.ts` also configures `marked` with a custom renderer that injects
-`id` attributes on headings (for the TOC) and wraps code blocks in
-`.code-block-wrap` with highlight.js classes. `blogUtils.ts` holds the shared pure
-helpers — `getTagCounts` and `filterBlogsByTag` are generic over the post shape because
-they only read `type`.
-
-Projects have no CMS — always `public/mock/projects.json` + `projectsCN.json`.
-
-### API routes
-
-| Route | Purpose |
-|---|---|
-| `app/api/contact/route.ts` | `POST` — contact form → Elastic Email HTTP API. Needs `ELASTIC_EMAIL_API_KEY`. |
-| `app/api/revalidate/route.ts` | `GET`/`POST` — on-demand ISR purge, guarded by `?secret=<REVALIDATE_SECRET>`. See the file's header comment for usage. |
-
-### i18n
-
-Two concerns — keep them separate:
-
-| | Where |
-|---|---|
-| UI strings (buttons, labels, nav, hints) | `messages/en.json` + `messages/zh.json` |
-| Content data (projects, blog posts, career) | `public/mock/*.json` (EN) + `public/mock/*CN.json` (ZH) |
-
-Access UI strings with `useTranslations('namespace')` or `getTranslations('namespace')` (server).  
-Never put project descriptions or blog content into `messages/`.
-
-### Three.js Interactive Pages
-
-Pages that are full Three.js apps (Magic Box, Decal Splatter) use a Loader pattern:
-
-```
-page.tsx           ← Server shell + Suspense
-FooLoader.tsx      ← dynamic import with ssr:false
-FooClient.tsx      ← entire Three.js logic ('use client', useEffect)
-```
-
-The client component mounts the Three.js renderer into a `containerRef` div and cleans up in the useEffect return. All Three.js state lives in closure variables inside the effect, not in React state.
-
----
-
-## Key Conventions
-
-### Adding a new project entry
-
-Update ALL of these — they must stay in sync:
-
-1. `public/mock/projects.json` — English content
-2. `public/mock/projectsCN.json` — Chinese content
-3. `lib/types/projects.ts` — only if the `Project` interface needs a new field
-
-ProjectCard shows: **Try It →** (`routeLink`), **Visit Site** (`url`). No View Code button.
-
-### Adding a new interactive project page
-
-1. Create `app/[locale]/projects/<slug>/page.tsx` + `<Name>Client.tsx` + `<Name>Loader.tsx`
-2. Add `routeLink: "/projects/<slug>"` to `projects.json` + `projectsCN.json`
-3. Add i18n strings under a new namespace in `messages/en.json` + `messages/zh.json`
-4. Run `/add-project-page` for a checklist
-
-### Updating translations
-
-Always update BOTH `messages/en.json` AND `messages/zh.json` together. Never leave one missing a key the other has.
-
----
-
-## Design System
-
-Dark mode only. All colors via CSS custom properties — never hardcode hex values.
-
-| Token | Use |
-|---|---|
-| `--bg` | Page background |
-| `--bg-secondary` | Card/panel background |
-| `--accent` | Cyan highlight (`#00d4ff`) |
-| `--text` | Primary text |
-| `--text-muted` | Secondary text |
-| `--text-dim` | Tertiary / labels |
-| `--border` | Card borders |
-| `--border-input` | Input borders |
-
-Button classes (defined in `globals.css`): `.btn-glow-primary`, `.btn-glow-outline`, `.btn-glow-purple`.  
-Use `GlowButton` component for external links.
-
----
-
-## Known Pitfalls (from past bugs)
-
-### Three.js Decal orientation on non-front faces
-`_tempObj.lookAt()` extracts Euler Z ≠ 0 for back/side faces (e.g., `π` for back face).  
-**Never do** `orientation.z = userRot` — it overwrites the base Euler-Z and flips the sticker.  
-**Always do** `orientation.z += userRot` (add, not replace). Store `baseZ` separately in `decalsPR`.
-
-### Three.js HeroWave theme toggle
-HeroWave uses two separate effects: `[]` for setup (creates WebGL renderer once), `[theme]` for color updates (uses refs). Never merge into one effect — it tears down the WebGL context on theme toggle.
-
-Note: the site is dark-only today and `components/ThemeProvider.tsx` is a stub that
-provides a hard-coded `{ theme: 'dark' }` with no toggle UI, so this bug cannot fire
-right now. Keep the two-effect split anyway — merging it would silently re-introduce
-the bug the moment a theme switch is added.
-
-### `.next/trace` EPERM on Windows
-Kill all Node processes → delete `.next/` → restart dev server.
-
-### Mock data has no trailing `code` field anymore
-`projects.json` / `projectsCN.json` no longer have a `code` field per project. Don't add it back. The `Project` type in `lib/types/projects.ts` does not include it.
-
-There used to be a second, stale `lib/types/project.ts` (singular) whose `Project` still
-had `code: number`, plus an unused `lib/utils/projectUtils.ts` that imported it. Both were
-deleted. **The only project types file is `lib/types/projects.ts` (plural)** — if you see
-an import from `types/project`, it is wrong.
-
----
-
-## File Map (quick reference)
-
-```
-app/
-  layout.tsx                   Root layout (html shell)
-  global-error.tsx             Root error boundary
-  not-found.tsx                404 page
-  sitemap.ts                   All routes + every blog post, per locale
-  robots.ts                    Points at the sitemap
-  manifest.ts                  PWA manifest (icon-192 / icon-512)
-  globals.css                  CSS custom properties + .btn-glow-* classes
-
-  api/contact/route.ts         POST — contact form → Elastic Email
-  api/revalidate/route.ts      GET/POST — on-demand ISR, ?secret= guarded
-
-  [locale]/
-    layout.tsx                 Locale layout — metadata, providers, <html lang>
-    error.tsx                  Locale-level error boundary
-    page.tsx / HomeClient      Home
-    projects/page.tsx          Projects (Server)
-    projects/ProjectsPageClient  Projects (Client)
-    projects/magic-box/        Magic Box Three.js app
-    projects/decal_splatter/   Decal Splatter Three.js app
-    blog/page.tsx              Blog list (Server)
-    blog/[id]/page.tsx         Blog detail (Server) — JSON-LD + BreadcrumbList
-    blog/[id]/opengraph-image.tsx   Dynamic per-post OG image
-    contact/page.tsx           Contact form
-    resume/page.tsx            PDF viewer
-
-components/
-  ThemeProvider.tsx            Stub — hard-coded dark, no toggle UI
-  AntdProvider.tsx             Ant Design locale + registry
-  layout/Navigation.tsx        Nav (uses lib/constants/menuData.ts)
-  layout/Footer.tsx            Social links (icons use aria-label, alt="")
-  layout/PageBanner.tsx
-  home/HeroWave.tsx            Three.js wave (desktop only)
-  home/AnimatedName.tsx
-  blog/                        BlogCard, BlogCoverImage, BlogSidebar, TagBadge
-  projects/                    ProjectCard, ScrollMenu
-  resume/MobilePdfViewer.tsx
-  ui/                          GlowButton, SectionCard, GridBackground, SectionHeader
-
-lib/
-  utils/serverData.ts          fs.readFileSync helpers + Notion/JSON branch
-  utils/notionBlog.ts          Notion API → notion-to-md → marked → highlight.js
-  utils/blogUtils.ts           Client-side blog cache (Promise cache) + AbortSignal
-  constants/menuData.ts        Nav items
-  hooks/useTypewriter.ts
-  types/projects.ts            Project, Career, ProjectsData, ProjectsResponse
-  types/blog.ts                BlogPost, TagCount, TocHeading
-  threejs/TransformControls.js Vendored Three.js control
-
-i18n/config.ts + request.ts   next-intl locales + request config
-proxy.ts                      Locale routing (/en, /zh) — renamed from middleware.ts in Next 16
-eslint.config.mjs             ESLint flat config (`next lint` was removed in Next 16)
-messages/en.json + zh.json    UI strings — keys must stay 1:1
-public/mock/*.json            Content data — projects(.CN), blogEN/blogCN
-public/models/stl/ascii/      STL models for Three.js pages
-public/image/decals/          54 built-in decal stickers
-```
-
-There is no Zustand store in use — `store/` was removed. Add one back only if a real
-cross-page client state need appears.
+<!-- END:nextjs-agent-rules -->

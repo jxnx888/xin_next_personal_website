@@ -8,6 +8,10 @@ interface ScrollMenuProps {
 
 const MOBILE_NAV = 56;
 const DESKTOP_NAV = 144;
+const DESKTOP_SCROLL_OFFSET = 120;
+// A menu click lands exactly on the active-section boundary; sub-pixel rounding can leave
+// it a fraction short, which highlighted the previous item instead of the clicked one.
+const ACTIVE_TOLERANCE = 4;
 
 export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -34,6 +38,13 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Same offset for scrolling to a section and for deciding which section is active,
+  // otherwise a click scrolls to a position the highlight logic doesn't count as "in" it.
+  const getScrollOffset = () =>
+    window.innerWidth < 1024
+      ? MOBILE_NAV + (mobileBarRef.current?.offsetHeight ?? 0) + 8
+      : DESKTOP_SCROLL_OFFSET;
+
   useEffect(() => {
     sectionRef.current = document.querySelector('.projects-main');
     const update = () => {
@@ -57,13 +68,14 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
 
       // Track active section
       const scrollTop = window.scrollY;
+      const offset = getScrollOffset() + ACTIVE_TOLERANCE;
       const entries = Object.keys(menuItems);
       let cur = 0;
       entries.forEach((key, i) => {
         const el = document.getElementById(key.replace(/ /g, ''));
         if (el) {
           const elTop = el.getBoundingClientRect().top + scrollTop;
-          if (scrollTop >= elTop - 120) cur = i;
+          if (scrollTop >= elTop - offset) cur = i;
         }
       });
       setActiveIndex(prev => prev !== cur ? cur : prev);
@@ -77,11 +89,7 @@ export default function ScrollMenu({ menuItems }: ScrollMenuProps) {
   const handleMenuClick = (key: string, index: number) => {
     const el = document.getElementById(key.replace(/ /g, ''));
     if (el) {
-      const isMobile = viewportWidth < 1024;
-      const offset = isMobile
-        ? MOBILE_NAV + (mobileBarRef.current?.offsetHeight ?? 0) + 8
-        : 120;
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - getScrollOffset(), behavior: 'smooth' });
       setActiveIndex(index);
     }
   };

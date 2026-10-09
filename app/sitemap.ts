@@ -9,6 +9,7 @@ const LOCALES = ['en', 'zh'] as const;
 const STATIC_ROUTES: Array<{ path: string; priority: number }> = [
   { path: '', priority: 1.0 },
   { path: '/projects', priority: 0.8 },
+  { path: '/projects/roblox', priority: 0.7 },
   { path: '/blog', priority: 0.9 },
   { path: '/contact', priority: 0.6 },
   { path: '/resume', priority: 0.5 },

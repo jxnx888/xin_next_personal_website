@@ -23,7 +23,8 @@ Live at **[www.ning-xin.com](https://www.ning-xin.com)**.
 | Route | Description |
 |---|---|
 | `/` | Home — hero, skills, featured projects |
-| `/projects` | Portfolio — career timeline + project cards |
+| `/projects` | Portfolio — Roblox learning block, career timeline + project cards |
+| `/projects/roblox` | Roblox games — Spinning Slayers, Spinning Survivors |
 | `/projects/magic-box` | Magic Box — interactive 3D builder |
 | `/projects/decal_splatter` | Luggage Decal Splatter — Three.js decal customizer |
 | `/blog` | Blog list with tag filtering + search |
@@ -121,6 +122,9 @@ Always read from `public/mock/projects.json` (EN) and `projectsCN.json` (ZH) via
 `getServerProjectsData()`. There is no CMS for projects — edit the JSON and keep both
 locales in sync.
 
+The Roblox games page reads `public/mock/robloxGames.json` / `robloxGamesCN.json` via
+`getServerRobloxGames()` the same way; see `docs/CONVENTIONS.md` before adding a game.
+
 ## API Routes
 
 | Route | Method | Description |
@@ -162,7 +166,7 @@ Generated at build time from the App Router conventions:
 - `app/[locale]/blog/[id]/opengraph-image.tsx` — dynamic per-post OG image
 - Canonical + `hreflang` on every page; JSON-LD (`BlogPosting`, `BreadcrumbList`) on post pages
 
-See `SEO_AUDIT.md` for the audit trail and the remaining manual tasks.
+See [`docs/SEO_AUDIT.md`](./docs/SEO_AUDIT.md) for the audit trail and the remaining manual tasks.
 
 ## Scripts
 
@@ -200,18 +204,29 @@ i18n/                  next-intl config + request handler
 proxy.ts               Locale routing (Next 16 name for middleware.ts)
 eslint.config.mjs      ESLint flat config
 lib/
-  types/               BlogPost, Project, Career
+  types/               BlogPost, Project, Career, RobloxGame
   utils/               serverData (fs), notionBlog (Notion), blogUtils (client cache)
   hooks/               useTypewriter
   constants/           menuData (nav items)
   threejs/             Vendored TransformControls
 messages/              i18n strings — en.json / zh.json (UI strings only)
-public/mock/           Content data — projects, blog posts (simulated CMS)
+public/mock/           Content data — projects, Roblox games, blog posts (simulated CMS)
 public/models/         Three.js STL models
-public/image/          Static images and decal stickers
+public/image/          Static images, decal stickers, game screenshots
+docs/                  Architecture, conventions, pitfalls, roadmap, changelog, SEO audit
 ```
 
 ## Contributing / Conventions
 
-Project-specific conventions, architecture rules, and known pitfalls live in
-[`CLAUDE.md`](./CLAUDE.md). Read it before adding a page or a project entry.
+Project documentation lives in [`docs/`](./docs):
+
+| File | Contents |
+|---|---|
+| [`ARCHITECTURE.md`](./docs/ARCHITECTURE.md) | SSR pattern, data sources, blog caching, i18n, file map |
+| [`CONVENTIONS.md`](./docs/CONVENTIONS.md) | Adding projects, pages, games, nav items, translations; design tokens |
+| [`PITFALLS.md`](./docs/PITFALLS.md) | Bugs that already happened once, and how to avoid them |
+| [`ROADMAP.md`](./docs/ROADMAP.md) | Open work and deliberately deferred decisions |
+| [`CHANGELOG.md`](./docs/CHANGELOG.md) | What changed and why, newest first |
+
+Read `CONVENTIONS.md` before adding a page or a project entry. [`CLAUDE.md`](./CLAUDE.md)
+holds the collaboration rules for AI-assisted work.
