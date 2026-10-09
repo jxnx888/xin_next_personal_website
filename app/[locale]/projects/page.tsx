@@ -36,7 +36,8 @@ export default async function ProjectsPage({
   const projectsData = getServerProjectsData(locale);
   const robloxGames = getServerRobloxGames(locale);
 
-  const menuItems: Record<string, string> = {};
+  // The Roblox section sits above the careers, so it leads the scroll menu too
+  const menuItems: Record<string, string> = robloxGames ? { Roblox: 'Roblox' } : {};
   Object.entries(projectsData).forEach(([key, career]) => {
     menuItems[key] = career.companySC;
   });

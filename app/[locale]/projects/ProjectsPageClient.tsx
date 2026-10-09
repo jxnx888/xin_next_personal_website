@@ -43,6 +43,7 @@ export default function ProjectsPageClient({ projectsData, menuItems, robloxGame
           {/* Side project — currently learning Roblox game development */}
           {robloxGames && (
             <div
+              id="Roblox"
               className="mb-16 phone:mb-12 rounded-xl border border-[var(--border)] p-8 phone:p-5"
               style={{ background: 'var(--bg-secondary)' }}
             >
