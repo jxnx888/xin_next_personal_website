@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { getServerRobloxGames } from '@/lib/utils/serverData';
 import HomeClient from './HomeClient';
 import type { Locale } from '@/i18n/config';
 
@@ -30,6 +31,7 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
+  const robloxGames = getServerRobloxGames(locale);
   const t = await getTranslations({ locale });
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ning-xin.com';
 
@@ -63,7 +65,7 @@ export default async function HomePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
-      <HomeClient />
+      <HomeClient robloxGames={robloxGames} />
     </>
   );
 }

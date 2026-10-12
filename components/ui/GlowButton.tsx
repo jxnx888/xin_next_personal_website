@@ -5,7 +5,7 @@ import { ReactNode, CSSProperties } from 'react';
 
 interface GlowButtonProps {
   children: ReactNode;
-  variant?: 'primary' | 'outline';
+  variant?: 'primary' | 'outline' | 'purple';
   href?: string;
   download?: boolean;
   external?: boolean;

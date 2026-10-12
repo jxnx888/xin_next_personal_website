@@ -104,9 +104,18 @@ they only read `type`.
 `/projects/roblox` (`app/[locale]/projects/roblox/`) is a plain Server + Client page, not
 a Three.js app. Its JSON (`lib/types/games.ts` → `RobloxGamesData`) holds two things:
 
-- `games[]` — rendered on the games page, **newest release first**
-- `intro` + `learnings` — the "currently learning Roblox" block, rendered at the top of
-  the **projects** page, not the games page. `projects/page.tsx` reads both JSON files.
+- `games[]` — rendered on the games page (**newest release first**) and, as icon + tagline
+  cards, in the home page's Games section
+- `intro` + `learnings` — the "currently learning Roblox" block on the **projects** page.
+  The home page reuses `intro[0]` alone as a one-line summary.
+
+Three pages read this JSON, so `getServerRobloxGames` is called from `page.tsx` in each:
+home, projects and the games page itself. All three handle `null` — a missing or
+malformed JSON file degrades to hiding the block, never a crash.
+
+The Discord invite is a module constant in `RobloxGamesClient.tsx`, not in the JSON: it is
+server-wide and locale-independent, so putting it in the data would mean keeping the same
+URL in sync across both locale files.
 
 Screenshots live in `public/image/games/` as compressed `.webp` (≤ ~200 KB each).
 
@@ -182,7 +191,7 @@ app/
   [locale]/
     layout.tsx                 Locale layout — metadata, providers, <html lang>
     error.tsx                  Locale-level error boundary
-    page.tsx / HomeClient      Home
+    page.tsx / HomeClient      Home — reads Roblox games for the Games section
     projects/page.tsx          Projects (Server) — careers + Roblox learning block
     projects/ProjectsPageClient  Projects (Client)
     projects/roblox/           Roblox games page (Server + RobloxGamesClient)

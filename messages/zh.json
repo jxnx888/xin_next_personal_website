@@ -42,10 +42,10 @@
   "NAV_LANGUAGE": "语言",
   "NAV_OPEN_MENU": "打开菜单",
   "SKIP_TO_CONTENT": "跳转到主内容",
-  "HOME_ABOUT": "我注重代码质量与用户体验，追求简洁、可维护的实现。既能独立推进项目，也擅长在跨职能团队中协作共创。",
+  "HOME_ABOUT": "我注重代码质量与用户体验，追求简洁、可维护的实现。既能独立推进项目，也擅长在跨职能团队中协作共创。工作之外，我通过独立设计并上线 Roblox 游戏来学习游戏开发。",
   "MY_PROJECTS": "我的项目",
   "KEEP_LEARNING": ["不断学习，不断成长", "一旦你停止学习，你就开始死亡。", "阿尔伯特 · 爱因斯坦"],
-  "INTRODUCTION": ["构建并交付高质量的 Web 应用。", "8 年以上 Web 开发经验。"],
+  "INTRODUCTION": ["构建并交付高质量的 Web 应用。", "8 年以上 Web 开发经验。", "正在用 Roblox 开发游戏。"],
   "FEATURED_PROJECTS": [
     {
       "title": "LCI Education — 企业官网",
@@ -113,6 +113,9 @@
     "enlarge": "放大截图",
     "close": "关闭",
     "ctaTitle": "我正在学习 Roblox 游戏开发",
-    "ctaButton": "查看我的游戏 →"
+    "ctaButton": "查看我的游戏 →",
+    "communityTitle": "加入 Discord",
+    "communityDesc": "第一时间了解我在做什么，提前体验新玩法，也可以直接向我反馈 bug 或提建议。",
+    "joinDiscord": "加入 Discord 服务器"
   }
 }

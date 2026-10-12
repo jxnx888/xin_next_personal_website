@@ -6,6 +6,64 @@ change.
 
 ---
 
+## 2026-10-11 — Hero and bio mention game development; job title does not
+
+With the games now surfaced on the home page, the copy above them still described only
+web work. Two of the three obvious places were widened; the third deliberately was not.
+
+`MY_TITLE` stays "Full-Stack Developer". That string feeds the hero, the bio card, the
+resume page **and** `jobTitle` in the Person JSON-LD, so widening it to "Full-Stack
+Developer & Game Developer" would have put an overclaim into structured data — the games
+are a month old and the site itself labels them "currently learning", against eight years
+and four companies of web work. It would also blur the positioning a recruiter reads in
+the first two seconds.
+
+Instead:
+
+- a third `INTRODUCTION` line ("Currently Building Games on Roblox.") — visible in the
+  hero, but phrased as current activity rather than identity. `useTypewriter` cycles
+  `words[loopNum % words.length]`, so a third entry needed no code change.
+- one sentence appended to `HOME_ABOUT`, which until now described only *how* he works
+  (clean code, performance, teamwork) and never what he is working on. It also bridges
+  into the Games section directly below it.
+
+---
+
+## 2026-10-11 — Discord invite on the games page
+
+One compact row above the games list. Not next to either Play button — one server covers
+both games, and per-game placement would have implied otherwise. Not below the list
+either, which is where it started: the page is roughly 2600px of covers and screenshots
+on desktop and five or six screens on mobile, so almost nobody reached it. A full-height
+card at the top would have pushed the "My Games" heading off the first screen, hence the
+single-row form.
+
+It uses the `purple` variant, which existed in `globals.css` as `.btn-glow-purple` but was
+missing from `GlowButton`'s prop type, so `ProjectCard` reaches for the raw class instead.
+Added `'purple'` to the union. `ProjectCard` was left alone — switching it over is
+unrelated to this change.
+
+---
+
+## 2026-10-11 — Games on the home page
+
+The Roblox games shipped on 2026-10-08 were reachable from the top nav and the projects
+page, but the home page — the page most visitors actually land on — said nothing about
+them. The `robloxGames.ctaTitle` / `ctaButton` strings already existed and were only wired
+into the projects page, so the home section reuses them rather than adding near-duplicate
+copy.
+
+Placed between Featured Work and Keep Learning: professional work first, then the side
+project, then the closing quote — and the Roblox block reads as the setup for a section
+about learning. The home card shows icon, tagline, genre and release for each game and
+deep-links to `#<id>` on the games page; it deliberately does not repeat `learnings`,
+which stays on the projects page.
+
+`HomeClient` now takes a `robloxGames` prop — the first data it has ever received. Home
+previously rendered entirely from i18n and hardcoded arrays.
+
+---
+
 ## 2026-10-08 — Docs moved into `docs/`
 
 Project knowledge was split across `README.md`, `CLAUDE.md`, a root-level `SEO_AUDIT.md`

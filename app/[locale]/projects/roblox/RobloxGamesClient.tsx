@@ -13,6 +13,18 @@ interface RobloxGamesClientProps {
   data: RobloxGamesData | null;
 }
 
+// The invite is server-wide and locale-independent, so it lives here rather than in
+// robloxGames.json / robloxGamesCN.json, where it would have to be kept in sync twice.
+const DISCORD_INVITE = 'https://discord.gg/GWZ79YcGuu';
+
+function DiscordIcon() {
+  return (
+    <svg aria-hidden="true" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19.27 5.33A16.6 16.6 0 0015.16 4l-.25.46a12.2 12.2 0 00-5.82 0L8.84 4a16.6 16.6 0 00-4.11 1.33C2.1 9.22 1.39 13 1.74 16.73a16.7 16.7 0 005.07 2.58l.6-.84a10.9 10.9 0 01-1.7-.82l.42-.33a11.9 11.9 0 0011.74 0l.42.33c-.54.32-1.11.6-1.7.82l.6.84a16.7 16.7 0 005.07-2.58c.42-4.33-.71-8.07-2.99-11.4zM8.52 14.46c-1 0-1.82-.92-1.82-2.05s.8-2.05 1.82-2.05 1.84.92 1.82 2.05c0 1.13-.8 2.05-1.82 2.05zm6.96 0c-1 0-1.82-.92-1.82-2.05s.8-2.05 1.82-2.05 1.83.92 1.81 2.05c0 1.13-.79 2.05-1.81 2.05z" />
+    </svg>
+  );
+}
+
 function PlayIcon() {
   return (
     <svg aria-hidden="true" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -182,6 +194,35 @@ export default function RobloxGamesClient({ data }: RobloxGamesClientProps) {
           <p className="text-center py-16 text-[var(--text-muted)]">{tg('SOMETHING_WRONG')}</p>
         ) : (
           <>
+            {/* Community — one invite covers both games, so it sits above the list
+                rather than beside either Play button. Kept to a single compact row:
+                the page is ~2600px of covers and screenshots, so at the bottom most
+                visitors never reached it, but a full-height card here would push the
+                "My Games" heading off the first screen. */}
+            <SectionCard className="mb-10 p-5 phone:p-4 flex flex-col phone:items-start pad:flex-row pc:flex-row pad:items-center pc:items-center gap-4">
+              <span
+                className="shrink-0 w-10 h-10 rounded-xl inline-flex items-center justify-center"
+                style={{ background: 'var(--accent-subtle)', color: 'var(--accent-purple)' }}
+              >
+                <DiscordIcon />
+              </span>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-base font-bold text-[var(--text)]">{t('communityTitle')}</h2>
+                <p className="text-sm leading-relaxed text-[var(--text-muted)] mt-0.5">{t('communityDesc')}</p>
+              </div>
+              <GlowButton
+                href={DISCORD_INVITE}
+                external
+                variant="purple"
+                className="shrink-0"
+                style={{ padding: '9px 20px', fontSize: '13px' }}
+                aria-label={t('joinDiscord')}
+              >
+                <DiscordIcon />
+                {t('joinDiscord')}
+              </GlowButton>
+            </SectionCard>
+
             <SectionHeader title={t('myGames')} />
             {data.games.map((game, i) => (
               <GameSection key={game.id} game={game} index={i} onOpenShot={setOpenShot} />
