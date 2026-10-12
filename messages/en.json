@@ -113,6 +113,9 @@
     "enlarge": "Enlarge screenshot",
     "close": "Close",
     "ctaTitle": "I'm learning Roblox game development",
-    "ctaButton": "See my games →"
+    "ctaButton": "See my games →",
+    "communityTitle": "Join the Discord",
+    "communityDesc": "Updates on what I'm building, early access to new features, and a place to send bug reports or ideas straight to me.",
+    "joinDiscord": "Join the Discord server"
   }
 }

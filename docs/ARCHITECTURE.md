@@ -113,6 +113,10 @@ Three pages read this JSON, so `getServerRobloxGames` is called from `page.tsx` 
 home, projects and the games page itself. All three handle `null` — a missing or
 malformed JSON file degrades to hiding the block, never a crash.
 
+The Discord invite is a module constant in `RobloxGamesClient.tsx`, not in the JSON: it is
+server-wide and locale-independent, so putting it in the data would mean keeping the same
+URL in sync across both locale files.
+
 Screenshots live in `public/image/games/` as compressed `.webp` (≤ ~200 KB each).
 
 ---

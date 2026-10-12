@@ -113,6 +113,9 @@
     "enlarge": "放大截图",
     "close": "关闭",
     "ctaTitle": "我正在学习 Roblox 游戏开发",
-    "ctaButton": "查看我的游戏 →"
+    "ctaButton": "查看我的游戏 →",
+    "communityTitle": "加入 Discord",
+    "communityDesc": "第一时间了解我在做什么，提前体验新玩法，也可以直接向我反馈 bug 或提建议。",
+    "joinDiscord": "加入 Discord 服务器"
   }
 }

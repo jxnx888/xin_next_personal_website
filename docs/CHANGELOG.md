@@ -6,6 +6,22 @@ change.
 
 ---
 
+## 2026-10-11 — Discord invite on the games page
+
+One compact row above the games list. Not next to either Play button — one server covers
+both games, and per-game placement would have implied otherwise. Not below the list
+either, which is where it started: the page is roughly 2600px of covers and screenshots
+on desktop and five or six screens on mobile, so almost nobody reached it. A full-height
+card at the top would have pushed the "My Games" heading off the first screen, hence the
+single-row form.
+
+It uses the `purple` variant, which existed in `globals.css` as `.btn-glow-purple` but was
+missing from `GlowButton`'s prop type, so `ProjectCard` reaches for the raw class instead.
+Added `'purple'` to the union. `ProjectCard` was left alone — switching it over is
+unrelated to this change.
+
+---
+
 ## 2026-10-11 — Games on the home page
 
 The Roblox games shipped on 2026-10-08 were reachable from the top nav and the projects
