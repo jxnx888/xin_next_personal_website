@@ -10,6 +10,8 @@ import SectionCard from '@/components/ui/SectionCard';
 import GridBackground from '@/components/ui/GridBackground';
 import SectionHeader from '@/components/ui/SectionHeader';
 import Image from 'next/image';
+import Link from 'next/link';
+import type { RobloxGamesData } from '@/lib/types/games';
 
 const TECH_ROW1 = ['React', 'Next.js', 'Vue.js', 'Three.js', 'Node.js', 'Sitecore', 'Uniform'];
 const TECH_ROW2 = ['JavaScript', 'TypeScript', 'HTML5 / CSS3', 'Tailwind CSS', 'Segment', 'Optimizely'];
@@ -22,9 +24,14 @@ const FEATURED_PROJECTS_STATIC = [
   { company: 'Kai Rong',       img: '/image/projects/magicBox.jpg',  tags: ['Three.js', 'Next.js', 'React', 'TypeScript'],        url: null, routeLink: '/projects/magic-box' },
 ] as const;
 
-export default function HomeClient() {
+interface HomeClientProps {
+  robloxGames: RobloxGamesData | null;
+}
+
+export default function HomeClient({ robloxGames }: HomeClientProps) {
   const t = useTranslations();
   const tp = useTranslations('projects');
+  const tr = useTranslations('robloxGames');
   const locale = useLocale();
   const featuredI18n = (t.raw('FEATURED_PROJECTS') as { title: string; desc: string }[]) ?? [];
   const featuredProjects = FEATURED_PROJECTS_STATIC.map((p, i) => ({ ...p, ...(featuredI18n[i] ?? { title: p.company, desc: '' }) }));
@@ -345,6 +352,64 @@ export default function HomeClient() {
             ))}
           </div>
         </div>
+
+        {/* ── Games ─────────────────────────────────────── */}
+        {robloxGames && robloxGames.games.length > 0 && (
+          <div className="mb-12">
+            <SectionHeader
+              title={t('GAMES')}
+              linkHref={`/${locale}/projects/roblox`}
+              linkLabel={t('VIEW_ALL')}
+            />
+
+            <SectionCard className="p-8 phone:p-6">
+              <span
+                className="inline-flex items-center gap-2 text-[11px] font-semibold tracking-widest uppercase mb-3"
+                style={{ color: 'var(--accent)' }}
+              >
+                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--accent)' }} />
+                {tr('learningBadge')}
+              </span>
+
+              <h3 className="text-xl phone:text-lg font-bold text-[var(--text)] mb-3" style={{ letterSpacing: '0.03em' }}>
+                {tr('ctaTitle')}
+              </h3>
+              {robloxGames.intro[0] && (
+                <p className="text-sm leading-relaxed text-[var(--text-muted)] mb-6">{robloxGames.intro[0]}</p>
+              )}
+
+              <div className="grid pad:grid-cols-2 pc:grid-cols-2 gap-4 mb-6">
+                {robloxGames.games.map((game) => (
+                  <Link
+                    key={game.id}
+                    href={`/${locale}/projects/roblox#${game.id}`}
+                    className="group flex items-center gap-4 rounded-lg p-4 border border-[var(--border)] hover-accent-border transition-all duration-300"
+                    style={{ background: 'var(--accent-subtle)' }}
+                  >
+                    <span className="relative w-14 h-14 phone:w-12 phone:h-12 rounded-lg overflow-hidden shrink-0">
+                      <Image src={game.icon} alt="" fill sizes="56px" className="object-cover" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[var(--text)] font-bold text-sm leading-snug truncate">
+                        {game.title}
+                      </span>
+                      <span className="block text-[var(--text-muted)] text-xs leading-relaxed truncate">
+                        {game.tagline}
+                      </span>
+                      <span className="block text-[var(--text-dim)] text-[11px] mt-1 truncate">
+                        {game.genre} · {tr('released')} {game.released}
+                      </span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+
+              <GlowButton href={`/${locale}/projects/roblox`} style={{ padding: '8px 16px', fontSize: '13px' }}>
+                {tr('ctaButton')}
+              </GlowButton>
+            </SectionCard>
+          </div>
+        )}
 
         {/* ── Keep Learning ─────────────────────────────── */}
         <SectionCard className="overflow-hidden">
