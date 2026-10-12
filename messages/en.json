@@ -42,10 +42,10 @@
   "NAV_LANGUAGE": "Language",
   "NAV_OPEN_MENU": "Open Menu",
   "SKIP_TO_CONTENT": "Skip to content",
-  "HOME_ABOUT": "I write clean, maintainable code and care deeply about performance and user experience. I work well independently and thrive in collaborative, cross-functional teams.",
+  "HOME_ABOUT": "I write clean, maintainable code and care deeply about performance and user experience. I work well independently and thrive in collaborative, cross-functional teams. Outside of work I'm learning game development by designing and shipping my own Roblox games.",
   "MY_PROJECTS": "My Projects",
   "KEEP_LEARNING": ["KEEP LEARNING, KEEP GROWING", "Once you stop learning, you start dying.", "Albert Einstein"],
-  "INTRODUCTION": ["I Build & Ship for the Web.", "8+ Years of Web Development Experience."],
+  "INTRODUCTION": ["I Build & Ship for the Web.", "8+ Years of Web Development Experience.", "Currently Building Games on Roblox."],
   "FEATURED_PROJECTS": [
     {
       "title": "LCI Education — Corporate Website",

@@ -6,6 +6,29 @@ change.
 
 ---
 
+## 2026-10-11 — Hero and bio mention game development; job title does not
+
+With the games now surfaced on the home page, the copy above them still described only
+web work. Two of the three obvious places were widened; the third deliberately was not.
+
+`MY_TITLE` stays "Full-Stack Developer". That string feeds the hero, the bio card, the
+resume page **and** `jobTitle` in the Person JSON-LD, so widening it to "Full-Stack
+Developer & Game Developer" would have put an overclaim into structured data — the games
+are a month old and the site itself labels them "currently learning", against eight years
+and four companies of web work. It would also blur the positioning a recruiter reads in
+the first two seconds.
+
+Instead:
+
+- a third `INTRODUCTION` line ("Currently Building Games on Roblox.") — visible in the
+  hero, but phrased as current activity rather than identity. `useTypewriter` cycles
+  `words[loopNum % words.length]`, so a third entry needed no code change.
+- one sentence appended to `HOME_ABOUT`, which until now described only *how* he works
+  (clean code, performance, teamwork) and never what he is working on. It also bridges
+  into the Games section directly below it.
+
+---
+
 ## 2026-10-11 — Discord invite on the games page
 
 One compact row above the games list. Not next to either Play button — one server covers
