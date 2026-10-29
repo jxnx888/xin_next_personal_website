@@ -6,7 +6,31 @@ interface ContactPayload {
   phone: string;
   subject: string;
   message: string;
+  /** Milliseconds between the form mounting and the submit. */
+  elapsedMs?: number;
 }
+
+/** Humans can't fill five fields faster than this. */
+const MIN_FILL_MS = 3000;
+
+/**
+ * True when the request comes from a page on this same host. Browsers always send Origin
+ * on a POST; many scripts don't. Comparing to the request's own host (rather than a
+ * hardcoded domain) keeps localhost, www and preview deployments working.
+ */
+function isSameOrigin(req: NextRequest) {
+  const origin = req.headers.get('origin');
+  const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
+  if (!origin || !host) return false;
+  try {
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}
+
+const escapeHtml = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.ELASTIC_EMAIL_API_KEY;
@@ -24,10 +48,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const { name, email, phone, subject, message } = body;
-  if (!name || !email || !phone || !subject || !message) {
+  const { elapsedMs } = body;
+  if (!body.name || !body.email || !body.phone || !body.subject || !body.message) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
+
+  // Bot checks. A missing elapsedMs also counts — scripts that POST straight to this
+  // route never ran the form. Reply 200 so the bot sees no difference to tune against.
+  const sameOrigin = isSameOrigin(req);
+  if (!sameOrigin || typeof elapsedMs !== 'number' || elapsedMs < MIN_FILL_MS) {
+    console.warn('Contact spam dropped:', { origin: req.headers.get('origin'), sameOrigin, elapsedMs });
+    return NextResponse.json({ success: true });
+  }
+
+  const name    = escapeHtml(body.name);
+  const email   = escapeHtml(body.email);
+  const phone   = escapeHtml(body.phone);
+  const subject = escapeHtml(body.subject);
+  const message = escapeHtml(body.message);
 
   const htmlBody = `
 <!DOCTYPE html>
@@ -111,9 +149,9 @@ export async function POST(req: NextRequest) {
     from: fromEmail,
     fromName: 'Xin Ning Personal Website',
     to: toEmail,
-    subject: `[Contact Form] ${subject}`,
+    subject: `[Contact Form] ${body.subject}`,
     bodyHtml: htmlBody,
-    replyTo: email,
+    replyTo: body.email,
   });
 
   const res = await fetch('https://api.elasticemail.com/v2/email/send', {

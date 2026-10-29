@@ -70,7 +70,10 @@ export default function ContactClient() {
   const [errors, setErrors]     = useState({ name: false, nameInvalid: false, email: false, emailInvalid: false, phone: false, phoneInvalid: false, subject: false, message: false });
   const [submitState, setSubmitState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Anti-spam: time since mount, checked in /api/contact.
+  const mountedAtRef = useRef(0);
 
+  useEffect(() => { mountedAtRef.current = Date.now(); }, []);
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   const validateName  = (v: string) => /^[a-zA-Z一-龥\s]+$/.test(v);
@@ -119,7 +122,7 @@ export default function ContactClient() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, elapsedMs: Date.now() - mountedAtRef.current }),
       });
       if (res.ok) {
         setSubmitState('success');
