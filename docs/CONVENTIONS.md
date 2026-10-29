@@ -15,6 +15,15 @@ Update ALL of these — they must stay in sync:
 
 ProjectCard shows: **Try It →** (`routeLink`), **Visit Site** (`url`). No View Code button.
 
+The home-page stats (years / projects / companies) are computed from `projects.json` plus
+`robloxGames.json` in `app/[locale]/page.tsx` (`getHomeStats`) — don't hardcode them.
+Years count from the earliest `startDate`, so keep it in `YYYY/MM` form.
+
+Career entries store only `startDate` / `endDate` (`YYYY/MM`, or `Present` / `至今`). Don't
+add a `duration` — `getServerProjectsData` computes it per locale. Newest role goes first;
+the projects page and scroll menu render in file order. `projects: []` is fine for a role
+with nothing public to show yet.
+
 ## Adding a new interactive project page
 
 1. Create `app/[locale]/projects/<slug>/page.tsx` + `<Name>Client.tsx` + `<Name>Loader.tsx`

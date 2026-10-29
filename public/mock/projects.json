@@ -1,19 +1,35 @@
 {
   "code": 200,
   "data": {
+    "Sengo": {
+      "companyName": "Sengo",
+      "companySC": "Sengo",
+      "jobtitle": "Technical Director | Head of Frontend | Composable Architecture",
+      "responsibilities": [
+        "Leading front-end architecture and technical direction across DXP and headless CMS projects.",
+        "Driving composable architecture: integrating headless CMS and DXP platforms such as Optimizely into scalable, maintainable front ends.",
+        "Bringing AI into delivery, including MCP (Model Context Protocol) integrations and Ploy.ai, to speed up how teams build and ship.",
+        "Setting the bar for code quality, performance, accessibility and security across every solution.",
+        "Mentoring developers and Tech Leads, and establishing front-end engineering standards and best practices.",
+        "Supporting pre-sales with technical consulting, solution architecture and project estimation.",
+        "Working with the leadership team to shape technical strategy and drive engineering excellence."
+      ],
+      "startDate": "2026/10",
+      "endDate": "Present",
+      "projects": []
+    },
     "LCI Education": {
       "companyName": "LCI Education",
       "companySC": "LCI Education",
       "jobtitle": "Front-end Developer",
       "responsibilities": [
-        "Developing and maintaining multilingual web applications for an international education group with 23 institutions across 5 continents.",
-        "Building responsive, accessible interfaces using React, Next.js and TypeScript, collaborating closely with UX/UI designers and back-end teams.",
-        "Implementing CMS-driven content workflows and ensuring cross-browser compatibility and web performance.",
-        "Participating in code reviews and contributing to shared component libraries and front-end standards."
+        "Developed and maintained multilingual web applications for an international education group with 23 institutions across 5 continents.",
+        "Built responsive, accessible interfaces using React, Next.js and TypeScript, collaborating closely with UX/UI designers and back-end teams.",
+        "Implemented CMS-driven content workflows and ensured cross-browser compatibility and web performance.",
+        "Took part in code reviews and contributed to shared component libraries and front-end standards."
       ],
       "startDate": "2021/10",
-      "endDate": "Present",
-      "duration": "3 yrs+",
+      "endDate": "2026/10",
       "projects": [
         {
           "title": "LCI Education — Corporate Website",
@@ -38,7 +54,6 @@
       ],
       "startDate": "2021/03",
       "endDate": "2021/09",
-      "duration": "6 mos",
       "projects": [
         {
           "title": "GWM Online Store - THAI",
@@ -62,7 +77,6 @@
       ],
       "startDate": "2019/05",
       "endDate": "2021/03",
-      "duration": "1 yr 11 mos",
       "projects": [
         {
           "title": "Import Express - Ecommerce",
@@ -116,7 +130,6 @@
       ],
       "startDate": "2018/05",
       "endDate": "2018/09",
-      "duration": "3 mos",
       "projects": [
         {
           "title": "WeChat H5 — Viral Quiz Campaign",

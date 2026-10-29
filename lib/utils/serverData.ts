@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { BlogIndexItem, BlogPost, BlogSummary } from '@/lib/types/blog';
-import type { ProjectsData } from '@/lib/types/projects';
+import type { Career, ProjectsData } from '@/lib/types/projects';
 import type { RobloxGamesData } from '@/lib/types/games';
 import { getReadTime } from '@/lib/utils/blogUtils';
 
@@ -66,12 +66,44 @@ export async function getServerBlogBySlug(slug: string, locale: string): Promise
   return readLocalPosts(locale).find((b) => b.id === slug) ?? null;
 }
 
+/** "YYYY/MM" → months since year 0; anything else ("Present", "至今") → this month. */
+function toMonthIndex(date: string): number {
+  const match = /^(\d{4})\/(\d{2})$/.exec(date);
+  if (match) return Number(match[1]) * 12 + Number(match[2]) - 1;
+  const now = new Date();
+  return now.getFullYear() * 12 + now.getMonth();
+}
+
+/** Length of a role, e.g. "1 yr 10 mos" / "1 年 10 个月". */
+function formatDuration(startDate: string, endDate: string, locale: string): string {
+  const total = Math.max(0, toMonthIndex(endDate) - toMonthIndex(startDate));
+  const years = Math.floor(total / 12);
+  const months = total % 12;
+  if (locale === 'zh') {
+    if (total === 0) return '不到 1 个月';
+    return [years && `${years} 年`, months && `${months} 个月`].filter(Boolean).join(' ');
+  }
+  if (total === 0) return '< 1 mo';
+  return [
+    years && `${years} ${years === 1 ? 'yr' : 'yrs'}`,
+    months && `${months} ${months === 1 ? 'mo' : 'mos'}`,
+  ].filter(Boolean).join(' ');
+}
+
 export function getServerProjectsData(locale: string): ProjectsData {
   try {
     const filename = locale === 'zh' ? 'projectsCN.json' : 'projects.json';
     const filePath = path.join(process.cwd(), 'public', 'mock', filename);
     const raw = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    return raw.code === 200 ? raw.data : {};
+    if (raw.code !== 200) return {};
+    // duration is derived from the dates, never stored, so it can't go stale
+    const data = raw.data as Record<string, Omit<Career, 'duration'>>;
+    return Object.fromEntries(
+      Object.entries(data).map(([key, career]) => [
+        key,
+        { ...career, duration: formatDuration(career.startDate, career.endDate, locale) },
+      ]),
+    );
   } catch {
     return {};
   }

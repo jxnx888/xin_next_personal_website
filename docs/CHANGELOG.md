@@ -6,6 +6,36 @@ change.
 
 ---
 
+## 2026-10-29 — Home-page stats computed from data
+
+"8+ Years Exp. / 10+ Projects / 4 Companies" were string literals in `HomeClient`, so the
+year count would have frozen at 8. They are now derived in `page.tsx` (`getHomeStats`):
+
+- **Years** — whole years since the earliest career `startDate` (2018/05), not the sum of
+  each role's length. Sums would read 7+ because of the 2018/09–2019/05 gap; counting from
+  career start is how a résumé reads, and was the owner's call.
+- **Projects** — career projects plus Roblox games (8 + 2 today), shown with a "+" as
+  before, at the owner's request.
+- **Companies** — number of career entries.
+
+The page is statically built, so the values update on deploy, not on the anniversary day.
+
+## 2026-10-29 — Sengo role added; career durations computed
+
+Left LCI Education on 2026/10/16 and joined Sengo on 2026/10/19 as Technical Director |
+Head of Frontend | Composable Architecture. Sengo is the first career entry with
+`projects: []` until there is public work to show; LCI got an end date and its
+responsibilities moved to past tense. Companies on the home page now reads 5.
+
+The stored `duration` strings had drifted ("3 yrs+" for a five-year role) and didn't even
+agree on whether the end month counts. They were removed from both JSON files and are now
+computed in `getServerProjectsData` as end month minus start month, per locale.
+
+The projects page had never shown dates or durations at all, so each role now gets a
+line under the company name: `2021/10 – 2026/10 · 5 yrs`.
+
+---
+
 ## 2026-10-29 — Contact form drops bot submissions
 
 Bot submissions started arriving: random-letter name, subject and message, a dotted Gmail
