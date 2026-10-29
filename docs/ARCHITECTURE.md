@@ -136,7 +136,7 @@ Screenshots live in `public/image/games/` as compressed `.webp` (≤ ~200 KB eac
 
 | Route | Purpose |
 |---|---|
-| `app/api/contact/route.ts` | `POST` — contact form → Elastic Email HTTP API. Needs `ELASTIC_EMAIL_API_KEY`. |
+| `app/api/contact/route.ts` | `POST` — contact form → Elastic Email HTTP API. Needs `ELASTIC_EMAIL_API_KEY`. Silently drops bots (`Origin` missing or not this host, or `elapsedMs` missing or < 3s) with a fake 200; HTML-escapes fields into the email body. |
 | `app/api/revalidate/route.ts` | `GET`/`POST` — on-demand ISR purge, guarded by `?secret=<REVALIDATE_SECRET>`. See the file's header comment for usage. |
 
 ---

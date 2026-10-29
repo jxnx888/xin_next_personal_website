@@ -6,6 +6,41 @@ change.
 
 ---
 
+## 2026-10-29 — Contact form drops bot submissions
+
+Bot submissions started arriving: random-letter name, subject and message, a dotted Gmail
+address (Gmail ignores dots, so spammers vary them to dodge blocklists). The form had no
+protection, so a zero-config check went in first. Turnstile was deferred: it needs keys
+and a server-side verify call, and this may be enough.
+
+- **Fill time** — the client sends `elapsedMs` since mount; under 3s is a bot. A missing
+  value also counts, which catches scripts that POST to `/api/contact` directly — the
+  likely source here, since these submissions pass the client-side validation anyway.
+- **Origin** — the `Origin` header must match the request's own host (`x-forwarded-host`
+  or `host`). Browsers always send it on a POST; many scripts don't. Matching the host
+  instead of hardcoding `ning-xin.com` keeps localhost, `www` and preview deploys working.
+  Trivially forged, but free.
+
+Both checks are spoofable by a bot that bothers. If spam keeps coming, the next step is
+Turnstile, not more homemade checks.
+
+**No honeypot — tried and removed.** An off-screen hidden input dropped real manual
+submissions twice: first named `website`, then renamed to `hp_extra` with no label and
+the `data-lpignore`/`data-1p-ignore`/`data-bwignore` attributes. Both times the browser's
+autocomplete put the email (`test@test.com`) into it — autofill does not go by field name
+alone, and real visitors use autofill too. A check that silently discards real messages
+costs more than the bots it stops, so don't re-add one without testing against real
+browser autofill.
+
+Dropped submissions still get a 200 `{ success: true }` so the bot has nothing to tune
+against; they are only logged with `console.warn`.
+
+Also fixed while in there: fields were interpolated raw into the email HTML, so anyone
+could inject markup or links into mail that arrives from our own domain. They are now
+HTML-escaped (the plain-text subject line and `replyTo` keep the raw values).
+
+---
+
 ## 2026-10-11 — Hero and bio mention game development; job title does not
 
 With the games now surfaced on the home page, the copy above them still described only
