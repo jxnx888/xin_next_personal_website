@@ -17,8 +17,11 @@ export interface Career {
   companySC: string;
   jobtitle: string;
   responsibilities: string[];
+  /** "YYYY/MM" */
   startDate: string;
+  /** "YYYY/MM", or "Present" / "至今" for the current role */
   endDate: string;
+  /** Computed from the dates in getServerProjectsData — not stored in the JSON */
   duration: string;
   projects: Project[];
 }

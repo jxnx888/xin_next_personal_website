@@ -26,9 +26,11 @@ const FEATURED_PROJECTS_STATIC = [
 
 interface HomeClientProps {
   robloxGames: RobloxGamesData | null;
+  /** Derived from projects/games data in page.tsx */
+  stats: { years: number; projects: number; companies: number };
 }
 
-export default function HomeClient({ robloxGames }: HomeClientProps) {
+export default function HomeClient({ robloxGames, stats: statValues }: HomeClientProps) {
   const t = useTranslations();
   const tp = useTranslations('projects');
   const tr = useTranslations('robloxGames');
@@ -57,9 +59,9 @@ export default function HomeClient({ robloxGames }: HomeClientProps) {
   const keepLearningArray = (t.raw('KEEP_LEARNING') || ['', '', '']) as string[];
 
   const stats = [
-    { value: '8+', label: t('STAT_YEARS') },
-    { value: '10+', label: t('STAT_PROJECTS') },
-    { value: '4', label: t('STAT_COMPANIES') },
+    { value: `${statValues.years}+`, label: t('STAT_YEARS') },
+    { value: `${statValues.projects}+`, label: t('STAT_PROJECTS') },
+    { value: `${statValues.companies}`, label: t('STAT_COMPANIES') },
   ];
 
   return (

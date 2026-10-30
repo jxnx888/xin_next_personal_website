@@ -110,9 +110,14 @@ export default function ProjectsPageClient({ projectsData, menuItems, robloxGame
                 >
                   {career.jobtitle}
                 </h2>
-                <h3 className="text-base text-[var(--accent)] mb-4 opacity-80">
+                <h3 className="text-base text-[var(--accent)] mb-1 opacity-80">
                   {career.companyName}
                 </h3>
+                <p className="text-xs text-[var(--text-dim)] tracking-wide mb-4">
+                  {career.startDate} – {career.endDate}
+                  <span className="mx-2" aria-hidden="true">·</span>
+                  {career.duration}
+                </p>
                 <div className="text-[var(--text-muted)] text-sm">
                   <p className="font-semibold mb-2 text-[var(--text)] text-xs tracking-widest uppercase">
                     {t('responsibilities')}

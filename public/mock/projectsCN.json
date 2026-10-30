@@ -1,6 +1,23 @@
 {
   "code": 200,
   "data": {
+    "Sengo": {
+      "companyName": "Sengo",
+      "companySC": "Sengo",
+      "jobtitle": "技术总监 | 前端负责人 | 可组合架构",
+      "responsibilities": [
+        "主导 DXP 与 Headless CMS 项目的前端架构和技术方向。",
+        "推动可组合架构（Composable Architecture），将 Optimizely 等 Headless CMS 与 DXP 平台集成为可扩展、易维护的前端方案。",
+        "将 AI 引入交付流程，包括 MCP（Model Context Protocol）集成与 Ploy.ai，提升团队的开发与交付效率。",
+        "为所有方案确立代码质量、性能、无障碍与安全标准。",
+        "指导开发工程师和技术负责人（Tech Lead），建立前端工程规范与最佳实践。",
+        "通过技术咨询、方案架构设计与项目评估支持售前工作。",
+        "与管理层共同制定技术战略，推动卓越工程文化。"
+      ],
+      "startDate": "2026/10",
+      "endDate": "至今",
+      "projects": []
+    },
     "LCI Education": {
       "companyName": "LCI Education",
       "companySC": "LCI Education",
@@ -12,8 +29,7 @@
         "参与代码审查，贡献共享组件库，推动前端规范建设。"
       ],
       "startDate": "2021/10",
-      "endDate": "至今",
-      "duration": "3 年以上",
+      "endDate": "2026/10",
       "projects": [
         {
           "title": "LCI Education — 企业官网",
@@ -38,7 +54,6 @@
       ],
       "startDate": "2021/03",
       "endDate": "2021/09",
-      "duration": "6 个月",
       "projects": [
         {
           "title": "GWM 电商网站 - 泰国",
@@ -62,7 +77,6 @@
       ],
       "startDate": "2019/05",
       "endDate": "2021/03",
-      "duration": "1 年 11 个月",
       "projects": [
         {
           "title": "Import Express - Ecommerce",
@@ -116,7 +130,6 @@
       ],
       "startDate": "2018/05",
       "endDate": "2018/09",
-      "duration": "3 个月",
       "projects": [
         {
           "title": "微信 H5 — 病毒式测试营销",
