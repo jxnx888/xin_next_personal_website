@@ -115,12 +115,12 @@
       "lying": "Lie",
       "sitting": "Sit",
       "tyrannosaurusRex": "T-Rex",
-      "bulbasaur": "Bulbasaur",
-      "charmander": "Charmander",
-      "chikorita": "Chikorita",
-      "pikachu": "Pikachu",
-      "squirtle": "Squirtle",
-      "totodile": "Totodile"
+      "cat": "Cat",
+      "bunny": "Bunny",
+      "bear": "Bear",
+      "penguin": "Penguin",
+      "robot": "Robot",
+      "rocket": "Rocket"
     },
     "toggleSidebar": "Toggle shape panel",
     "back": "Back",

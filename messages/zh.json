@@ -115,12 +115,12 @@
       "lying": "躺下",
       "sitting": "坐姿",
       "tyrannosaurusRex": "霸王龙",
-      "bulbasaur": "妙蛙种子",
-      "charmander": "小火龙",
-      "chikorita": "菊草叶",
-      "pikachu": "皮卡丘",
-      "squirtle": "杰尼龟",
-      "totodile": "小锯鳄"
+      "cat": "小猫",
+      "bunny": "兔子",
+      "bear": "小熊",
+      "penguin": "企鹅",
+      "robot": "机器人",
+      "rocket": "火箭"
     },
     "toggleSidebar": "展开/收起形状面板",
     "back": "返回",

@@ -44,6 +44,18 @@ with nothing public to show yet.
 4. Prefer the `roblox.com/games/<placeId>/<Name>` URL for `playUrl`; a `share?code=…`
    link works but is less stable.
 
+## Adding a Magic Box cartoon model
+
+Models are generated, not downloaded — no third-party characters on a public site.
+
+1. Add a builder to `MODELS` in `scripts/magic-box-models/models.mjs` (Y up, standing on
+   y = 0, facing +Z, ~50 units tall; overlapping primitives are fine).
+2. `node scripts/magic-box-models/build.mjs` → `public/models/stl/original/<name>.stl` and
+   `public/image/3dBuilder/3dPrinting/sprint_<name>.png`.
+3. Add the file to `STL_FILES` under a **new** code and the item to `CARTOON_LIST`
+   (`engine/constants.ts`). Never reuse a code for a different model — saves store it.
+4. Add `magicBox.shapes.<name>` to both `messages/en.json` and `zh.json`.
+
 ## Adding a top-nav item
 
 Add it to `lib/constants/menuData.ts` (renumber `id`s) and add the label key to **both**

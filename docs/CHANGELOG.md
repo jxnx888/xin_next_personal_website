@@ -6,6 +6,19 @@ change.
 
 ---
 
+## 2026-11-20 — Magic Box: original cartoon models replace the Pokémon
+
+The six Pokémon STLs (fan-made models of Pikachu, Bulbasaur, …) were recognisable
+third-party characters on a public portfolio. They are replaced by six original models —
+cat, bunny, bear, penguin, robot, rocket — built from Three.js primitives in
+`scripts/magic-box-models/models.mjs`. `build.mjs` writes the binary STLs and renders the
+sidebar thumbnails with the locally installed Chrome in headless mode (`--screenshot`), so
+the repo gains no dependency and the thumbnails always match the models.
+
+They take over codes 5–10, so scenes saved with a Pokémon still load (as the new model in
+that slot) instead of falling back to the T-Rex. New models get new codes from now on
+(CONVENTIONS, "Adding a Magic Box cartoon model").
+
 ## 2026-11-20 — Magic Box: i18n, CSS Module, accessibility, shadows, real bounds
 
 - **i18n.** Every UI string, toast and the page metadata now come from `magicBox.*` in

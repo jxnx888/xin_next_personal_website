@@ -260,7 +260,9 @@ proxy.ts                      Locale routing (/en, /zh) — renamed from middlew
 eslint.config.mjs             ESLint flat config (`next lint` was removed in Next 16)
 messages/en.json + zh.json    UI strings — keys must stay 1:1
 public/mock/*.json            Content data — projects(.CN), robloxGames(.CN), blogEN/blogCN
-public/models/stl/ascii/      STL models for Three.js pages
+public/models/stl/ascii/      STL models for Three.js pages (binary STL despite the folder name)
+public/models/stl/original/   Magic Box's original cartoon models — generated, see scripts/
+scripts/magic-box-models/     models.mjs (shapes from primitives) + build.mjs (STL + sidebar thumbnails)
 public/image/decals/          54 built-in decal stickers
 public/image/games/           Roblox game covers, icons and screenshots (.webp)
 docs/                         This documentation
