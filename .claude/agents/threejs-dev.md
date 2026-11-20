@@ -19,6 +19,8 @@ app/[locale]/projects/<slug>/<Name>Client.tsx  'use client' — all Three.js log
 
 All Three.js state (scene, camera, renderer, meshes) lives in closure variables inside `useEffect(()=>{ ... }, [])`. React state is only for UI that needs to re-render (loading flags, sidebar values).
 
+**Magic Box is the exception, and the model for larger apps:** its Three.js side is a plain class, `magic-box/engine/MagicBoxEngine.ts`, created in an effect; the component only forwards input and renders the `EngineState` it reports. Undo goes through command objects (`engine/history.ts`, `engine/commands.ts`), placement/bounds through `engine/bounds.ts`; these are unit-tested (`npm test`). See `docs/ARCHITECTURE.md`, "Three.js interactive pages".
+
 ### Cleanup is mandatory
 The `useEffect` return must:
 - `cancelAnimationFrame(animId)`

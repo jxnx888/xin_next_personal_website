@@ -15,7 +15,7 @@ const MagicBoxClient = dynamic(() => import('./MagicBoxClient'), {
     }}>
       <div
         className="animate-spin"
-        style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid rgba(0,212,255,0.15)', borderTopColor: '#00d4ff' }}
+        style={{ width: 44, height: 44, borderRadius: '50%', border: '3px solid var(--accent-dim)', borderTopColor: 'var(--accent)' }}
       />
     </div>
   ),

@@ -1,0 +1,667 @@
+/*
+ * Magic Box has its own light, kid-friendly palette, separate from the site's dark
+ * theme (it covers the whole viewport). Every colour is a token defined once on
+ * .root; the rules below only reference tokens.
+ */
+.root {
+  --mb-sky-top: #79b1ea;
+  --mb-sky-bottom: #4e92ef;
+  --mb-panel: #f0f7ff;
+  --mb-panel-header: #ddeeff;
+  --mb-panel-border: #c8daf0;
+  --mb-panel-divider: #e6ecf8;
+  --mb-heading: #426a8d;
+  --mb-ink: #323232;
+  --mb-ink-strong: #2a4a7f;
+  --mb-surface: #ffffff;
+  --mb-on-sky: #ffffff;
+  --mb-tool: #4a9fc2;
+  --mb-tool-active: #2b9cff;
+  --mb-tool-active-label: #e09a1e;
+  --mb-tool-active-bg: rgba(121, 194, 222, 0.25);
+  --mb-danger: #e5484d;
+  --mb-danger-bg: rgba(255, 80, 80, 0.18);
+  --mb-status: #7bb3ff;
+  --mb-modal: #b9efff;
+  --mb-modal-title-from: #55b6e3;
+  --mb-modal-title-to: #3681e3;
+  --mb-modal-glow: rgba(56, 154, 240, 0.6);
+  --mb-modal-shadow: rgba(34, 87, 145, 0.2);
+  --mb-input-inset: rgba(85, 182, 227, 0.64);
+  --mb-button: #4e92ef;
+  --mb-focus: #1f6fd6;
+  --mb-selected-bg: #e6f2ff;
+  --mb-backdrop: rgba(0, 0, 0, 0.35);
+  --mb-backdrop-strong: rgba(0, 0, 0, 0.5);
+  --mb-toast-bg: rgba(0, 0, 0, 0.72);
+  --mb-loading-bg: rgba(79, 147, 240, 0.7);
+  --mb-portrait-from: #4e92ef;
+  --mb-portrait-to: #2a6fd4;
+  --mb-shadow: rgba(0, 0, 0, 0.35);
+  --mb-shadow-soft: rgba(0, 0, 0, 0.12);
+  --mb-swatch-ring: rgba(0, 0, 0, 0.18);
+  --mb-spinner-track: rgba(255, 255, 255, 0.35);
+  --mb-spinner: #ffffff;
+
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  overflow: hidden;
+  background: linear-gradient(to bottom, var(--mb-sky-top) 0%, var(--mb-sky-bottom) 100%);
+  color: var(--mb-ink);
+}
+
+.root :focus-visible {
+  outline: 2px solid var(--mb-focus);
+  outline-offset: 2px;
+}
+
+/* :where() keeps this at zero specificity, so each class's own font-size wins. */
+:where(.root) button {
+  font-family: inherit;
+}
+
+/* ── Canvas & sidebar ───────────────────────────────────────────────── */
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.sidebarToggle {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 20px;
+  height: 60px;
+  padding: 0;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  background: var(--mb-panel);
+  color: var(--mb-heading);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  z-index: 6;
+  background: var(--mb-panel);
+}
+
+.sectionHeader {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 1px solid var(--mb-panel-border);
+  background: var(--mb-panel-header);
+  color: var(--mb-heading);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.moduleItem {
+  display: block;
+  width: 100%;
+  padding: 6px 4px;
+  border: none;
+  border-bottom: 1px solid var(--mb-panel-divider);
+  background: none;
+  text-align: center;
+  cursor: grab;
+  user-select: none;
+}
+
+.moduleItem:hover {
+  background: var(--mb-selected-bg);
+}
+
+.moduleImgWrap {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 2px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.moduleImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+}
+
+.moduleName {
+  font-size: 10px;
+  line-height: 1.2;
+  color: var(--mb-ink);
+}
+
+/* ── Top-left buttons & status ──────────────────────────────────────── */
+
+.topBtns {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 8;
+  display: flex;
+  gap: 10px;
+}
+
+.topBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  background: none;
+  color: var(--mb-on-sky);
+  cursor: pointer;
+}
+
+.topBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.topBtnIcon {
+  width: 26px;
+  height: 26px;
+  filter: drop-shadow(0 1px 2px var(--mb-shadow));
+}
+
+.topBtnLabel {
+  font-size: 10px;
+  text-shadow: 0 1px 2px var(--mb-shadow);
+}
+
+.status {
+  position: absolute;
+  top: 90px;
+  left: 10px;
+  z-index: 8;
+  padding: 6px 10px;
+  border-radius: 5px;
+  background: var(--mb-status);
+  color: var(--mb-on-sky);
+  font-size: 13px;
+}
+
+/* ── Bottom toolbar ─────────────────────────────────────────────────── */
+
+.bottomBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 8;
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* only the toolbar itself takes clicks */
+}
+
+.toolbar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  border-radius: 16px 16px 0 0;
+  background: var(--mb-surface);
+  box-shadow: 0 -2px 8px var(--mb-shadow-soft);
+}
+
+.toolBtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 40px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mb-tool);
+  cursor: pointer;
+}
+
+.toolBtn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.toolBtnActive {
+  background: var(--mb-tool-active-bg);
+  color: var(--mb-tool-active);
+}
+
+.toolBtnActive .toolLabel {
+  color: var(--mb-tool-active-label);
+}
+
+.toolBtnDanger {
+  background: var(--mb-danger-bg);
+  color: var(--mb-danger);
+}
+
+.toolIcon {
+  width: 22px;
+  height: 22px;
+  margin: 2px 0;
+}
+
+.toolLabel {
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.popupAnchor {
+  position: relative;
+}
+
+.popup {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  min-width: 80px;
+  padding: 4px 0;
+  border-radius: 6px;
+  background: var(--mb-surface);
+  box-shadow: 0 0 12px var(--mb-shadow-soft);
+}
+
+.popupItem {
+  display: block;
+  width: 100%;
+  padding: 5px 12px;
+  border: none;
+  background: none;
+  color: var(--mb-ink);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.popupItem:hover {
+  background: var(--mb-selected-bg);
+}
+
+.colorPopup {
+  composes: popup;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  width: 128px;
+  padding: 8px;
+}
+
+.colorCircle {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin: 2px 0;
+  border-radius: 50%;
+  border: 1px solid var(--mb-swatch-ring);
+}
+
+.colorSwatch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  outline: 1px solid var(--mb-swatch-ring);
+  color: var(--mb-tool);
+  cursor: pointer;
+}
+
+.colorSwatchSelected {
+  outline: 2px solid var(--mb-tool-active);
+  outline-offset: 1px;
+}
+
+.colorInput {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+/* ── Dialogs ────────────────────────────────────────────────────────── */
+
+.modalBg {
+  position: fixed;
+  inset: 0;
+  z-index: 12;
+  background: var(--mb-backdrop);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 13;
+  width: min(300px, calc(100vw - 32px));
+  padding: 24px 24px 20px;
+  border-radius: 28px;
+  background: var(--mb-modal);
+  box-shadow: 0 0 11px var(--mb-modal-shadow), 0 0 60px var(--mb-modal-glow) inset;
+  text-align: center;
+}
+
+.modalTitle {
+  margin: -24px -24px 12px;
+  padding: 10px 0;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(0deg, var(--mb-modal-title-from), var(--mb-modal-title-to));
+  color: var(--mb-on-sky);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.modalHint {
+  margin-bottom: 8px;
+  color: var(--mb-heading);
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.modalHintSpaced {
+  composes: modalHint;
+  margin-top: 12px;
+}
+
+.modalInput {
+  width: 90%;
+  height: 36px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  background: var(--mb-surface);
+  color: var(--mb-ink);
+  font-size: 12px;
+  box-shadow: 3px 2px 2px var(--mb-input-inset) inset;
+}
+
+.modalInput:focus-visible {
+  outline: 2px solid var(--mb-focus);
+}
+
+.textInput {
+  composes: modalInput;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.modalBtns {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.modalBtn {
+  padding: 6px 18px;
+  border: none;
+  border-radius: 10px;
+  background: var(--mb-button);
+  color: var(--mb-on-sky);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.modalBtn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.fontPicker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.fontOption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: var(--mb-surface);
+  color: var(--mb-ink);
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.fontOption[aria-checked='true'] {
+  border-color: var(--mb-modal-title-to);
+  background: var(--mb-selected-bg);
+}
+
+.fontSample {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.fontName {
+  font-size: 10px;
+}
+
+/* ── Overlays ───────────────────────────────────────────────────────── */
+
+.guideBg {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--mb-backdrop-strong);
+  cursor: pointer;
+}
+
+.guideCard {
+  max-width: 340px;
+  padding: 28px 32px;
+  border-radius: 18px;
+  background: var(--mb-surface);
+  color: var(--mb-ink-strong);
+  box-shadow: 0 8px 40px var(--mb-shadow);
+  text-align: center;
+}
+
+.guideIcon {
+  width: 44px;
+  height: 44px;
+  margin-bottom: 10px;
+  color: var(--mb-button);
+}
+
+.guideTitle {
+  margin-bottom: 12px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.guideSteps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: left;
+}
+
+.guideSteps li {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 4px;
+}
+
+.guideSteps li::before {
+  content: '›';
+  position: absolute;
+  left: 2px;
+  color: var(--mb-button);
+  font-weight: 700;
+}
+
+.guideFoot {
+  margin-top: 16px;
+  padding: 6px 14px;
+  border: none;
+  border-radius: 10px;
+  background: var(--mb-button);
+  color: var(--mb-on-sky);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.portraitOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  background: linear-gradient(to bottom, var(--mb-portrait-from), var(--mb-portrait-to));
+  color: var(--mb-on-sky);
+  text-align: center;
+}
+
+.portraitIcon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 16px;
+}
+
+.portraitTitle {
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.portraitHint {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  padding: 8px 18px;
+  border-radius: 20px;
+  background: var(--mb-toast-bg);
+  color: var(--mb-on-sky);
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.loading {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--mb-loading-bg);
+  color: var(--mb-on-sky);
+  font-size: 13px;
+}
+
+.progressTrack {
+  width: 200px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--mb-spinner-track);
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--mb-spinner);
+  transition: width 0.2s;
+}
+
+.dragGhost {
+  position: fixed;
+  z-index: 200;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: 6px;
+  opacity: 0.85;
+  filter: drop-shadow(0 4px 10px var(--mb-shadow));
+  pointer-events: none;
+  user-select: none;
+}
+
+.dragGhostImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+}
+
+.dragGhostLoading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mb-backdrop-strong);
+}
+
+.spinner {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 3px solid var(--mb-spinner-track);
+  border-top-color: var(--mb-spinner);
+  animation: mbSpin 0.7s linear infinite;
+}
+
+@keyframes mbSpin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2s; }
+  .progressBar { transition: none; }
+}

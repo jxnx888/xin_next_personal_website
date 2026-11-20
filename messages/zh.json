@@ -92,6 +92,111 @@
     "pngOnly": "仅支持 PNG 格式图片",
     "fileTooLarge": "文件大小不能超过 8 MB"
   },
+  "magicBox": {
+    "metaTitle": "Magic Box — 3D 搭建",
+    "metaDescription": "基于 Three.js 的教育类 3D 搭建应用，孩子们可以用几何形状和卡通积木拼建 3D 模型。",
+    "panel": "形状",
+    "basic": "基础",
+    "cartoon": "卡通",
+    "shapes": {
+      "cube": "正方体",
+      "ball": "球",
+      "cylinder": "圆柱",
+      "prismatic": "五棱柱",
+      "cone": "圆锥",
+      "pyramid": "四棱锥",
+      "doughnut": "圆环",
+      "hollowcylinder": "空心圆柱",
+      "triprism": "三棱柱",
+      "fivepointstar": "五角星",
+      "text": "文字",
+      "standing": "站立",
+      "climbing": "攀爬",
+      "lying": "躺下",
+      "sitting": "坐姿",
+      "tyrannosaurusRex": "霸王龙",
+      "bulbasaur": "妙蛙种子",
+      "charmander": "小火龙",
+      "chikorita": "菊草叶",
+      "pikachu": "皮卡丘",
+      "squirtle": "杰尼龟",
+      "totodile": "小锯鳄"
+    },
+    "toggleSidebar": "展开/收起形状面板",
+    "back": "返回",
+    "save": "保存",
+    "photo": "拍照",
+    "status": {
+      "translate": "状态：移动",
+      "scale": "状态：缩放",
+      "rotate": "状态：旋转"
+    },
+    "tools": {
+      "label": "编辑工具",
+      "undo": "撤销",
+      "redo": "重做",
+      "view": "视角",
+      "viewTitle": "重置视角",
+      "scale": "缩放",
+      "move": "移动",
+      "rotate": "旋转",
+      "zoom": "缩放视图",
+      "copy": "复制",
+      "delete": "删除",
+      "clear": "清空",
+      "clearConfirm": "确定？",
+      "color": "颜色",
+      "colorSwatch": "颜色 {hex}",
+      "customColor": "自定义颜色"
+    },
+    "toast": {
+      "loadingModel": "模型加载中…",
+      "modelFailed": "模型加载失败",
+      "largeScene": "场景里的物体有点多了，可以删掉一些",
+      "textFailed": "无法生成这段文字",
+      "exported": "STL 已导出！",
+      "screenshot": "截图已保存！",
+      "cleared": "场景已清空，点撤销可以恢复",
+      "duplicated": "已复制！"
+    },
+    "text": {
+      "title": "生成文字",
+      "placeholder": "输入文字（最多 10 个字）",
+      "font": "字体：",
+      "fonts": {
+        "sans": "黑体",
+        "serif": "宋体",
+        "kai": "楷体",
+        "round": "圆体"
+      }
+    },
+    "saveModal": {
+      "title": "保存模型",
+      "hint": "给 STL 文件起个名字：",
+      "export": "导出 STL"
+    },
+    "leaveModal": {
+      "title": "有未导出的修改",
+      "hint": "最新的修改还没有导出。作品会一直保存在这个浏览器里——离开前要导出 STL 文件吗？",
+      "exportAndLeave": "导出并离开",
+      "leave": "直接离开"
+    },
+    "confirm": "确定",
+    "cancel": "取消",
+    "guide": {
+      "title": "欢迎来到 Magic Box！",
+      "step1": "从<b>右侧面板</b>选一个形状",
+      "step2": "把它<b>拖</b>到工作区，或者先<b>点</b>一下形状，再点地面",
+      "step3": "选中任意物体，就可以移动、缩放或旋转",
+      "step4": "快捷键：<b>W / E / R</b> 移动 · 旋转 · 缩放，<b>{mod}+Z</b> 撤销，<b>Del</b> 删除",
+      "close": "点击任意位置开始"
+    },
+    "portrait": {
+      "title": "请把设备横过来",
+      "hint": "Magic Box 在横屏模式下体验最好"
+    },
+    "restoring": "正在恢复你的场景…"
+  },
   "contact": {
     "topTitle": ["想要联系宁鑫", "以下是与我联系的几种方式"],
     "sectionGetInTouch": "联系方式",

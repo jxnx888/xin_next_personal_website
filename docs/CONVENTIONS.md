@@ -85,6 +85,11 @@ Use `GlowButton` component for external links.
 
 No emoji in page copy — the site's visual language is the cyan accent and `›` bullets.
 
+**Full-screen apps with their own palette** (Magic Box) define their colours as scoped
+tokens on their root class in a CSS Module (`--mb-*` in `MagicBox.module.css`) and use
+only those tokens below. Three.js scene colours (ground, grid, lights) are WebGL values
+and stay as constants in the engine.
+
 ---
 
 ## Keeping these docs current

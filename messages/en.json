@@ -92,6 +92,111 @@
     "pngOnly": "Only PNG files are supported",
     "fileTooLarge": "File must be under 8 MB"
   },
+  "magicBox": {
+    "metaTitle": "Magic Box — 3D Builder",
+    "metaDescription": "Educational 3D builder app built with Three.js — kids assemble 3D models using geometric and cartoon shapes.",
+    "panel": "Shapes",
+    "basic": "Basic",
+    "cartoon": "Cartoon",
+    "shapes": {
+      "cube": "Cube",
+      "ball": "Ball",
+      "cylinder": "Cylinder",
+      "prismatic": "Prism",
+      "cone": "Cone",
+      "pyramid": "Pyramid",
+      "doughnut": "Doughnut",
+      "hollowcylinder": "Hollow Cyl.",
+      "triprism": "Tri-Prism",
+      "fivepointstar": "Star",
+      "text": "Text",
+      "standing": "Stand",
+      "climbing": "Climb",
+      "lying": "Lie",
+      "sitting": "Sit",
+      "tyrannosaurusRex": "T-Rex",
+      "bulbasaur": "Bulbasaur",
+      "charmander": "Charmander",
+      "chikorita": "Chikorita",
+      "pikachu": "Pikachu",
+      "squirtle": "Squirtle",
+      "totodile": "Totodile"
+    },
+    "toggleSidebar": "Toggle shape panel",
+    "back": "Back",
+    "save": "Save",
+    "photo": "Photo",
+    "status": {
+      "translate": "Status: Move",
+      "scale": "Status: Scale",
+      "rotate": "Status: Rotate"
+    },
+    "tools": {
+      "label": "Editing tools",
+      "undo": "Undo",
+      "redo": "Redo",
+      "view": "View",
+      "viewTitle": "Reset camera",
+      "scale": "Scale",
+      "move": "Move",
+      "rotate": "Rotate",
+      "zoom": "Zoom",
+      "copy": "Copy",
+      "delete": "Delete",
+      "clear": "Clear",
+      "clearConfirm": "Sure?",
+      "color": "Color",
+      "colorSwatch": "Color {hex}",
+      "customColor": "Custom color"
+    },
+    "toast": {
+      "loadingModel": "Loading model…",
+      "modelFailed": "Failed to load model",
+      "largeScene": "Scene is getting large — consider removing some objects",
+      "textFailed": "Could not create this text",
+      "exported": "STL exported!",
+      "screenshot": "Screenshot saved!",
+      "cleared": "Scene cleared — Undo brings it back",
+      "duplicated": "Duplicated!"
+    },
+    "text": {
+      "title": "Generate Text",
+      "placeholder": "Enter text (max 10 chars)",
+      "font": "Font:",
+      "fonts": {
+        "sans": "Sans",
+        "serif": "Serif",
+        "kai": "Kai",
+        "round": "Round"
+      }
+    },
+    "saveModal": {
+      "title": "Save Model",
+      "hint": "Enter a name for the STL file:",
+      "export": "Export STL"
+    },
+    "leaveModal": {
+      "title": "Unsaved changes",
+      "hint": "You haven't exported your latest changes. Your work stays saved in this browser — export an STL file before leaving?",
+      "exportAndLeave": "Export & Leave",
+      "leave": "Leave"
+    },
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "guide": {
+      "title": "Welcome to Magic Box!",
+      "step1": "Pick a shape from the <b>right panel</b>",
+      "step2": "<b>Drag</b> it into the workspace, or <b>tap</b> it and then tap the ground",
+      "step3": "Select any object to move, scale or rotate it",
+      "step4": "Shortcuts: <b>W / E / R</b> move · rotate · scale, <b>{mod}+Z</b> undo, <b>Del</b> delete",
+      "close": "Click anywhere to start"
+    },
+    "portrait": {
+      "title": "Please rotate your device",
+      "hint": "Magic Box works best in landscape mode"
+    },
+    "restoring": "Restoring your scene…"
+  },
   "contact": {
     "topTitle": ["Want to contact Xin Ning", "Here are a few ways to get in touch with me"],
     "sectionGetInTouch": "GET IN TOUCH",
