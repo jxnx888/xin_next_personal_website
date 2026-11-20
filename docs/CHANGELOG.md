@@ -6,6 +6,99 @@ change.
 
 ---
 
+## 2026-11-20 — Magic Box: original cartoon models replace the Pokémon
+
+The six Pokémon STLs (fan-made models of Pikachu, Bulbasaur, …) were recognisable
+third-party characters on a public portfolio. They are replaced by six original models —
+cat, bunny, bear, penguin, robot, rocket — built from Three.js primitives in
+`scripts/magic-box-models/models.mjs`. `build.mjs` writes the binary STLs and renders the
+sidebar thumbnails with the locally installed Chrome in headless mode (`--screenshot`), so
+the repo gains no dependency and the thumbnails always match the models.
+
+They take over codes 5–10, so scenes saved with a Pokémon still load (as the new model in
+that slot) instead of falling back to the T-Rex. New models get new codes from now on
+(CONVENTIONS, "Adding a Magic Box cartoon model").
+
+## 2026-11-20 — Magic Box: i18n, CSS Module, accessibility, shadows, real bounds
+
+- **i18n.** Every UI string, toast and the page metadata now come from `magicBox.*` in
+  `messages/en.json` / `zh.json` (the page was English-only, against the both-locales
+  rule). The engine reports toasts as keys (`EngineToast`), the UI translates them.
+- **Styles → `ui/MagicBox.module.css`.** The ~170-line inline style object is gone; the
+  app's own light palette is a set of `--mb-*` tokens on `.root` (CONVENTIONS). Toolbar
+  label colour darkened from `#79c2de` to `#4a9fc2` — the old one was ~2:1 on white.
+- **Emoji → SVG icons** (`ui/icons.tsx`), per the no-emoji convention; also renders the
+  same on every OS.
+- **Accessibility.** Dialogs move focus in, trap Tab, close on Esc and return focus to
+  the opener; sidebar items can be placed from the keyboard (Enter/Space drops the shape
+  in the middle of the view); toolbar is a `role="toolbar"` with pressed/expanded states
+  and shortcut hints; colour swatches are labelled.
+- **Shortcuts:** W / E / R move · rotate · scale, Ctrl/⌘+Z undo, Ctrl/⌘+Shift+Z or
+  Ctrl+Y redo, Ctrl/⌘+D duplicate, Del delete, Esc cancel. Listed in the welcome guide.
+- **Real shadows.** The light now casts shadows onto a transparent shadow catcher (the
+  ground is unlit `MeshBasicMaterial`, so it can't receive them itself). Previously
+  `shadowMap` was enabled but nothing cast a shadow — pure overhead.
+- **Bounds from the real bounding box** (`engine/bounds.ts`). Clamping assumed every object
+  was a 20-unit cube, so cartoon models, text and rotated objects were clamped wrongly.
+  Objects resting on the ground stay grounded while scaled or rotated.
+- **Cartoon models centred and grounded.** The STL files have origins up to ~15 units off
+  (the "lying" figure floated 16 units above the ground). They are centred on load and
+  placed on the surface they're dropped on. Saves are now schema v3 (`centered: true` on
+  STL items); older STL positions are migrated on restore so existing scenes don't move.
+- **Real loading progress.** The fixed 1-second fake progress bar is gone. An overlay
+  shows only while saved cartoon models download, with done/total.
+- **On-demand rendering** instead of a permanent 60 fps loop.
+- The "rotate your device" screen shows only on phones (coarse pointer, ≤ 820 px), not on
+  narrow desktop windows or tablets.
+- Tests: 40 (bounds and v3 migration added).
+
+## 2026-11-20 — Magic Box: engine extracted, command-based undo, tests
+
+`MagicBoxClient.tsx` was 1,600 lines of ~40 refs and flags. Its Three.js side now lives
+in `magic-box/engine/` as a plain class (`MagicBoxEngine`) and the UI in `magic-box/ui/`;
+the client component is ~300 lines of composition. See ARCHITECTURE, "Three.js
+interactive pages".
+
+- **Undo/redo rewritten as commands** (`history.ts`, `commands.ts`). The old version kept
+  parallel per-object snapshot lists: redo applied the wrong snapshot after two steps,
+  the redo branch was never cleared, the 5-step cap was bypassed by some paths and
+  flooded by the color picker. Now each command has before/after, one stack, 50 steps;
+  the custom color picker records one step per pick, not one per value.
+- **Clear Scene is undoable** (one remove command for all objects); the toolbar stays up
+  while there is something to undo.
+- **Orbit-drag no longer counts as a click** — releasing a camera drag used to deselect
+  or place the armed shape (see PITFALLS).
+- **Memory:** meshes are disposed once history can't bring them back; unmount disposes
+  the whole scene and the WebGL context. STLs are parsed once per session and cloned.
+- **Saves are schema v2** (`{ v, items }`) with per-item validation; v1 arrays still load.
+- **Lint:** the three React Compiler rules downgraded for MagicBoxClient (immutability /
+  purity / refs) are back to their defaults — nothing trips them anymore.
+- **Tests:** Vitest added (`npm test`), 27 tests for history, commands, persistence and
+  text-outline tracing.
+- Smaller: `preserveDrawingBuffer` dropped (screenshots render-then-read in one task);
+  resize via `ResizeObserver` instead of window resize + a sidebar `setTimeout`; Esc drops
+  the armed shape / deselects; dialogs close on Esc; Delete is disabled without a
+  selection; STL export no longer mutates the live scene (proxies in a temp group).
+
+## 2026-11-20 — Magic Box: system-font text, persistence and STL load fixes
+
+- **37 MB font removed.** 3D text needed `public/font/SimHei_Regular.json` (a typeface
+  JSON of a commercial font), fetched on every visit whether or not text was used; until
+  it arrived, "Confirm" in the text dialog silently did nothing. Text is now drawn with the
+  visitor's system fonts on a canvas, its outline traced and extruded
+  (`magic-box/textGeometry.ts`). The dialog offers four font stacks (Sans / Serif / Kai /
+  Round), each previewed in its own font. Trade-off: the same word can look a little
+  different per OS, depending on installed fonts. Saved text items now carry `font`; old
+  saves fall back to Sans.
+- **Autosave no longer drops models still loading** from the last visit (see PITFALLS).
+- **Exporting STL no longer clears the scene.** It is a download; the scene stays (and
+  stays autosaved) and is only marked exported for the leave prompt. The object URL is
+  revoked after a delay, since revoking in the same tick can cancel the download in Safari.
+- **Late STL responses are ignored** via a request token. Dropping a model on the canvas
+  before it loaded used to show "try again" and then silently arm it, so the next click
+  placed it unexpectedly; it now lands where it was dropped once loaded.
+- Duplicate now autosaves; Clear frees the removed meshes' GPU memory.
+
 ## 2026-10-29 — Home-page stats computed from data
 
 "8+ Years Exp. / 10+ Projects / 4 Companies" were string literals in `HomeClient`, so the

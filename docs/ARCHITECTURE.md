@@ -171,6 +171,34 @@ The client component mounts the Three.js renderer into a `containerRef` div and 
 in the useEffect return. All Three.js state lives in closure variables inside the effect,
 not in React state.
 
+**Magic Box goes one step further** and keeps its Three.js state in a plain class outside
+React, so the client component is only DOM chrome:
+
+```
+magic-box/
+  MagicBoxClient.tsx     creates the engine in an effect, forwards input, renders EngineState
+  engine/
+    MagicBoxEngine.ts    scene, controls, placing, selection, autosave, export
+    history.ts           undo/redo command stack (no Three.js — unit-tested)
+    commands.ts          StateCommand (transform/color), PresenceCommand (add/remove)
+    persistence.ts       localStorage schema v3 + validation (unit-tested)
+    bounds.ts            placement, workspace clamping, legacy STL migration (unit-tested)
+    geometry.ts          shape factory, createMesh, STL cache (models centred on load)
+    textGeometry.ts      3D text from system fonts (canvas → traced outline → extrude)
+    constants.ts         sizes, catalogue, palette
+  ui/
+    Sidebar / Toolbar / Modals.tsx   all strings from messages `magicBox.*`
+    MagicBox.module.css  styles; its own light palette as --mb-* tokens on .root
+    icons.tsx            inline SVG icon set
+```
+
+The engine reports UI state through one `onState(EngineState)` callback; React never
+reads engine internals during render. Every mutation goes through a command pushed onto
+`History`, then `changed()` (version bump → autosave → emit). Meshes removed from the
+scene are disposed when history can no longer bring them back (`Command.discard`).
+Rendering is on demand — `requestRender()` from camera/gizmo changes and every `emit()` —
+so an idle page draws nothing.
+
 ---
 
 ## File map
@@ -195,7 +223,7 @@ app/
     projects/page.tsx          Projects (Server) — careers + Roblox learning block
     projects/ProjectsPageClient  Projects (Client)
     projects/roblox/           Roblox games page (Server + RobloxGamesClient)
-    projects/magic-box/        Magic Box Three.js app
+    projects/magic-box/        Magic Box Three.js app — engine/ (Three.js, tests) + ui/
     projects/decal_splatter/   Decal Splatter Three.js app
     blog/page.tsx              Blog list (Server)
     blog/[id]/page.tsx         Blog detail (Server) — JSON-LD + BreadcrumbList
@@ -232,7 +260,9 @@ proxy.ts                      Locale routing (/en, /zh) — renamed from middlew
 eslint.config.mjs             ESLint flat config (`next lint` was removed in Next 16)
 messages/en.json + zh.json    UI strings — keys must stay 1:1
 public/mock/*.json            Content data — projects(.CN), robloxGames(.CN), blogEN/blogCN
-public/models/stl/ascii/      STL models for Three.js pages
+public/models/stl/ascii/      STL models for Three.js pages (binary STL despite the folder name)
+public/models/stl/original/   Magic Box's original cartoon models — generated, see scripts/
+scripts/magic-box-models/     models.mjs (shapes from primitives) + build.mjs (STL + sidebar thumbnails)
 public/image/decals/          54 built-in decal stickers
 public/image/games/           Roblox game covers, icons and screenshots (.webp)
 docs/                         This documentation

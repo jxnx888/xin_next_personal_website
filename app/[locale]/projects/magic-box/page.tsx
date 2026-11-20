@@ -10,12 +10,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const isZh = locale === 'zh';
   return {
-    title: `Magic Box — 3D Builder | ${t('MY_NAME')}`,
-    description: isZh
-      ? '基于 Three.js 的教育类 3D 搭建应用，孩子们可以用几何形状和卡通积木拼建 3D 模型。'
-      : 'Educational 3D builder app built with Three.js — kids assemble 3D models using geometric and cartoon shapes.',
+    title: `${t('magicBox.metaTitle')} | ${t('MY_NAME')}`,
+    description: t('magicBox.metaDescription'),
     alternates: {
       canonical: `/${locale}/projects/magic-box`,
       languages: { 'x-default': '/en/projects/magic-box', en: '/en/projects/magic-box', zh: '/zh/projects/magic-box' },

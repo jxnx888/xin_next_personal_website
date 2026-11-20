@@ -175,6 +175,8 @@ npm run dev      # Development server
 npm run build    # Production build (standalone output)
 npm run start    # Production server
 npm run lint     # ESLint CLI (`eslint .`) — must be clean before committing
+npm test         # Vitest unit tests (currently the Magic Box engine)
+node scripts/magic-box-models/build.mjs   # regenerate Magic Box's original models + thumbnails (needs local Chrome)
 ```
 
 ## Deployment

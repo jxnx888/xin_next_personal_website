@@ -36,12 +36,19 @@ When an item is done, move it to **Done** with the date and add a
   This is the only remaining cause of slow cold builds. Fix needs an `Excerpt` property in
   Notion (changes the writing workflow) or dropping excerpts from the list.
 
-- [ ] **4 `react-hooks` React Compiler rules downgraded to warnings** in
-  `eslint.config.mjs`. `setMounted(true)` hydration guards could move to
-  `useSyncExternalStore`; `MagicBoxClient`'s immutability/purity/refs findings conflict
-  with the documented "Three.js state lives in closure variables" architecture.
+- [ ] **`react-hooks/set-state-in-effect` downgraded to a warning** in
+  `eslint.config.mjs`. The `setMounted(true)` hydration guards (HomeClient, Navigation) and
+  ScrollMenu's viewport read could move to `useSyncExternalStore`. (immutability / purity /
+  refs were restored to their defaults on 2026-11-20 once Magic Box moved to its engine.)
+
+- [ ] **Magic Box on touch: the shape panel can't be scrolled by dragging an item**,
+  because a touch on an item starts the drag-to-place. Scrolling works from the gaps and
+  headers. A long-press-to-drag would fix it at the cost of a slower pick.
 
 ## Done
+
+- [x] Magic Box overhaul — system-font text, engine + command undo + tests, i18n, CSS
+  Module, a11y, shadows, shortcuts, real bounds (2026-11-20, see CHANGELOG)
 
 - [x] Roblox games page, nav entry, projects-page learning block (2026-10-08)
 - [x] Next 16 + next-intl 4 + ESLint CLI, blog fetch/caching overhaul (2026-09-22, PR #12)

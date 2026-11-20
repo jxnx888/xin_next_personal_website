@@ -25,9 +25,10 @@ npx tsc --noEmit
        `DecalSplatterClient.tsx`, `*Loader.tsx`) — `next/image` cannot be used for
        dynamically-loaded Three.js textures or canvas-context images. Suppress with
        `{/* eslint-disable-next-line @next/next/no-img-element */}` if needed.
-     - `react-hooks/*` warnings (set-state-in-effect, immutability, purity, refs) —
-       the React Compiler rule family added in eslint-config-next 16. These are
-       downgraded to warnings in `eslint.config.mjs`; see the comment there.
+     - `react-hooks/set-state-in-effect` warnings — from the React Compiler rule
+       family added in eslint-config-next 16, downgraded to a warning in
+       `eslint.config.mjs` (see the comment there). immutability / purity / refs are
+       back at their default severity: an error from them is a real error.
 
 4. Fix all Errors, then re-run to confirm clean.
 

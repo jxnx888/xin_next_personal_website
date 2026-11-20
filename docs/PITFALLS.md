@@ -10,6 +10,39 @@ Bugs that have already happened once. Each entry says what breaks and what to do
 **Never do** `orientation.z = userRot` — it overwrites the base Euler-Z and flips the sticker.
 **Always do** `orientation.z += userRot` (add, not replace). Store `baseZ` separately in `decalsPR`.
 
+## Magic Box: async restore vs. autosave
+
+STL models are restored from `localStorage` asynchronously. Saving writes whatever is in
+the scene, so a save that ran before the STLs arrived (placing a shape right after the page
+opened) used to erase them from storage for good. Items still loading live in
+`MagicBoxEngine.pendingRestore` and are appended on every save — keep that if you touch
+persistence.
+
+Same family: STL picks are async. The load callback only applies if `this.armed` is still
+the same object it was started for; anything else (a newer pick, text, Clear, unmount)
+means it must do nothing — otherwise a late response arms or places the wrong model.
+
+## Magic Box: a click after a drag is not a click
+
+The browser fires `click` after an orbit drag that started and ended on the canvas. The
+old code treated it as a real click, so releasing an orbit over empty ground deselected
+the object — or placed the armed shape. `MagicBoxEngine.click` ignores it when the pointer
+moved more than `CLICK_SLOP` px since `pointerDown`, and when the press began on the gizmo
+(`tc.dragging`, already set because TransformControls sees pointerdown before React).
+
+## Magic Box dialogs: no `autoFocus` on inputs
+
+`Modal` records the element that had focus when it opened and gives focus back on close.
+React applies `autoFocus` during commit — before the effect runs — so with `autoFocus` the
+"previous" element was the dialog's own input, and closing dropped focus on `<body>`. The
+effect focuses the first input itself instead.
+
+## Magic Box CSS: reset rules must not out-rank classes
+
+`.root button { font: inherit }` (specificity 0,1,1) silently beat `.sectionHeader`
+(0,1,0) and blew every button's font-size up to the page default. Resets in
+`MagicBox.module.css` go through `:where(.root)` so they have zero specificity.
+
 ## Three.js HeroWave theme toggle
 
 HeroWave uses two separate effects: `[]` for setup (creates WebGL renderer once), `[theme]`

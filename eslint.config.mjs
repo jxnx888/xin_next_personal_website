@@ -17,23 +17,18 @@ export default defineConfig([
     extends: [...nextCoreWebVitals, ...nextTypescript],
   },
   {
-    // eslint-config-next 16 adds the React Compiler rule family. These flag
-    // long-standing patterns in this codebase rather than new mistakes:
+    // eslint-config-next 16 adds the React Compiler rule family.
+    // set-state-in-effect flags the `setMounted(true)` SSR hydration guard
+    // (HomeClient, Navigation) and the viewport-width read in ScrollMenu — a
+    // long-standing pattern, kept as a warning until those move to
+    // useSyncExternalStore (see docs/ROADMAP.md).
     //
-    //  - set-state-in-effect: the `setMounted(true)` SSR hydration guard
-    //    (HomeClient, Navigation) and the viewport-width read in ScrollMenu.
-    //  - immutability / purity / refs: MagicBoxClient, whose Three.js state
-    //    deliberately lives in closure variables rather than React state
-    //    (see docs/ARCHITECTURE.md, "Three.js interactive pages").
-    //
-    // Kept as warnings so they stay visible without failing the build. Fixing
-    // them means reworking the hydration guards and auditing a 1600-line
-    // Three.js file, which belongs in its own change, not a framework upgrade.
+    // immutability / purity / refs used to be downgraded too, for the old
+    // 1600-line MagicBoxClient. Since its Three.js state moved into
+    // magic-box/engine (2026-11-20) nothing trips them, so they are back to
+    // their defaults.
     rules: {
       'react-hooks/set-state-in-effect': 'warn',
-      'react-hooks/immutability': 'warn',
-      'react-hooks/purity': 'warn',
-      'react-hooks/refs': 'warn',
     },
   },
 ]);
